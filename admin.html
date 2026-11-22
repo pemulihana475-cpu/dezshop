@@ -221,7 +221,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <h1>📱 Download APK</h1>
 <div class="cd">
 <h3 style="margin-bottom:.5rem">Atur Link Download APK</h3>
-<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Paste link APK yang bisa didownload langsung. Data disimpan di browser ini (localStorage).</p>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Paste link APK yang bisa didownload langsung. Data disimpan permanen di database.</p>
 <div class="fg"><label>Versi</label><input class="fc" id="apkVer" placeholder="1.0.0"></div>
 <div class="fg"><label>Link Download</label><input class="fc" id="apkUrl" placeholder="https://..."></div>
 <div class="fg"><label>Ukuran</label><input class="fc" id="apkSize" placeholder="15 MB"></div>
@@ -414,7 +414,6 @@ function showInstallGuide(){
 function loadMrk(){db.collection('settings').doc('markup').get().then(d=>{if(d.exists){document.getElementById('mrkPercent').value=d.data().percent||20;document.getElementById('mrkRound').value=d.data().round||100}})}
 function saveMrk(){var p=parseInt(document.getElementById('mrkPercent').value)||20;var r=parseInt(document.getElementById('mrkRound').value)||100;db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')})}
 
-// ✅ API KEY DISIMPAN KE FIREBASE (PERMANEN)
 function loadApi(){
   db.collection('settings').doc('pps').get().then(d=>{
     if(d.exists){
@@ -461,7 +460,6 @@ function syncPPS(){
   else{db.collection('settings').doc('markup').get().then(m=>{if(m.exists){MP=m.data().percent||20;RU=m.data().round||100}doSync(k,s,MP,RU)})}
 }
 
-// ===== DO SYNC (CHUNKING 500) =====
 function doSync(k,s,MP,RU){
   var prog=document.getElementById('syncProgress');
   if(prog)prog.textContent='🔄 Mengambil layanan dari PPS...';
@@ -655,16 +653,48 @@ function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLo
 // ===== KEAMANAN =====
 function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
 
-// ===== APK =====
-function loadApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');document.getElementById('apkVer').value=a.ver||'';document.getElementById('apkUrl').value=a.url||'';document.getElementById('apkSize').value=a.size||'';document.getElementById('apkNote').value=a.note||'';showApkInfo(a)}
-function showApkInfo(a){var el=document.getElementById('apkInfo');if(!a||!a.url){el.innerHTML='⚠️ Belum ada APK diatur. Isi link lalu Simpan.';return}el.innerHTML='<b>Versi:</b> '+(a.ver||'-')+'<br><b>Ukuran:</b> '+(a.size||'-')+'<br><b>Catatan:</b> '+(a.note||'-')+'<br><b>Link:</b> <span style="word-break:break-all;color:var(--s)">'+a.url+'</span>'}
-function saveApk(){var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};if(!a.url){T('❌ Link download wajib diisi!',1);return}try{localStorage.setItem('apk',JSON.stringify(a));T('✅ APK disimpan!');showApkInfo(a)}catch(e){T('❌ Gagal simpan: '+e.message,1)}}
-function copyApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');if(!a.url){T('❌ Belum ada link!',1);return}var t=document.createElement('textarea');t.value=a.url;document.body.appendChild(t);t.select();try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}document.body.removeChild(t)}
-function testApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');if(!a.url){T('❌ Belum ada link!',1);return}T('🔗 Membuka link...');window.open(a.url,'_blank')}
+// ===== APK (DIPERBAIKI: DISIMPAN KE FIREBASE) =====
+function loadApk(){
+  db.collection('settings').doc('apk').get().then(d=>{
+    var a = d.exists ? d.data() : JSON.parse(localStorage.getItem('apk')||'{}');
+    document.getElementById('apkVer').value=a.ver||'';
+    document.getElementById('apkUrl').value=a.url||'';
+    document.getElementById('apkSize').value=a.size||'';
+    document.getElementById('apkNote').value=a.note||'';
+    showApkInfo(a);
+  });
+}
+function showApkInfo(a){
+  var el=document.getElementById('apkInfo');
+  if(!a||!a.url){el.innerHTML='⚠️ Belum ada APK diatur. Isi link lalu Simpan.';return}
+  el.innerHTML='<b>Versi:</b> '+(a.ver||'-')+'<br><b>Ukuran:</b> '+(a.size||'-')+'<br><b>Catatan:</b> '+(a.note||'-')+'<br><b>Link:</b> <span style="word-break:break-all;color:var(--s)">'+a.url+'</span>';
+}
+function saveApk(){
+  var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};
+  if(!a.url){T('❌ Link download wajib diisi!',1);return}
+  try{
+    localStorage.setItem('apk',JSON.stringify(a));
+    db.collection('settings').doc('apk').set(a); // ✅ BARIS PENTING INI MENYIMPAN KE DATABASE
+    T('✅ APK disimpan permanen!');
+    showApkInfo(a);
+  }catch(e){T('❌ Gagal simpan: '+e.message,1)}
+}
+function copyApk(){
+  var a=JSON.parse(localStorage.getItem('apk')||'{}');
+  if(!a.url){T('❌ Belum ada link!',1);return}
+  var t=document.createElement('textarea');t.value=a.url;document.body.appendChild(t);t.select();
+  try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}
+  document.body.removeChild(t);
+}
+function testApk(){
+  var a=JSON.parse(localStorage.getItem('apk')||'{}');
+  if(!a.url){T('❌ Belum ada link!',1);return}
+  T('🔗 Membuka link...');window.open(a.url,'_blank');
+}
 
 // ===== INIT =====
 showLoginModal();
 loadDash();
 </script>
 </body>
-  </html>
+</html>                                                                                               </html>
