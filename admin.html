@@ -410,11 +410,39 @@ function showInstallGuide(){
   else{info.innerHTML='<b>Desktop:</b> Klik ikon Install di bar alamat browser.'}
 }
 
-// ===== API PPS =====
+// ===== API PPS (API KEY DISIMPAN PERMANEN DI FIREBASE) =====
 function loadMrk(){db.collection('settings').doc('markup').get().then(d=>{if(d.exists){document.getElementById('mrkPercent').value=d.data().percent||20;document.getElementById('mrkRound').value=d.data().round||100}})}
 function saveMrk(){var p=parseInt(document.getElementById('mrkPercent').value)||20;var r=parseInt(document.getElementById('mrkRound').value)||100;db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')})}
-function loadApi(){document.getElementById('apiKey').value=localStorage.getItem('ak')||'';document.getElementById('apiSec').value=localStorage.getItem('sk')||''}
-function saveApi(){localStorage.setItem('ak',document.getElementById('apiKey').value.trim());localStorage.setItem('sk',document.getElementById('apiSec').value.trim());T('✅ API disimpan!')}
+
+// ✅ API KEY DISIMPAN KE FIREBASE (PERMANEN)
+function loadApi(){
+  db.collection('settings').doc('pps').get().then(d=>{
+    if(d.exists){
+      var k=d.data().apiKey||'';
+      var s=d.data().secretKey||'';
+      document.getElementById('apiKey').value=k;
+      document.getElementById('apiSec').value=s;
+      if(k)localStorage.setItem('ak',k);
+      if(s)localStorage.setItem('sk',s);
+    } else {
+      document.getElementById('apiKey').value=localStorage.getItem('ak')||'';
+      document.getElementById('apiSec').value=localStorage.getItem('sk')||'';
+    }
+  }).catch(e=>{
+    document.getElementById('apiKey').value=localStorage.getItem('ak')||'';
+    document.getElementById('apiSec').value=localStorage.getItem('sk')||'';
+  });
+}
+function saveApi(){
+  var k=document.getElementById('apiKey').value.trim();
+  var s=document.getElementById('apiSec').value.trim();
+  if(!k||!s){T('❌ API Key & Secret Key wajib diisi!',1);return}
+  db.collection('settings').doc('pps').set({apiKey:k,secretKey:s},{merge:true}).then(()=>{
+    localStorage.setItem('ak',k);
+    localStorage.setItem('sk',s);
+    T('✅ API disimpan permanen!');
+  }).catch(e=>{T('❌ Gagal simpan: '+e.message,1)});
+}
 function testApi(){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ Isi API Key & Secret dulu, lalu Simpan!',1);return}
@@ -433,7 +461,7 @@ function syncPPS(){
   else{db.collection('settings').doc('markup').get().then(m=>{if(m.exists){MP=m.data().percent||20;RU=m.data().round||100}doSync(k,s,MP,RU)})}
 }
 
-// ===== DO SYNC (DIPERBAIKI: CHUNKING 500, TIDAK JEBOL BATCH LIMIT) =====
+// ===== DO SYNC (CHUNKING 500) =====
 function doSync(k,s,MP,RU){
   var prog=document.getElementById('syncProgress');
   if(prog)prog.textContent='🔄 Mengambil layanan dari PPS...';
@@ -626,6 +654,13 @@ function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLo
 
 // ===== KEAMANAN =====
 function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
+
+// ===== APK =====
+function loadApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');document.getElementById('apkVer').value=a.ver||'';document.getElementById('apkUrl').value=a.url||'';document.getElementById('apkSize').value=a.size||'';document.getElementById('apkNote').value=a.note||'';showApkInfo(a)}
+function showApkInfo(a){var el=document.getElementById('apkInfo');if(!a||!a.url){el.innerHTML='⚠️ Belum ada APK diatur. Isi link lalu Simpan.';return}el.innerHTML='<b>Versi:</b> '+(a.ver||'-')+'<br><b>Ukuran:</b> '+(a.size||'-')+'<br><b>Catatan:</b> '+(a.note||'-')+'<br><b>Link:</b> <span style="word-break:break-all;color:var(--s)">'+a.url+'</span>'}
+function saveApk(){var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};if(!a.url){T('❌ Link download wajib diisi!',1);return}try{localStorage.setItem('apk',JSON.stringify(a));T('✅ APK disimpan!');showApkInfo(a)}catch(e){T('❌ Gagal simpan: '+e.message,1)}}
+function copyApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');if(!a.url){T('❌ Belum ada link!',1);return}var t=document.createElement('textarea');t.value=a.url;document.body.appendChild(t);t.select();try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}document.body.removeChild(t)}
+function testApk(){var a=JSON.parse(localStorage.getItem('apk')||'{}');if(!a.url){T('❌ Belum ada link!',1);return}T('🔗 Membuka link...');window.open(a.url,'_blank')}
 
 // ===== INIT =====
 showLoginModal();
