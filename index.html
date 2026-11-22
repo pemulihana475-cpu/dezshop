@@ -6,8 +6,6 @@
 <title>DEZSTORE - SMM Panel Premium</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a1a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -47,7 +45,7 @@ body{background:var(--d);color:#fff;min-height:100vh;overflow-x:hidden;backgroun
 .fc:focus{outline:none;border-color:var(--s)}
 textarea.fc{min-height:80px;resize:vertical;font-family:monospace;font-size:.8rem}
 .bt{padding:.6rem 1rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.82rem;display:inline-flex;align-items:center;justify-content:center;gap:.4rem;transition:.2s}
-.bp{background:linear-gradient(135deg,var(--p),var(--s));color:#fff}.bp:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(59,130,246,.4)}
+.bp{background:linear-gradient(135deg,var(--p),var(--s));color:#fff}
 .bg{background:var(--ok);color:#fff}.be{background:var(--err);color:#fff}.bw{background:var(--warn);color:#fff}
 .bo{background:transparent;border:1px solid var(--b);color:#fff}
 .bb{width:100%}.bs{padding:.3rem .6rem;font-size:.7rem}
@@ -58,12 +56,12 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
 .bad.p{background:rgba(245,158,11,.2);color:var(--warn)}.bad.w{background:rgba(139,92,246,.2);color:#a78bfa}
 .bad.c{background:rgba(16,185,129,.2);color:var(--ok)}.bad.x{background:rgba(239,68,68,.2);color:var(--err)}
 .bad.i{background:rgba(59,130,246,.2);color:var(--s)}.bad.pr{background:rgba(168,85,247,.2);color:var(--a)}
-.ann-card{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(168,85,247,.08));border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:1rem;margin-bottom:.9rem;position:relative;overflow:hidden}
-.ann-h{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;position:relative;z-index:1}
+.ann-card{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(168,85,247,.08));border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:1rem;margin-bottom:.9rem}
+.ann-h{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem}
 .ann-h i{font-size:1.3rem;color:var(--warn);animation:pl 2s infinite}
 @keyframes pl{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
 .ann-h b{font-size:.95rem}
-.ann-body{position:relative;z-index:1;font-size:.82rem;color:#cbd5e1;line-height:1.6}
+.ann-body{font-size:.82rem;color:#cbd5e1;line-height:1.6}
 .ann-body .t{font-weight:700;color:#fff;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
 .ann-body .d{font-size:.7rem;color:var(--m);margin-top:.4rem}
 .ann-empty,.empty-state{text-align:center;color:var(--m);font-size:.8rem;padding:1rem}
@@ -82,10 +80,6 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
 .ts.on{transform:translateY(0);opacity:1}.ts.e{background:var(--err)}.ts.w{background:var(--warn)}.ts.i{background:var(--p)}
 .ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:98;display:none}.ov.on{display:block}
 .flo-wa{position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.5rem;box-shadow:0 4px 15px rgba(37,211,102,.4);z-index:90;text-decoration:none}
-.flo-wa:hover{transform:scale(1.1)}
-.toggle-mode{display:flex;background:var(--dd);border-radius:8px;padding:3px;margin-bottom:.8rem}
-.toggle-mode div{flex:1;text-align:center;padding:.6rem;font-size:.85rem;cursor:pointer;border-radius:6px;transition:.2s;font-weight:600}
-.toggle-mode div.active{background:linear-gradient(135deg,var(--ok),#059669);color:#fff}
 .info-box{background:rgba(59,130,246,.1);border-left:3px solid var(--p);padding:.7rem .9rem;border-radius:8px;font-size:.78rem;color:var(--m);margin-bottom:.7rem}
 .info-box b{color:var(--s)}
 .share-btns{display:flex;gap:.5rem;margin-top:.5rem}
@@ -95,14 +89,14 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
 .stat-chart{height:120px;background:linear-gradient(180deg,rgba(59,130,246,.1),transparent);border-radius:8px;padding:.5rem;margin-top:.5rem;display:flex;align-items:flex-end;gap:.3rem}
 .stat-bar{flex:1;background:var(--p);border-radius:4px 4px 0 0;min-height:10px;transition:height .3s}
 /* AUTOCOMPLETE */
-.autocomplete{position:relative}
-.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:var(--dd);border:1px solid var(--b);border-radius:8px;max-height:250px;overflow-y:auto;z-index:50;display:none;margin-top:4px}
-.autocomplete-list.show{display:block}
-.autocomplete-item{padding:.7rem .9rem;cursor:pointer;border-bottom:1px solid var(--b);transition:.2s}
-.autocomplete-item:hover,.autocomplete-item.selected{background:rgba(59,130,246,.15);color:var(--s)}
-.autocomplete-item .svc-name{font-size:.85rem;font-weight:600}
-.autocomplete-item .svc-meta{font-size:.7rem;color:var(--m);margin-top:.2rem}
-.autocomplete-cat{padding:.4rem .9rem;font-size:.7rem;font-weight:700;color:var(--a);background:rgba(168,85,247,.1);border-bottom:1px solid var(--b)}
+.ac-wrap{position:relative}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--dd);border:1px solid var(--b);border-radius:8px;max-height:260px;overflow-y:auto;z-index:50;display:none;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.ac-list.show{display:block}
+.ac-item{padding:.7rem .9rem;cursor:pointer;border-bottom:1px solid var(--b)}
+.ac-item:hover,.ac-item.sel{background:rgba(59,130,246,.15);color:var(--s)}
+.ac-item .nm{font-size:.85rem;font-weight:600}
+.ac-item .mt{font-size:.7rem;color:var(--m);margin-top:.2rem}
+.ac-cat{padding:.4rem .9rem;font-size:.7rem;font-weight:700;color:var(--a);background:rgba(168,85,247,.1);border-bottom:1px solid var(--b);position:sticky;top:0}
 @media(max-width:768px){.ham{display:block}.side{transform:translateX(-100%)}.side.on{transform:translateX(0)}.bd{margin-left:0}.g2{grid-template-columns:1fr}}
 </style>
 </head>
@@ -159,42 +153,23 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
     </div>
   </div>
 
-  <!-- ORDER BARU (1 FIELD AUTOCOMPLETE) -->
+  <!-- ORDER (1 MODE, 1 FIELD) -->
   <div class="pg" id="order">
-    <div class="ph"><h1>🛒 Order Baru</h1><p>Pilih layanan & buat pesanan</p></div>
+    <div class="ph"><h1>🛒 Order Baru</h1><p>Cari layanan, isi link & jumlah</p></div>
     <div class="cd">
-      <div class="toggle-mode">
-        <div class="active" id="modeSingle" onclick="setOrderMode('single')"><i class="fas fa-plus"></i> Single Order</div>
-        <div id="modeMass" onclick="setOrderMode('mass')"><i class="fas fa-layer-group"></i> Mass Order</div>
-      </div>
-      
-      <!-- 1 FIELD AUTOCOMPLETE -->
-      <div class="fg autocomplete">
-        <label><i class="fas fa-search" style="color:var(--s);margin-right:.3rem"></i>Cari & Pilih Layanan</label>
-        <input class="fc" id="svcAutocomplete" placeholder="Ketik nama layanan..." oninput="showAutocomplete()" onfocus="showAutocomplete()">
-        <div class="autocomplete-list" id="autocompleteList"></div>
+      <div class="fg ac-wrap">
+        <label><i class="fas fa-search" style="color:var(--s);margin-right:.3rem"></i>Pilih Layanan</label>
+        <input class="fc" id="svcAc" placeholder="Klik atau ketik nama layanan..." onfocus="showAc()" oninput="showAc()" autocomplete="off">
+        <div class="ac-list" id="acList"></div>
         <input type="hidden" id="oSvc" value="">
       </div>
-      
-      <div class="info-box" id="svcInfo">
-        <i class="fas fa-info-circle"></i> Ketik & pilih layanan untuk melihat harga & batas order.
-      </div>
-      
-      <div id="singleInput">
-        <div class="fg"><label>Link / Target</label><input class="fc" id="oLink" placeholder="https://... atau @username"></div>
-        <div class="fg"><label>Jumlah</label><input type="number" class="fc" id="oQty" oninput="calcTotal()" placeholder="0"></div>
-      </div>
-      
-      <div id="massInput" style="display:none">
-        <div class="fg"><label>Format: Link | Jumlah (satu per baris)</label>
-        <textarea class="fc" id="oMassData" rows="6" placeholder="https://instagram.com/p/abc | 1000&#10;https://instagram.com/p/xyz | 500"></textarea></div>
-      </div>
-      
+      <div class="info-box" id="svcInfo"><i class="fas fa-info-circle"></i> Pilih layanan untuk melihat harga & batas order.</div>
+      <div class="fg"><label>Link / Target</label><input class="fc" id="oLink" placeholder="https://... atau @username"></div>
+      <div class="fg"><label>Jumlah</label><input type="number" class="fc" id="oQty" oninput="calcTotal()" placeholder="0"></div>
       <div class="fg"><label>Kode Voucher (Opsional)</label>
         <div style="display:flex;gap:.5rem"><input class="fc" id="oVoucher" placeholder="CONTOH: DISKON10" style="text-transform:uppercase"><button class="bt bo" onclick="checkVoucher()">Cek</button></div>
         <small id="vouchInfo" style="color:var(--ok);font-size:.7rem;display:none;margin-top:.3rem"></small>
       </div>
-      
       <div class="fg"><label>Total Harga</label><input class="fc" id="oTotal" readonly value="Rp 0" style="font-weight:700;color:var(--ok);font-size:1rem"></div>
       <button class="bt bp bb" style="padding:.8rem;font-size:.95rem" onclick="submitOrder()"><i class="fas fa-paper-plane"></i> Proses Order</button>
     </div>
@@ -272,13 +247,12 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
       <h4 style="color:var(--s);margin-bottom:.5rem">1. Cara Order</h4>
       <ul style="padding-left:1.2rem;font-size:.82rem;color:var(--m);line-height:1.7;margin-bottom:.8rem">
         <li>Buka menu <b style="color:#fff">Order</b>.</li>
-        <li>Ketik nama layanan di field pencarian.</li>
-        <li>Pilih layanan dari list yang muncul.</li>
-        <li>Masukkan link target & jumlah.</li>
-        <li>Klik <b style="color:#fff">Proses Order</b>.</li>
+        <li>Klik field "Pilih Layanan" → list layanan muncul.</li>
+        <li>Ketik untuk mencari, lalu klik layanan yang diinginkan.</li>
+        <li>Masukkan link target & jumlah, klik <b style="color:#fff">Proses Order</b>.</li>
       </ul>
       <h4 style="color:var(--s);margin-bottom:.5rem">2. Cara Deposit</h4>
-      <ul style="padding-left:1.2rem;font-size:.82rem;color:var(--m);line-height:1.7;margin-bottom:.8rem">
+      <ul style="padding-left:1.2rem;font-size:.82rem;color:var(--m);line-height:1.7">
         <li>Menu <b style="color:#fff">Deposit</b> → pilih metode → transfer sesuai nomor.</li>
         <li>Masukkan jumlah & upload bukti → <b style="color:#fff">Kirim Deposit</b>.</li>
         <li>Saldo masuk setelah admin approve.</li>
@@ -324,7 +298,6 @@ var db=firebase.firestore();
 var ME=JSON.parse(localStorage.getItem('dez_member')||'null');
 var currentVoucher=null;
 var SVC=[];
-var orderMode='single';
 
 window.addEventListener('error',function(e){try{T('JS Error: '+(e.message||''),'e')}catch(x){}});
 
@@ -387,66 +360,49 @@ function renderAnnList(){annData(function(a){var el=document.getElementById('ann
 // ===== SERVICES =====
 function services(){return new Promise(function(res){var c=getCached('services',900000);if(c&&c.length){SVC=c;res(c);return}db.collection('services').get().then(function(s){SVC=[];s.forEach(function(d){SVC.push(d.data())});setCached('services',SVC);res(SVC)}).catch(function(){res(SVC)})})}
 
-// ===== ORDER (1 FIELD AUTOCOMPLETE) =====
-function loadOrder(){services().then(function(){})}
+// ===== ORDER: 1 MODE, 1 FIELD (AUTOCOMPLETE) =====
+function loadOrder(){services().then(function(){showAc()})}
 
-function showAutocomplete(){
-  var q=(document.getElementById('svcAutocomplete').value||'').toLowerCase();
-  var list=document.getElementById('autocompleteList');
-  
-  if(!q){list.classList.remove('show');return}
-  
+function showAc(){
+  var q=(document.getElementById('svcAc').value||'').toLowerCase();
+  var list=document.getElementById('acList');
+  if(!SVC.length){list.innerHTML='<div style="padding:1rem;text-align:center;color:var(--m)">Belum ada layanan. Admin belum Sync PPS.</div>';list.classList.add('show');return}
   var cats={};
   SVC.forEach(function(x){
-    if(!(x.name||'').toLowerCase().includes(q)&&(x.categoryName||'').toLowerCase().includes(q))return;
+    if(q&&!(x.name||'').toLowerCase().includes(q)&&(x.categoryName||'').toLowerCase().includes(q))return;
     var cat=x.categoryName||x.category||'Lainnya';
     if(!cats[cat])cats[cat]=[];
     cats[cat].push(x);
   });
-  
-  var h='';
-  var hasResults=false;
+  var h='';var has=false;var count=0;
   Object.keys(cats).sort().forEach(function(cat){
-    if(cats[cat].length===0)return;
-    hasResults=true;
-    h+='<div class="autocomplete-cat">📁 '+cat+'</div>';
-    cats[cat].forEach(function(x){
-      var globalIdx=SVC.indexOf(x);
-      h+='<div class="autocomplete-item" onclick="selectService('+globalIdx+')">';
-      h+='<div class="svc-name">'+x.name+'</div>';
-      h+='<div class="svc-meta">'+rp(x.price)+'/1000 • Min: '+x.min+' • Max: '+x.max+'</div>';
-      h+='</div>';
+    var arr=cats[cat];if(!arr.length)return;has=true;
+    h+='<div class="ac-cat">📁 '+cat+' ('+arr.length+')</div>';
+    arr.forEach(function(x){
+      if(count>=300)return; // batas render biar ringan
+      count++;
+      var gi=SVC.indexOf(x);
+      h+='<div class="ac-item" onclick="pickSvc('+gi+')"><div class="nm">'+x.name+'</div><div class="mt">'+rp(x.price)+'/1000 • Min '+x.min+' • Max '+x.max+'</div></div>';
     });
   });
-  
-  if(!hasResults){h='<div style="padding:1rem;text-align:center;color:var(--m)">Tidak ada layanan ditemukan</div>'}
-  list.innerHTML=h;
-  list.classList.add('show');
+  if(!has)h='<div style="padding:1rem;text-align:center;color:var(--m)">Tidak ada layanan ditemukan</div>';
+  list.innerHTML=h;list.classList.add('show');
 }
 
-function selectService(idx){
-  var x=SVC[idx];
-  if(!x)return;
+function pickSvc(idx){
+  var x=SVC[idx];if(!x)return;
   document.getElementById('oSvc').value=idx;
-  document.getElementById('svcAutocomplete').value=x.name;
-  document.getElementById('autocompleteList').classList.remove('show');
-  
-  var info=document.getElementById('svcInfo');
-  info.innerHTML='<b style="color:var(--s)">'+x.name+'</b><br><small>Kategori: '+(x.categoryName||'-')+' • Harga: <b style="color:var(--ok)">'+rp(x.price)+'</b>/1000 • Min: '+x.min+' • Max: '+x.max+'</small>';
+  document.getElementById('svcAc').value=x.name;
+  document.getElementById('acList').classList.remove('show');
+  document.getElementById('svcInfo').innerHTML='<b style="color:var(--s)">'+x.name+'</b><br><small>Kategori: '+(x.categoryName||'-')+' • Harga: <b style="color:var(--ok)">'+rp(x.price)+'</b>/1000 • Min: '+x.min+' • Max: '+x.max+'</small>';
   calcTotal();
 }
 
-// Tutup autocomplete saat klik di luar
 document.addEventListener('click',function(e){
-  var list=document.getElementById('autocompleteList');
-  var input=document.getElementById('svcAutocomplete');
-  if(list&&!e.target.closest('.autocomplete')){
-    list.classList.remove('show');
-  }
+  if(!e.target.closest('.ac-wrap')){var l=document.getElementById('acList');if(l)l.classList.remove('show')}
 });
 
-function setOrderMode(mode){orderMode=mode;document.getElementById('modeSingle').classList.toggle('active',mode==='single');document.getElementById('modeMass').classList.toggle('active',mode==='mass');document.getElementById('singleInput').style.display=mode==='single'?'block':'none';document.getElementById('massInput').style.display=mode==='mass'?'block':'none'}
-function curSvc(){var idx=document.getElementById('oSvc').value;if(idx===''||idx===null)return null;return SVC[parseInt(idx)]||null}
+function curSvc(){var idx=document.getElementById('oSvc').value;if(idx==='')return null;return SVC[parseInt(idx)]||null}
 function calcTotal(){var x=curSvc();if(!x){document.getElementById('oTotal').value='Rp 0';return}var q=parseInt(document.getElementById('oQty').value)||0;var t=Math.round(x.price*q/1000);if(currentVoucher){t=currentVoucher.type==='percent'?Math.round(t-(t*currentVoucher.vl/100)):Math.round(t-currentVoucher.vl);if(t<0)t=0}document.getElementById('oTotal').value=rp(t)}
 function checkVoucher(){
   var code=document.getElementById('oVoucher').value.trim().toUpperCase();var vi=document.getElementById('vouchInfo');
@@ -458,10 +414,9 @@ function checkVoucher(){
 function submitOrder(){
   if(!ME){T('Silakan login!','e');return}
   var x=curSvc();if(!x){T('Pilih layanan dulu!','e');return}
-  if(orderMode==='single'){var link=document.getElementById('oLink').value.trim(),q=parseInt(document.getElementById('oQty').value)||0;if(!link||!q){T('Lengkapi link & jumlah!','e');return}if(q<x.min||q>x.max){T('Jumlah harus '+x.min+'-'+x.max,'e');return}processSingleOrder(x,link,q)}
-  else{var data=document.getElementById('oMassData').value.trim();if(!data){T('Isi data mass order!','e');return}processMassOrder(x,data)}
-}
-function processSingleOrder(x,link,q){
+  var link=document.getElementById('oLink').value.trim(),q=parseInt(document.getElementById('oQty').value)||0;
+  if(!link||!q){T('Lengkapi link & jumlah!','e');return}
+  if(q<x.min||q>x.max){T('Jumlah harus '+x.min+'-'+x.max,'e');return}
   var total=Math.round(x.price*q/1000);
   if(currentVoucher){total=currentVoucher.type==='percent'?Math.round(total-(total*currentVoucher.vl/100)):Math.round(total-currentVoucher.vl);if(total<0)total=0}
   if(total>ME.balance){T('Saldo tidak cukup!','e');return}
@@ -472,27 +427,7 @@ function processSingleOrder(x,link,q){
     var od={userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
     if(vc){od.voucherUsed=vc.code;t.update(db.collection('vouchers').doc(vc.id),{used:firebase.firestore.FieldValue.increment(1)})}
     t.add(db.collection('orders'),od);
-  })}).then(function(){T('✅ Order berhasil!');currentVoucher=null;document.getElementById('oVoucher').value='';document.getElementById('vouchInfo').style.display='none';document.getElementById('oLink').value='';document.getElementById('oQty').value='';calcTotal();go('status',document.querySelectorAll('.mi')[2])}).catch(function(e){T('❌ '+e,'e')});
-}
-function processMassOrder(x,data){
-  var lines=data.split('\n').filter(function(l){return l.trim()!==''});
-  if(lines.length>20){T('Maksimal 20 order per batch!','e');return}
-  T('Memproses '+lines.length+' order...','i');
-  var idx=0,success=0,fail=0;
-  function processNext(){
-    if(idx>=lines.length){T('✅ Selesai! Berhasil: '+success+', Gagal: '+fail,fail>0?'w':'');document.getElementById('oMassData').value='';go('status',document.querySelectorAll('.mi')[2]);return}
-    var parts=lines[idx].split('|').map(function(s){return s.trim()});idx++;
-    if(parts.length!==2){fail++;processNext();return}
-    var link=parts[0],q=parseInt(parts[1]);
-    if(!link||!q||q<x.min||q>x.max){fail++;processNext();return}
-    var total=Math.round(x.price*q/1000);
-    db.runTransaction(function(t){return t.get(db.collection('users').doc(ME.id)).then(function(u){
-      if((u.data().balance||0)<total)throw 'Saldo kurang';
-      t.update(db.collection('users').doc(ME.id),{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});
-      t.add(db.collection('orders'),{userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-    })}).then(function(){success++;processNext()}).catch(function(){fail++;processNext()});
-  }
-  processNext();
+  })}).then(function(){T('✅ Order berhasil!');currentVoucher=null;document.getElementById('oVoucher').value='';document.getElementById('vouchInfo').style.display='none';document.getElementById('oLink').value='';document.getElementById('oQty').value='';document.getElementById('svcAc').value='';document.getElementById('oSvc').value='';document.getElementById('svcInfo').innerHTML='<i class="fas fa-info-circle"></i> Pilih layanan untuk melihat harga & batas order.';document.getElementById('oTotal').value='Rp 0';go('status',document.querySelectorAll('.mi')[2])}).catch(function(e){T('❌ '+e,'e')});
 }
 
 // ===== STATUS ORDER =====
@@ -501,7 +436,7 @@ function loadStatus(){
   db.collection('orders').where('userId','==',ME.id).get().then(function(s){
     var rows=[];s.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()))});
     rows.sort(function(a,b){return(b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0)-(a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0)});
-    var h='';for(var i=0;i<rows.length;i++){var o=rows[i];h+='<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td>'+sBadge(o.status)+'</td><td><button class="bt bo bs" onclick="repeatOrder(\''+o.serviceId+'\',\''+(o.link||'').replace(/'/g,"\\'")+'\')"><i class="fas fa-redo"></i></button></td></tr>'}
+    var h='';for(var i=0;i<rows.length;i++){var o=rows[i];h+='<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td>'+sBadge(o.status)+'</td><td><button class="bt bo bs" onclick="repeatOrder(\''+o.serviceId+'\',\''+String(o.link||'').replace(/'/g,"\\'")+'\')"><i class="fas fa-redo"></i></button></td></tr>'}
     document.getElementById('histTb').innerHTML=h||'<tr><td colspan="6" class="empty-state">Belum ada order</td></tr>';
   }).catch(function(e){document.getElementById('histTb').innerHTML='<tr><td colspan="6" class="empty-state">Error: '+e.message+'</td></tr>'});
 }
@@ -510,14 +445,7 @@ function repeatOrder(svcId,link){
     var x=SVC.find(function(s){return s.serviceId===svcId});
     if(!x){T('Layanan tidak ditemukan','e');return}
     go('order',document.querySelectorAll('.mi')[1]);
-    setTimeout(function(){
-      var idx=SVC.indexOf(x);
-      document.getElementById('oSvc').value=idx;
-      document.getElementById('svcAutocomplete').value=x.name;
-      selectService(idx);
-      document.getElementById('oLink').value=link;
-      T('📋 Order disalin, tinggal isi jumlah!');
-    },500);
+    setTimeout(function(){pickSvc(SVC.indexOf(x));document.getElementById('oLink').value=link;T('📋 Order disalin, tinggal isi jumlah!')},400);
   });
 }
 
@@ -634,9 +562,7 @@ function renderStatChart(){
       var o=d.data();
       if(o.createdAt&&o.createdAt.toDate){
         var od=o.createdAt.toDate();
-        for(var i=0;i<days.length;i++){
-          if(od.toDateString()===days[i].date.toDateString()){days[i].count++;break}
-        }
+        for(var i=0;i<days.length;i++){if(od.toDateString()===days[i].date.toDateString()){days[i].count++;break}}
       }
     });
     var max=Math.max.apply(null,days.map(function(d){return d.count}));if(max===0)max=1;
@@ -650,11 +576,7 @@ function renderStatChart(){
 }
 
 // ===== BOOT =====
-function boot(){
-  applyTheme();
-  applySite();
-  loadHome();
-}
+function boot(){applyTheme();applySite();loadHome()}
 if(ME){closeM('mLogin');boot()}else{document.getElementById('liUser').focus()}
 </script>
 </body>
