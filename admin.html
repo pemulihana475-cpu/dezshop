@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DEZSTORE ADMIN</title>
+<!-- PWA Meta Tags -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DEZSTORE">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -52,11 +58,11 @@ textarea.fc{min-height:60px;resize:vertical}
 .bad.c{background:rgba(16,185,129,.2);color:var(--ok)}
 .bad.x{background:rgba(239,68,68,.2);color:var(--err)}
 .bad.w{background:rgba(139,92,246,.2);color:#a78bfa}
-.md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:1rem}
+.md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;padding:1rem}
 .md.on{display:flex}
 .mdc{background:var(--c);border-radius:12px;padding:1.2rem;max-width:450px;width:100%;max-height:90vh;overflow-y:auto}
 .mdc h2{margin-bottom:.8rem;font-size:1.1rem}
-.ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.6rem 1rem;border-radius:8px;font-weight:600;font-size:.78rem;z-index:9999;transform:translateY(100px);opacity:0;transition:.3s}
+.ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.6rem 1rem;border-radius:8px;font-weight:600;font-size:.78rem;z-index:10000;transform:translateY(100px);opacity:0;transition:.3s}
 .ts.on{transform:translateY(0);opacity:1}
 .ts.e{background:var(--err)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
@@ -104,6 +110,22 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg on" id="dash">
 <h1>📊 Dashboard</h1>
+<div class="cd" style="background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(59,130,246,.15));border-color:var(--ok)">
+<h3 style="margin-bottom:.5rem">📱 Install Jadi Aplikasi</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Install DEZSTORE Admin ke HP. Buka dari home screen tanpa browser!</p>
+<button class="bt bg" id="btnInstall" style="display:none" onclick="installApp()"><i class="fas fa-download"></i> Install ke HP</button>
+<button class="bt bp" onclick="showInstallGuide()"><i class="fas fa-question-circle"></i> Cara Manual</button>
+<div id="installInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--m)"></div>
+</div>
+<div class="cd" style="background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(59,130,246,.15));border-color:var(--a)">
+<h3 style="margin-bottom:.5rem">🔐 Keamanan Login</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Aktifkan sidik jari untuk login cepat & aman.</p>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="bt bg" onclick="registerBiometric()"><i class="fas fa-fingerprint"></i> Aktifkan Sidik Jari</button>
+<button class="bt be" onclick="removeBiometric()"><i class="fas fa-trash"></i> Hapus</button>
+</div>
+<div id="bioStatus" style="margin-top:.6rem;font-size:.75rem;color:var(--m)"></div>
+</div>
 <div class="st">
 <div class="sc"><div class="si b"><i class="fas fa-users"></i></div><div><h3 id="d1">0</h3><p>Users</p></div></div>
 <div class="sc"><div class="si g"><i class="fas fa-shopping-cart"></i></div><div><h3 id="d2">0</h3><p>Orders</p></div></div>
@@ -187,27 +209,12 @@ textarea.fc{min-height:60px;resize:vertical}
 <h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis</h3>
 <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Setiap kali klik "Sync PPS", harga akan otomatis naik sesuai persentase di bawah ini.</p>
 <div class="g2">
-  <div class="fg">
-    <label>Persentase Markup (%)</label>
-    <input type="number" class="fc" id="mrkPercent" placeholder="20" value="20">
-  </div>
-  <div class="fg">
-    <label>Pembulatan Harga</label>
-    <select class="fc" id="mrkRound">
-      <option value="0">Tanpa pembulatan</option>
-      <option value="10">Ke puluhan</option>
-      <option value="100" selected>Ke ratusan</option>
-      <option value="500">Ke 500-an</option>
-      <option value="1000">Ke ribuan</option>
-      <option value="5000">Ke 5 ribuan</option>
-    </select>
-  </div>
+  <div class="fg"><label>Persentase Markup (%)</label><input type="number" class="fc" id="mrkPercent" placeholder="20" value="20"></div>
+  <div class="fg"><label>Pembulatan Harga</label><select class="fc" id="mrkRound"><option value="0">Tanpa pembulatan</option><option value="10">Ke puluhan</option><option value="100" selected>Ke ratusan</option><option value="500">Ke 500-an</option><option value="1000">Ke ribuan</option><option value="5000">Ke 5 ribuan</option></select></div>
 </div>
 <button class="bt bp" onclick="saveMrk()">💾 Simpan Pengaturan</button>
 <button class="bt bg" onclick="syncPPS()">🔄 Sync PPS dengan Markup</button>
-<div id="mrkInfo" style="margin-top:.8rem;padding:.6rem;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem">
-  <b>Contoh:</b> Harga PPS Rp 6.998 + Markup 20% = Rp 8.400
-</div>
+<div id="mrkInfo" style="margin-top:.8rem;padding:.6rem;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem"><b>Contoh:</b> Harga PPS Rp 6.998 + Markup 20% = Rp 8.400</div>
 </div>
 </div>
 
@@ -290,6 +297,14 @@ textarea.fc{min-height:60px;resize:vertical}
 </div>
 
 <!-- MODALS -->
+<div class="md" id="mLogin"><div class="mdc" style="text-align:center">
+<h2>🔐 Login Admin</h2>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Pilih cara masuk ke panel</p>
+<button class="bt bg" id="btnBioLogin" style="display:none;width:100%;justify-content:center;padding:.7rem" onclick="loginBio()"><i class="fas fa-fingerprint"></i> Masuk dengan Sidik Jari</button>
+<button class="bt bp" style="width:100%;justify-content:center;padding:.7rem;margin-top:.4rem" onclick="loginPass()"><i class="fas fa-key"></i> Masuk dengan Password</button>
+<div id="loginInfo" style="margin-top:.6rem;font-size:.7rem;color:var(--m)"></div>
+</div></div>
+
 <div class="md" id="mUsr"><div class="mdc"><h2>User</h2><div class="fg"><label>Username</label><input class="fc" id="uNm"></div><div class="fg"><label>Email</label><input type="email" class="fc" id="uEm"></div><div class="fg"><label>WA</label><input class="fc" id="uWa"></div><div class="fg"><label>Saldo</label><input type="number" class="fc" id="uBal" value="0"></div><div class="fg"><label>Status</label><select class="fc" id="uSt"><option value="active">Active</option><option value="banned">Banned</option></select></div><button class="bt bp" onclick="saveUsr()">Simpan</button><button class="bt be" onclick="closeM('mUsr')">Batal</button></div></div>
 
 <div class="md" id="mSvc"><div class="mdc"><h2>Layanan</h2><div class="fg"><label>Service ID</label><input class="fc" id="sId"></div><div class="fg"><label>Kategori</label><input class="fc" id="sCat"></div><div class="fg"><label>Nama Kategori</label><input class="fc" id="sCatN"></div><div class="fg"><label>Nama</label><input class="fc" id="sNm"></div><div class="fg"><label>Harga</label><input type="number" class="fc" id="sPr"></div><div class="fg"><label>Min</label><input type="number" class="fc" id="sMn"></div><div class="fg"><label>Max</label><input type="number" class="fc" id="sMx"></div><button class="bt bp" onclick="saveSvc()">Simpan</button><button class="bt be" onclick="closeM('mSvc')">Batal</button></div></div>
@@ -314,109 +329,105 @@ textarea.fc{min-height:60px;resize:vertical}
 var fc={apiKey:"AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",authDomain:"dezstore-78d09.firebaseapp.com",projectId:"dezstore-78d09",storageBucket:"dezstore-78d09.firebasestorage.app",messagingSenderId:"815388782850",appId:"1:815388782850:web:de678f5df5380be276921b"};
 firebase.initializeApp(fc);
 var db=firebase.firestore();
-var PW = localStorage.getItem('ap') || 'dezstore2026';
-async function lakukanLogin() {
-    // 1. Coba panggil fitur Sidik Jari / Face ID bawaan browser
-    if (window.PasswordCredential) {
-        try {
-            const cred = await navigator.credentials.get({ password: true });
-            if (cred && cred.password === PW) {
-                console.log("✅ Login Berhasil via Sidik Jari!");
-                return; // Langsung masuk, tidak perlu ketik password
-            }
-        } catch (err) {
-            console.log("Sidik jari dibatalkan atau tidak tersedia, pakai manual.");
-        }
-    }
-    // 2. Fallback: Jika sidik jari gagal, dibatalkan, atau browser tidak support, pakai prompt biasa
-    var p = prompt('🔐 Masukkan Password Admin:');
-    if (p !== PW) {
-        alert('❌ Password Salah!');
-        location.reload(); // Refresh halaman
-    } else {
-        // 3. Simpan kredensial ke browser agar lain kali bisa pakai sidik jari
-        if (window.PasswordCredential) {
-            const cred = new PasswordCredential({ 
-                id: 'admin_dezstore', 
-                password: PW, 
-                name: 'Admin DEZSTORE' 
-            });
-            navigator.credentials.store(cred);
-        }
-    }
-}
-// Jalankan fungsi login saat halaman dibuka
-lakukanLogin();
-
-// ===== URL API PPS (WAJIB GANTI DENGAN URL CLOUDFLARE WORKER KAMU) =====
+var PW=localStorage.getItem('ap')||'dezstore2026';
 var PPS_URL='https://dezstore-api.dezstore300.workers.dev/';
 
-function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
+// ===== HELPERS =====
+function b64ToBuf(b){var s=atob(b);var u=new Uint8Array(s.length);for(var i=0;i<s.length;i++){u[i]=s.charCodeAt(i)}return u}
+function bufToB64(b){var s='';var u=new Uint8Array(b);for(var i=0;i<u.length;i++){s+=String.fromCharCode(u[i])}return btoa(s)}
+function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
-// ===== APK MANAGER =====
-function loadApk(){
-  var a=JSON.parse(localStorage.getItem('apk')||'{}');
-  document.getElementById('apkVer').value=a.ver||'';
-  document.getElementById('apkUrl').value=a.url||'';
-  document.getElementById('apkSize').value=a.size||'';
-  document.getElementById('apkNote').value=a.note||'';
-  showApkInfo(a);
+// ===== LOGIN MODAL =====
+function showLoginModal(){
+  var bio=localStorage.getItem('bioCred');
+  var btn=document.getElementById('btnBioLogin');
+  var info=document.getElementById('loginInfo');
+  if(bio){btn.style.display='inline-flex';info.innerHTML='✅ Sidik jari sudah terdaftar.'}
+  else{btn.style.display='none';info.innerHTML='💡 Tip: Login dulu pakai password, lalu aktifkan sidik jari di Dashboard.'}
+  document.getElementById('mLogin').classList.add('on');
 }
-function showApkInfo(a){
-  var el=document.getElementById('apkInfo');
-  if(!a||!a.url){el.innerHTML='⚠️ Belum ada APK diatur. Isi link lalu Simpan.';return}
-  el.innerHTML='<b>Versi:</b> '+(a.ver||'-')+'<br><b>Ukuran:</b> '+(a.size||'-')+'<br><b>Catatan:</b> '+(a.note||'-')+'<br><b>Link:</b> <span style="word-break:break-all;color:var(--s)">'+a.url+'</span>';
+function loginPass(){
+  var p=prompt('🔐 Masukkan Password Admin:');
+  if(p!==PW){alert('❌ Password Salah!');return}
+  document.getElementById('mLogin').classList.remove('on');
+  T('✅ Login berhasil!');
 }
-function saveApk(){
-  var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};
-  if(!a.url){T('❌ Link download wajib diisi!',1);return}
+async function loginBio(){
+  var saved=localStorage.getItem('bioCred');
+  if(!saved){T('❌ Sidik jari belum terdaftar',1);return}
+  var chal=crypto.getRandomValues(new Uint8Array(32));
   try{
-    localStorage.setItem('apk',JSON.stringify(a));
-    T('✅ APK disimpan!');
-    showApkInfo(a);
-  }catch(e){T('❌ Gagal simpan: '+e.message,1)}
+    await navigator.credentials.get({publicKey:{challenge:chal,timeout:60000,userVerification:'required',allowCredentials:[{type:'public-key',id:b64ToBuf(saved)}]}});
+    document.getElementById('mLogin').classList.remove('on');
+    T('✅ Selamat datang, Admin!');
+  }catch(e){T('❌ Verifikasi dibatalkan',1)}
 }
-function copyApk(){
-  var a=JSON.parse(localStorage.getItem('apk')||'{}');
-  if(!a.url){T('❌ Belum ada link!',1);return}
-  var t=document.createElement('textarea');
-  t.value=a.url;
-  document.body.appendChild(t);
-  t.select();
-  try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}
-  document.body.removeChild(t);
+
+// ===== SIDIK JARI (WEBAUTHN) =====
+async function registerBiometric(){
+  if(!window.PublicKeyCredential){T('❌ Browser tidak dukung sidik jari',1);return}
+  var chal=crypto.getRandomValues(new Uint8Array(32));
+  var uid=crypto.getRandomValues(new Uint8Array(16));
+  try{
+    var cred=await navigator.credentials.create({publicKey:{
+      challenge:chal,rp:{name:'DEZSTORE ADMIN'},
+      user:{id:uid,name:'admin_dezstore',displayName:'Admin DEZSTORE'},
+      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}]
+    }});
+    localStorage.setItem('bioCred',bufToB64(cred.rawId));
+    T('✅ Sidik jari berhasil didaftarkan!');
+    cekBioStatus();
+  }catch(e){T('❌ Gagal: '+e.message,1)}
 }
-function testApk(){
-  var a=JSON.parse(localStorage.getItem('apk')||'{}');
-  if(!a.url){T('❌ Belum ada link!',1);return}
-  T('🔗 Membuka link...');
-  window.open(a.url,'_blank');
+function removeBiometric(){
+  if(!confirm('Hapus sidik jari? Nanti login pakai password lagi.'))return;
+  localStorage.removeItem('bioCred');
+  T('🗑 Sidik jari dihapus');
+  cekBioStatus();
+}
+function cekBioStatus(){
+  var el=document.getElementById('bioStatus');
+  if(!el)return;
+  if(localStorage.getItem('bioCred')){el.innerHTML='✅ Sidik jari aktif. Login berikutnya tinggal tempel jari.'}
+  else{el.innerHTML='⚠️ Belum aktif. Klik "Aktifkan Sidik Jari" untuk merekam.'}
+}
+
+// ===== PWA =====
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(e){console.log('SW gagal',e)})}
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();window.deferredPrompt=e;
+  var btn=document.getElementById('btnInstall');if(btn)btn.style.display='inline-flex';
+});
+function installApp(){
+  if(!window.deferredPrompt){T('❌ Tidak support install / sudah ter-install',1);return}
+  window.deferredPrompt.prompt();
+  window.deferredPrompt.userChoice.then(function(c){
+    if(c.outcome==='accepted'){T('✅ Aplikasi ter-install!')}
+    window.deferredPrompt=null;
+    var btn=document.getElementById('btnInstall');if(btn)btn.style.display='none';
+  });
+}
+function showInstallGuide(){
+  var info=document.getElementById('installInfo');if(!info)return;
+  var a=/Android/i.test(navigator.userAgent),i=/iPhone|iPad/i.test(navigator.userAgent);
+  if(a){info.innerHTML='<b>Android:</b> Chrome → titik tiga (⋮) → "Install aplikasi" / "Tambahkan ke layar utama" → Install.'}
+  else if(i){info.innerHTML='<b>iPhone:</b> Safari → Share (⬆️) → "Tambah ke Layar Utama" → Tambah.'}
+  else{info.innerHTML='<b>Desktop:</b> Klik ikon Install di bar alamat browser.'}
 }
 
 // ===== API PPS =====
-function loadMrk(){
-  db.collection('settings').doc('markup').get().then(d=>{
-    if(d.exists){
-      document.getElementById('mrkPercent').value=d.data().percent||20;
-      document.getElementById('mrkRound').value=d.data().round||100;
-    }
-  });
-}
-function saveMrk(){
-  var p=parseInt(document.getElementById('mrkPercent').value)||20;
-  var r=parseInt(document.getElementById('mrkRound').value)||100;
-  db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')});
-}
+function loadMrk(){db.collection('settings').doc('markup').get().then(d=>{if(d.exists){document.getElementById('mrkPercent').value=d.data().percent||20;document.getElementById('mrkRound').value=d.data().round||100}})}
+function saveMrk(){var p=parseInt(document.getElementById('mrkPercent').value)||20;var r=parseInt(document.getElementById('mrkRound').value)||100;db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')})}
 function loadApi(){document.getElementById('apiKey').value=localStorage.getItem('ak')||'';document.getElementById('apiSec').value=localStorage.getItem('sk')||''}
 function saveApi(){localStorage.setItem('ak',document.getElementById('apiKey').value.trim());localStorage.setItem('sk',document.getElementById('apiSec').value.trim());T('✅ API disimpan!')}
 function testApi(){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ Isi API Key & Secret dulu, lalu Simpan!',1);return}
-  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dengan Cloudflare Worker kamu!',1);return}
   var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','profile');
   fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
   .then(r=>r.json())
@@ -426,44 +437,26 @@ function testApi(){
 function syncPPS(){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ API belum diset!',1);return}
-  var MARKUP_PERCENT=20, ROUND_UP=100;
-  var inputPercent=document.getElementById('mrkPercent');
-  var inputRound=document.getElementById('mrkRound');
-  if(inputPercent && inputPercent.value){
-    MARKUP_PERCENT=parseInt(inputPercent.value)||20;
-    ROUND_UP=parseInt(inputRound.value)||100;
-  } else {
-    db.collection('settings').doc('markup').get().then(m=>{
-      if(m.exists){MARKUP_PERCENT=m.data().percent||20;ROUND_UP=m.data().round||100}
-      doSync(k,s,MARKUP_PERCENT,ROUND_UP);
-    });
-    return;
-  }
-  doSync(k,s,MARKUP_PERCENT,ROUND_UP);
+  var MP=20,RU=100;
+  var ip=document.getElementById('mrkPercent'),ir=document.getElementById('mrkRound');
+  if(ip&&ip.value){MP=parseInt(ip.value)||20;RU=parseInt(ir.value)||100;doSync(k,s,MP,RU)}
+  else{db.collection('settings').doc('markup').get().then(m=>{if(m.exists){MP=m.data().percent||20;RU=m.data().round||100}doSync(k,s,MP,RU)})}
 }
-function doSync(k,s,MARKUP_PERCENT,ROUND_UP){
-  var fd=new URLSearchParams();
-  fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
+function doSync(k,s,MP,RU){
+  var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
   fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
   .then(r=>r.json())
   .then(d=>{
-    if(d.data){
-      var b=db.batch(),c=0;
-      d.data.forEach(x=>{
-        var hargaAsli=parseInt(x.price)||0;
-        var hargaBaru=hargaAsli+(hargaAsli*MARKUP_PERCENT/100);
-        if(ROUND_UP>0){hargaBaru=Math.ceil(hargaBaru/ROUND_UP)*ROUND_UP}
-        b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hargaBaru,min:parseInt(x.min)||0,max:parseInt(x.max)||0});
-        c++;
-      });
-      b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MARKUP_PERCENT+'%!');loadSvc()});
+    if(d.data){var b=db.batch(),c=0;
+      d.data.forEach(x=>{var ha=parseInt(x.price)||0;var hb=ha+(ha*MP/100);if(RU>0){hb=Math.ceil(hb/RU)*RU}b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hb,min:parseInt(x.min)||0,max:parseInt(x.max)||0});c++});
+      b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MP+'%!');loadSvc()});
     } else T('❌ Gagal ambil data!',1);
   })
   .catch(e=>T('❌ '+e.message,1));
 }
 
 // ===== DASHBOARD =====
-function loadDash(){db.collection('users').get().then(s=>document.getElementById('d1').textContent=s.size);db.collection('orders').get().then(s=>{document.getElementById('d2').textContent=s.size;var p=0,c=0;s.forEach(d=>{if(d.data().status==='pending')p++;if(d.data().status==='completed')c++});document.getElementById('d5').textContent=p;document.getElementById('d6').textContent=c});db.collection('deposits').where('status','==','approved').get().then(s=>{var t=0;s.forEach(d=>t+=(d.data().amount||0));document.getElementById('d3').textContent=s.size;document.getElementById('d4').textContent='Rp '+t.toLocaleString('id-ID')})}
+function loadDash(){cekBioStatus();db.collection('users').get().then(s=>document.getElementById('d1').textContent=s.size);db.collection('orders').get().then(s=>{document.getElementById('d2').textContent=s.size;var p=0,c=0;s.forEach(d=>{if(d.data().status==='pending')p++;if(d.data().status==='completed')c++});document.getElementById('d5').textContent=p;document.getElementById('d6').textContent=c});db.collection('deposits').where('status','==','approved').get().then(s=>{var t=0;s.forEach(d=>t+=(d.data().amount||0));document.getElementById('d3').textContent=s.size;document.getElementById('d4').textContent='Rp '+t.toLocaleString('id-ID')})}
 
 // ===== USERS =====
 function loadUsr(){var q=(document.getElementById('sUsr').value||'').toLowerCase();db.collection('users').get().then(s=>{var h='';s.forEach(d=>{var u=d.data();if(q&&!(u.username||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return;h+='<tr><td><b>'+(u.username||'-')+'</b></td><td>'+(u.email||'-')+'</td><td>'+(u.whatsapp||'-')+'</td><td>Rp '+(u.balance||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(u.status==='banned'?'x':'c')+'">'+(u.status||'active')+'</span></td><td><button class="bt bg bs" onclick="openBal(\''+d.id+'\')">💰</button><button class="bt be bs" onclick="delUsr(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tUsr').innerHTML=h||'<tr><td colspan="6" style="text-align:center">Tidak ada</td></tr>'})}
@@ -478,7 +471,6 @@ function loadOrd(){var f=document.getElementById('fOrd').value;var q=db.collecti
 function sendPPS(id){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ API PPS belum diset!',1);return}
-  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dulu!',1);return}
   db.collection('orders').doc(id).get().then(d=>{
     var o=d.data();
     var svc=(o.serviceId||o.service||'').toString().replace('PPS','');
@@ -547,24 +539,16 @@ function saveSvc(){
   var id=curSvc||d.serviceId;
   if(!id||!d.name){T('❌ Isi lengkap!',1);return}
   db.collection('services').doc(id).set(d,{merge:true}).then(()=>{
-    T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));
-    curSvc='';
-    closeM('mSvc');
+    T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));curSvc='';closeM('mSvc');
     var rows=document.querySelectorAll('#tSvc tr');
     for(var i=0;i<rows.length;i++){
       if(rows[i].innerHTML.includes(id)){
         var tds=rows[i].querySelectorAll('td');
-        if(tds.length>=6){
-          tds[1].textContent=d.categoryName||d.category||'-';
-          tds[2].textContent=d.name||'-';
-          tds[3].textContent='Rp '+d.price.toLocaleString('id-ID');
-          tds[4].textContent=d.min||0;
-          tds[5].textContent=d.max||0;
-        }
+        if(tds.length>=6){tds[1].textContent=d.categoryName||d.category||'-';tds[2].textContent=d.name||'-';tds[3].textContent='Rp '+d.price.toLocaleString('id-ID');tds[4].textContent=d.min||0;tds[5].textContent=d.max||0}
         break;
       }
     }
-  })
+  });
 }
 function delSvc(id){if(confirm('Hapus?'))db.collection('services').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadSvc()})}
 
@@ -634,7 +618,10 @@ function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLo
 
 // ===== KEAMANAN =====
 function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
+
+// ===== INIT =====
+showLoginModal();
 loadDash();
 </script>
 </body>
-</html>                                                                                        </html>
+  </html>
