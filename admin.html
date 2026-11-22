@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DEZSTORE ADMIN</title>
-<!-- PWA Meta Tags -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -296,29 +295,24 @@ textarea.fc{min-height:60px;resize:vertical}
 
 </div>
 
-<!-- MODALS -->
-<div class="md" id="mLogin"><div class="mdc" style="text-align:center">
+<!-- MODAL LOGIN (DIPERBAIKI: PAKAI INPUT, BUKAN PROMPT) -->
+<div class="md on" id="mLogin"><div class="mdc" style="text-align:center">
 <h2>🔐 Login Admin</h2>
-<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Pilih cara masuk ke panel</p>
-<button class="bt bg" id="btnBioLogin" style="display:none;width:100%;justify-content:center;padding:.7rem" onclick="loginBio()"><i class="fas fa-fingerprint"></i> Masuk dengan Sidik Jari</button>
-<button class="bt bp" style="width:100%;justify-content:center;padding:.7rem;margin-top:.4rem" onclick="loginPass()"><i class="fas fa-key"></i> Masuk dengan Password</button>
-<div id="loginInfo" style="margin-top:.6rem;font-size:.7rem;color:var(--m)"></div>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Masukkan password untuk mengakses panel</p>
+<button class="bt bg" id="btnBioLogin" style="display:none;width:100%;justify-content:center;padding:.7rem;margin-bottom:.5rem" onclick="loginBio()"><i class="fas fa-fingerprint"></i> Masuk dengan Sidik Jari</button>
+<div class="fg"><input type="password" class="fc" id="loginPassInput" placeholder="Password Admin" style="text-align:center;font-size:1rem;margin-bottom:.5rem"></div>
+<button class="bt bp" style="width:100%;justify-content:center;padding:.7rem" onclick="checkLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+<div id="loginInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--err)"></div>
 </div></div>
 
+<!-- MODALS LAINNYA -->
 <div class="md" id="mUsr"><div class="mdc"><h2>User</h2><div class="fg"><label>Username</label><input class="fc" id="uNm"></div><div class="fg"><label>Email</label><input type="email" class="fc" id="uEm"></div><div class="fg"><label>WA</label><input class="fc" id="uWa"></div><div class="fg"><label>Saldo</label><input type="number" class="fc" id="uBal" value="0"></div><div class="fg"><label>Status</label><select class="fc" id="uSt"><option value="active">Active</option><option value="banned">Banned</option></select></div><button class="bt bp" onclick="saveUsr()">Simpan</button><button class="bt be" onclick="closeM('mUsr')">Batal</button></div></div>
-
 <div class="md" id="mSvc"><div class="mdc"><h2>Layanan</h2><div class="fg"><label>Service ID</label><input class="fc" id="sId"></div><div class="fg"><label>Kategori</label><input class="fc" id="sCat"></div><div class="fg"><label>Nama Kategori</label><input class="fc" id="sCatN"></div><div class="fg"><label>Nama</label><input class="fc" id="sNm"></div><div class="fg"><label>Harga</label><input type="number" class="fc" id="sPr"></div><div class="fg"><label>Min</label><input type="number" class="fc" id="sMn"></div><div class="fg"><label>Max</label><input type="number" class="fc" id="sMx"></div><button class="bt bp" onclick="saveSvc()">Simpan</button><button class="bt be" onclick="closeM('mSvc')">Batal</button></div></div>
-
 <div class="md" id="mAnn"><div class="mdc"><h2>Pengumuman</h2><div class="fg"><label>Judul</label><input class="fc" id="anT"></div><div class="fg"><label>Tipe</label><select class="fc" id="anTy"><option value="info">Info</option><option value="warning">Warning</option><option value="success">Success</option><option value="promo">Promo</option></select></div><div class="fg"><label>Pesan</label><textarea class="fc" id="anM" rows="3"></textarea></div><button class="bt bp" onclick="saveAnn()">Simpan</button><button class="bt be" onclick="closeM('mAnn')">Batal</button></div></div>
-
 <div class="md" id="mVch"><div class="mdc"><h2>Voucher</h2><div class="fg"><label>Kode</label><input class="fc" id="vCd" placeholder="DISKON50"></div><div class="g2"><div class="fg"><label>Tipe</label><select class="fc" id="vTy"><option value="percent">%</option><option value="fixed">Rp</option></select></div><div class="fg"><label>Nilai</label><input type="number" class="fc" id="vVl"></div></div><div class="g2"><div class="fg"><label>Min Order</label><input type="number" class="fc" id="vMn" value="10000"></div><div class="fg"><label>Max Pakai</label><input type="number" class="fc" id="vMx" value="100"></div></div><button class="bt bp" onclick="saveVch()">Simpan</button><button class="bt be" onclick="closeM('mVch')">Batal</button></div></div>
-
 <div class="md" id="mTik"><div class="mdc"><h2>Balas Tiket</h2><div id="tikDtl" style="margin-bottom:.5rem;font-size:.8rem"></div><div class="fg"><label>Balasan</label><textarea class="fc" id="tikRpl" rows="3"></textarea></div><div class="fg"><label>Status</label><select class="fc" id="tikSt"><option value="open">Open</option><option value="closed">Closed</option></select></div><button class="bt bp" onclick="saveTik()">Kirim</button><button class="bt be" onclick="closeM('mTik')">Batal</button></div></div>
-
 <div class="md" id="mPay"><div class="mdc"><h2>Edit Pembayaran</h2><div class="fg"><label>Nomor</label><input class="fc" id="payNum"></div><div class="fg"><label>Fee (Rp)</label><input type="number" class="fc" id="payFee"></div><button class="bt bp" onclick="savePay()">Simpan</button><button class="bt be" onclick="closeM('mPay')">Batal</button></div></div>
-
 <div class="md" id="mBal"><div class="mdc"><h2>Tambah Saldo</h2><div class="fg"><label>Jumlah (Rp)</label><input type="number" class="fc" id="balAmt"></div><button class="bt bp" onclick="confirmAddBal()">Tambah</button><button class="bt be" onclick="closeM('mBal')">Batal</button></div></div>
-
 <div class="md" id="mCat"><div class="mdc"><h2>Kategori Baru</h2><div class="fg"><label>Nama Kategori</label><input class="fc" id="catNm"></div><div class="fg"><label>ID (slug)</label><input class="fc" id="catId" placeholder="instagram"></div><button class="bt bp" onclick="saveCat()">Simpan</button><button class="bt be" onclick="closeM('mCat')">Batal</button></div></div>
 
 <div class="ts" id="toast"></div>
@@ -341,19 +335,25 @@ function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
-// ===== LOGIN MODAL =====
+// ===== LOGIN (DIPERBAIKI: PAKAI INPUT) =====
 function showLoginModal(){
   var bio=localStorage.getItem('bioCred');
   var btn=document.getElementById('btnBioLogin');
   var info=document.getElementById('loginInfo');
   if(bio){btn.style.display='inline-flex';info.innerHTML='✅ Sidik jari sudah terdaftar.'}
-  else{btn.style.display='none';info.innerHTML='💡 Tip: Login dulu pakai password, lalu aktifkan sidik jari di Dashboard.'}
+  else{btn.style.display='none';info.innerHTML=''}
   document.getElementById('mLogin').classList.add('on');
 }
-function loginPass(){
-  var p=prompt('🔐 Masukkan Password Admin:');
-  if(p!==PW){alert('❌ Password Salah!');return}
+function checkLogin(){
+  var p=document.getElementById('loginPassInput').value;
+  if(p!==PW){
+    document.getElementById('loginInfo').textContent='❌ Password Salah!';
+    document.getElementById('loginPassInput').value='';
+    return;
+  }
   document.getElementById('mLogin').classList.remove('on');
+  document.getElementById('loginPassInput').value='';
+  document.getElementById('loginInfo').textContent='';
   T('✅ Login berhasil!');
 }
 async function loginBio(){
@@ -363,22 +363,19 @@ async function loginBio(){
   try{
     await navigator.credentials.get({publicKey:{challenge:chal,timeout:60000,userVerification:'required',allowCredentials:[{type:'public-key',id:b64ToBuf(saved)}]}});
     document.getElementById('mLogin').classList.remove('on');
+    document.getElementById('loginPassInput').value='';
+    document.getElementById('loginInfo').textContent='';
     T('✅ Selamat datang, Admin!');
   }catch(e){T('❌ Verifikasi dibatalkan',1)}
 }
 
-// ===== SIDIK JARI (WEBAUTHN) =====
+// ===== SIDIK JARI =====
 async function registerBiometric(){
   if(!window.PublicKeyCredential){T('❌ Browser tidak dukung sidik jari',1);return}
   var chal=crypto.getRandomValues(new Uint8Array(32));
   var uid=crypto.getRandomValues(new Uint8Array(16));
   try{
-    var cred=await navigator.credentials.create({publicKey:{
-      challenge:chal,rp:{name:'DEZSTORE ADMIN'},
-      user:{id:uid,name:'admin_dezstore',displayName:'Admin DEZSTORE'},
-      authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},
-      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}]
-    }});
+    var cred=await navigator.credentials.create({publicKey:{challenge:chal,rp:{name:'DEZSTORE ADMIN'},user:{id:uid,name:'admin_dezstore',displayName:'Admin DEZSTORE'},authenticatorSelection:{authenticatorAttachment:'platform',userVerification:'required'},pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}]}});
     localStorage.setItem('bioCred',bufToB64(cred.rawId));
     T('✅ Sidik jari berhasil didaftarkan!');
     cekBioStatus();
@@ -399,10 +396,7 @@ function cekBioStatus(){
 
 // ===== PWA =====
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(e){console.log('SW gagal',e)})}
-window.addEventListener('beforeinstallprompt',function(e){
-  e.preventDefault();window.deferredPrompt=e;
-  var btn=document.getElementById('btnInstall');if(btn)btn.style.display='inline-flex';
-});
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.deferredPrompt=e;var btn=document.getElementById('btnInstall');if(btn)btn.style.display='inline-flex'});
 function installApp(){
   if(!window.deferredPrompt){T('❌ Tidak support install / sudah ter-install',1);return}
   window.deferredPrompt.prompt();
@@ -624,4 +618,4 @@ showLoginModal();
 loadDash();
 </script>
 </body>
-  </html>
+</html>
