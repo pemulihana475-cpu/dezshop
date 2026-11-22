@@ -84,11 +84,12 @@ textarea.fc{min-height:60px;resize:vertical}
 <div class="mi" onclick="go('vch',this)"><i class="fas fa-ticket-alt"></i> Voucher</div>
 <div class="lbl">Keuangan</div>
 <div class="mi" onclick="go('pay',this)"><i class="fas fa-credit-card"></i> Payment</div>
-<div class="mi" onclick="go('qrs',this)"><i class="fas -qrcode"></i> QRIS</div>
+<div class="mi" onclick="go('qrs',this)"><i class="fas fa-qrcode"></i> QRIS</div>
 <div class="lbl">Integrasi</div>
 <div class="mi" onclick="go('api',this)"><i class="fas fa-plug"></i> API PPS</div>
 <div class="mi" onclick="go('mrk',this)"><i class="fas fa-percentage"></i> Markup Harga</div>
 <div class="mi" onclick="go('wa',this)"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+<div class="mi" onclick="go('apk',this)"><i class="fas fa-download"></i> Download APK</div>
 <div class="lbl">Pengaturan</div>
 <div class="mi" onclick="go('set',this)"><i class="fas fa-cog"></i> Website</div>
 <div class="mi" onclick="go('thm',this)"><i class="fas fa-palette"></i> Tema</div>
@@ -178,7 +179,9 @@ textarea.fc{min-height:60px;resize:vertical}
 <button class="bt bw" onclick="syncPPS()">Sync</button>
 <div id="apiRes" style="margin-top:.5rem"></div>
 </div>
-</div><div class="pg" id="mrk">
+</div>
+
+<div class="pg" id="mrk">
 <h1>💰 Markup Harga</h1>
 <div class="cd">
 <h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis</h3>
@@ -207,6 +210,23 @@ textarea.fc{min-height:60px;resize:vertical}
 </div>
 </div>
 </div>
+
+<div class="pg" id="apk">
+<h1>📱 Download APK</h1>
+<div class="cd">
+<h3 style="margin-bottom:.5rem">Atur Link Download APK</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Paste link APK yang bisa didownload langsung. Data disimpan di browser ini (localStorage).</p>
+<div class="fg"><label>Versi</label><input class="fc" id="apkVer" placeholder="1.0.0"></div>
+<div class="fg"><label>Link Download</label><input class="fc" id="apkUrl" placeholder="https://..."></div>
+<div class="fg"><label>Ukuran</label><input class="fc" id="apkSize" placeholder="15 MB"></div>
+<div class="fg"><label>Catatan Update</label><textarea class="fc" id="apkNote" rows="2" placeholder="Perbaikan bug..."></textarea></div>
+<button class="bt bg" onclick="saveApk()">💾 Simpan</button>
+<button class="bt bp" onclick="copyApk()">📋 Copy Link</button>
+<button class="bt bw" onclick="testApk()">🔗 Test Link</button>
+<div id="apkInfo" style="margin-top:.8rem;padding:.6rem;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem"></div>
+</div>
+</div>
+
 <div class="pg" id="wa">
 <h1>📱 WhatsApp</h1>
 <div class="cd"><div class="fg"><label>Token Fonnte</label><input class="fc" id="fntToken"></div><div class="fg"><label>Nomor Admin</label><input class="fc" id="waNum" placeholder="62895..."></div><button class="bt bg" onclick="saveWa()">Simpan</button><button class="bt bp" onclick="testWa()">Test</button><div id="waRes" style="margin-top:.5rem"></div></div>
@@ -294,14 +314,88 @@ textarea.fc{min-height:60px;resize:vertical}
 var fc={apiKey:"AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",authDomain:"dezstore-78d09.firebaseapp.com",projectId:"dezstore-78d09",storageBucket:"dezstore-78d09.firebasestorage.app",messagingSenderId:"815388782850",appId:"1:815388782850:web:de678f5df5380be276921b"};
 firebase.initializeApp(fc);
 var db=firebase.firestore();
-var PW=localStorage.getItem('ap')||'dezstore2026';
-var p=prompt('🔐 Password:');
-if(p!==PW){alert('❌ Salah!');location.href='index.html'}
+var PW = localStorage.getItem('ap') || 'dezstore2026';
+async function lakukanLogin() {
+    // 1. Coba panggil fitur Sidik Jari / Face ID bawaan browser
+    if (window.PasswordCredential) {
+        try {
+            const cred = await navigator.credentials.get({ password: true });
+            if (cred && cred.password === PW) {
+                console.log("✅ Login Berhasil via Sidik Jari!");
+                return; // Langsung masuk, tidak perlu ketik password
+            }
+        } catch (err) {
+            console.log("Sidik jari dibatalkan atau tidak tersedia, pakai manual.");
+        }
+    }
+    // 2. Fallback: Jika sidik jari gagal, dibatalkan, atau browser tidak support, pakai prompt biasa
+    var p = prompt('🔐 Masukkan Password Admin:');
+    if (p !== PW) {
+        alert('❌ Password Salah!');
+        location.reload(); // Refresh halaman
+    } else {
+        // 3. Simpan kredensial ke browser agar lain kali bisa pakai sidik jari
+        if (window.PasswordCredential) {
+            const cred = new PasswordCredential({ 
+                id: 'admin_dezstore', 
+                password: PW, 
+                name: 'Admin DEZSTORE' 
+            });
+            navigator.credentials.store(cred);
+        }
+    }
+}
+// Jalankan fungsi login saat halaman dibuka
+lakukanLogin();
 
 // ===== URL API PPS (WAJIB GANTI DENGAN URL CLOUDFLARE WORKER KAMU) =====
 var PPS_URL='https://dezstore-api.dezstore300.workers.dev/';
 
-function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk};if(f[id])f[id]()}
+function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
+function openM(id){document.getElementById(id).classList.add('on')}
+function closeM(id){document.getElementById(id).classList.remove('on')}
+function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
+function doLogout(){if(confirm('Logout?'))location.href='index.html'}
+
+// ===== APK MANAGER =====
+function loadApk(){
+  var a=JSON.parse(localStorage.getItem('apk')||'{}');
+  document.getElementById('apkVer').value=a.ver||'';
+  document.getElementById('apkUrl').value=a.url||'';
+  document.getElementById('apkSize').value=a.size||'';
+  document.getElementById('apkNote').value=a.note||'';
+  showApkInfo(a);
+}
+function showApkInfo(a){
+  var el=document.getElementById('apkInfo');
+  if(!a||!a.url){el.innerHTML='⚠️ Belum ada APK diatur. Isi link lalu Simpan.';return}
+  el.innerHTML='<b>Versi:</b> '+(a.ver||'-')+'<br><b>Ukuran:</b> '+(a.size||'-')+'<br><b>Catatan:</b> '+(a.note||'-')+'<br><b>Link:</b> <span style="word-break:break-all;color:var(--s)">'+a.url+'</span>';
+}
+function saveApk(){
+  var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};
+  if(!a.url){T('❌ Link download wajib diisi!',1);return}
+  try{
+    localStorage.setItem('apk',JSON.stringify(a));
+    T('✅ APK disimpan!');
+    showApkInfo(a);
+  }catch(e){T('❌ Gagal simpan: '+e.message,1)}
+}
+function copyApk(){
+  var a=JSON.parse(localStorage.getItem('apk')||'{}');
+  if(!a.url){T('❌ Belum ada link!',1);return}
+  var t=document.createElement('textarea');
+  t.value=a.url;
+  document.body.appendChild(t);
+  t.select();
+  try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}
+  document.body.removeChild(t);
+}
+function testApk(){
+  var a=JSON.parse(localStorage.getItem('apk')||'{}');
+  if(!a.url){T('❌ Belum ada link!',1);return}
+  T('🔗 Membuka link...');
+  window.open(a.url,'_blank');
+}
 
 // ===== API PPS =====
 function loadMrk(){
@@ -332,28 +426,42 @@ function testApi(){
 function syncPPS(){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ API belum diset!',1);return}
-  db.collection('settings').doc('markup').get().then(m=>{
-    var MARKUP_PERCENT=20, ROUND_UP=100;
-    if(m.exists){MARKUP_PERCENT=m.data().percent||20;ROUND_UP=m.data().round||100}
-    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
-    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-    .then(r=>r.json())
-    .then(d=>{
-      if(d.data){
-        var b=db.batch(),c=0;
-        d.data.forEach(x=>{
-          var hargaAsli=parseInt(x.price)||0;
-          var hargaBaru=hargaAsli+(hargaAsli*MARKUP_PERCENT/100);
-          if(ROUND_UP>0){hargaBaru=Math.ceil(hargaBaru/ROUND_UP)*ROUND_UP}
-          b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hargaBaru,min:parseInt(x.min)||0,max:parseInt(x.max)||0});
-          c++;
-        });
-        b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MARKUP_PERCENT+'%!');loadSvc()});
-      } else T('❌ Gagal ambil data!',1);
-    })
-    .catch(e=>T('❌ '+e.message,1));
-  });
+  var MARKUP_PERCENT=20, ROUND_UP=100;
+  var inputPercent=document.getElementById('mrkPercent');
+  var inputRound=document.getElementById('mrkRound');
+  if(inputPercent && inputPercent.value){
+    MARKUP_PERCENT=parseInt(inputPercent.value)||20;
+    ROUND_UP=parseInt(inputRound.value)||100;
+  } else {
+    db.collection('settings').doc('markup').get().then(m=>{
+      if(m.exists){MARKUP_PERCENT=m.data().percent||20;ROUND_UP=m.data().round||100}
+      doSync(k,s,MARKUP_PERCENT,ROUND_UP);
+    });
+    return;
+  }
+  doSync(k,s,MARKUP_PERCENT,ROUND_UP);
 }
+function doSync(k,s,MARKUP_PERCENT,ROUND_UP){
+  var fd=new URLSearchParams();
+  fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
+  fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.data){
+      var b=db.batch(),c=0;
+      d.data.forEach(x=>{
+        var hargaAsli=parseInt(x.price)||0;
+        var hargaBaru=hargaAsli+(hargaAsli*MARKUP_PERCENT/100);
+        if(ROUND_UP>0){hargaBaru=Math.ceil(hargaBaru/ROUND_UP)*ROUND_UP}
+        b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hargaBaru,min:parseInt(x.min)||0,max:parseInt(x.max)||0});
+        c++;
+      });
+      b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MARKUP_PERCENT+'%!');loadSvc()});
+    } else T('❌ Gagal ambil data!',1);
+  })
+  .catch(e=>T('❌ '+e.message,1));
+}
+
 // ===== DASHBOARD =====
 function loadDash(){db.collection('users').get().then(s=>document.getElementById('d1').textContent=s.size);db.collection('orders').get().then(s=>{document.getElementById('d2').textContent=s.size;var p=0,c=0;s.forEach(d=>{if(d.data().status==='pending')p++;if(d.data().status==='completed')c++});document.getElementById('d5').textContent=p;document.getElementById('d6').textContent=c});db.collection('deposits').where('status','==','approved').get().then(s=>{var t=0;s.forEach(d=>t+=(d.data().amount||0));document.getElementById('d3').textContent=s.size;document.getElementById('d4').textContent='Rp '+t.toLocaleString('id-ID')})}
 
@@ -365,7 +473,7 @@ function openBal(id){curBalId=id;document.getElementById('balAmt').value='';open
 function confirmAddBal(){var a=parseInt(document.getElementById('balAmt').value);if(!a||isNaN(a)){T('❌ Jumlah tidak valid!',1);return}db.collection('users').doc(curBalId).update({balance:firebase.firestore.FieldValue.increment(a)}).then(()=>{T('✅ +Rp '+a.toLocaleString('id-ID'));closeM('mBal');loadUsr()})}
 function delUsr(id){if(confirm('Hapus user?'))db.collection('users').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadUsr()})}
 
-// ===== ORDERS (dengan Auto-Process ke PPS) =====
+// ===== ORDERS =====
 function loadOrd(){var f=document.getElementById('fOrd').value;var q=db.collection('orders');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var o=d.data();var btn='';if(!o.ppsId&&o.status!=='cancelled'&&o.status!=='completed'){btn+='<button class="bt bp bs" onclick="sendPPS(\''+d.id+'\')">🚀</button> '}if(o.ppsId&&o.status!=='completed'&&o.status!=='cancelled'){btn+='<button class="bt bw bs" onclick="cekStatus(\''+d.id+'\')">🔄</button> '}btn+='<button class="bt bg bs" onclick="apOrd(\''+d.id+'\')">✓</button><button class="bt be bs" onclick="cnOrd(\''+d.id+'\')">✗</button>';h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(o.username||'-')+'</td><td>'+(o.serviceName||'-')+'<br><small style="color:var(--m)">PPS: '+(o.ppsId||'-')+'</small></td><td>'+(o.qty||0)+'</td><td>Rp '+(o.total||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td><td>'+btn+'</td></tr>'});document.getElementById('tOrd').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
 function sendPPS(id){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
@@ -429,7 +537,7 @@ var curTik='';
 function repTik(id){curTik=id;db.collection('tickets').doc(id).get().then(d=>{var t=d.data();document.getElementById('tikDtl').innerHTML='<b>Subjek:</b> '+t.subject+'<br><b>Pesan:</b> '+t.message+'<br><b>User:</b> '+(t.username||'-');document.getElementById('tikRpl').value='';document.getElementById('tikSt').value=t.status||'open';openM('mTik')})}
 function saveTik(){var r=document.getElementById('tikRpl').value.trim();var s=document.getElementById('tikSt').value;if(!r){T('❌ Isi balasan!',1);return}db.collection('tickets').doc(curTik).update({replies:firebase.firestore.FieldValue.arrayUnion({admin:true,message:r,time:new Date().toISOString()}),status:s}).then(()=>{T('✅ Terkirim!');closeM('mTik');loadTik()})}
 
-// ===== LAYANAN (dengan EDIT) =====
+// ===== LAYANAN =====
 var curSvc='';
 function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt bp bs" onclick="editSvc(\''+d.id+'\')">✏️</button> <button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
 function addSvc(){curSvc='';document.querySelector('#mSvc h2').textContent='Tambah Layanan';document.getElementById('sId').readOnly=false;['sId','sCat','sCatN','sNm','sPr','sMn','sMx'].forEach(i=>document.getElementById(i).value='');openM('mSvc')}
@@ -475,7 +583,7 @@ function loadVch(){db.collection('vouchers').orderBy('createdAt','desc').get().t
 function saveVch(){var d={code:document.getElementById('vCd').value.toUpperCase(),type:document.getElementById('vTy').value,vl:parseInt(document.getElementById('vVl').value)||0,mn:parseInt(document.getElementById('vMn').value)||0,mx:parseInt(document.getElementById('vMx').value)||100,used:0,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(!d.code||!d.vl){T('❌ Isi lengkap!',1);return}db.collection('vouchers').add(d).then(()=>{T('✅ Dibuat!');closeM('mVch');loadVch()})}
 function delVch(id){if(confirm('Hapus?'))db.collection('vouchers').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadVch()})}
 
-// ===== PAYMENT (dengan MODAL EDIT) =====
+// ===== PAYMENT =====
 function loadPay(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();var ms=[{k:'qris',n:'QRIS'},{k:'dana',n:'DANA'},{k:'gopay',n:'GoPay'},{k:'ovo',n:'OVO'},{k:'shopeepay',n:'ShopeePay'},{k:'bca',n:'BCA'}];var h='';ms.forEach(m=>{h+='<tr><td><b>'+m.n+'</b></td><td>'+(p[m.k]||'-')+'</td><td>Rp '+(p[m.k+'Fee']||0)+'</td><td><button class="bt bp bs" onclick="edPay(\''+m.k+'\')">✏️</button></td></tr>'});document.getElementById('tPay').innerHTML=h})}
 var curPay='';
 function edPay(k){curPay=k;db.collection('settings').doc('payment').get().then(d=>{var p=(d.exists&&d.data())||{};document.getElementById('payNum').value=p[k]||'';document.getElementById('payFee').value=p[k+'Fee']||0;openM('mPay')})}
@@ -529,4 +637,4 @@ function chgPass(){var o=document.getElementById('pOld').value,n=document.getEle
 loadDash();
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
+</html>                                                                                        </html>
