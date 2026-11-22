@@ -2,373 +2,459 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>DEZSTORE - SMM Panel Termurah</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DEZSTORE">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="icon" type="image/png" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-/* [CSS SAMA SEPERTI SEBELUMNYA, DITAMBAH STYLE ADMIN DI BAWAH] */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-:root{--secondary:#3b82f6;--accent:#60a5fa;--darker:#0a0a1a;--dark:#111128;--card:#1a1a2e;--border:rgba(255,255,255,0.08);--muted:#9ca3af;--success:#10b981;--danger:#ef4444;--warning:#f59e0b}
-body{background:var(--darker);color:#fff;min-height:100vh;overflow-x:hidden}
-.navbar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:1000}
-.navbar-brand{display:flex;align-items:center;gap:.5rem;font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900}
-.logo-icon{width:35px;height:35px;background:linear-gradient(135deg,var(--secondary),var(--accent));border-radius:8px;display:flex;align-items:center;justify-content:center}
-.navbar-user{display:flex;align-items:center;gap:.8rem}
-.balance-badge{background:linear-gradient(135deg,var(--success),#059669);padding:.4rem .8rem;border-radius:50px;font-size:.8rem;font-weight:600}
-.btn-icon{background:var(--card);border:1px solid var(--border);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.sidebar{position:fixed;top:60px;left:0;bottom:0;width:260px;background:var(--dark);border-right:1px solid var(--border);overflow-y:auto;z-index:999;transition:.3s;transform:translateX(-100%)}
-.sidebar.active{transform:translateX(0)}
-.sidebar-menu{padding:1rem 0}
-.menu-label{padding:.5rem 1.5rem;font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.menu-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.5rem;color:#cbd5e1;cursor:pointer;transition:.2s;border-left:3px solid transparent}
-.menu-item:hover{background:rgba(59,130,246,0.1);color:#fff}
-.menu-item.active{background:rgba(59,130,246,0.15);color:var(--accent);border-left-color:var(--accent)}
-.menu-item i{width:20px;text-align:center}
-.main-content{margin-top:60px;padding:1.2rem;min-height:calc(100vh - 60px);transition:.3s}
-@media(min-width:769px){.sidebar{transform:translateX(0)}.main-content{margin-left:260px}}
-.page{display:none}.page.active{display:block;animation:fadeIn .3s}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.page-header{margin-bottom:1.2rem}
-.page-header h1{font-size:1.4rem;font-weight:700}
-.page-header p{color:var(--muted);font-size:.85rem;margin-top:.2rem}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1rem}
-.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.2rem}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:.8rem}
-.stat-icon{width:45px;height:45px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
-.stat-icon.blue{background:rgba(59,130,246,0.2);color:var(--secondary)}
-.stat-icon.green{background:rgba(16,185,129,0.2);color:var(--success)}
-.stat-info h3{font-size:1.2rem;font-weight:700}
-.stat-info p{color:var(--muted);font-size:.75rem}
-.btn{padding:.65rem 1.2rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
-.btn-primary{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-block{width:100%;justify-content:center}
-
-/* Announcement & APK Styles */
-.announcement-card{background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(96,165,250,0.05));border:1px solid rgba(59,130,246,0.3);border-radius:12px;padding:1rem;margin-bottom:1rem;position:relative;overflow:hidden}
-.announcement-header{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem;position:relative;z-index:1}
-.announcement-header i{font-size:1.5rem;color:var(--warning);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.announcement-title{font-weight:700;font-size:1rem}
-.announcement-content{font-size:.85rem;color:var(--muted);line-height:1.5;position:relative;z-index:1}
-.announcement-date{font-size:.7rem;color:var(--accent);margin-top:.5rem;position:relative;z-index:1}
-
-.apk-card{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.05));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:1.2rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:1rem}
-.apk-header{display:flex;align-items:center;gap:1rem}
-.apk-icon{width:50px;height:50px;background:linear-gradient(135deg,var(--success),#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff}
-.apk-info h3{font-size:1rem;font-weight:700}
-.apk-info p{font-size:.75rem;color:var(--muted)}
-.apk-version{display:inline-block;background:rgba(16,185,129,0.2);color:var(--success);padding:.2rem .5rem;border-radius:4px;font-size:.65rem;font-weight:600;margin-top:.3rem}
-.btn-download-apk{background:linear-gradient(135deg,var(--success),#059669);color:#fff;border:none;padding:.8rem;border-radius:8px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:.3s}
-.btn-download-apk:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(16,185,129,0.4)}
-
-/* Modal & Admin Styles */
-.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(5px);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem}
-.modal-overlay.active{display:flex}
-.modal-content{background:var(--dark);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;max-height:80vh;overflow-y:auto;animation:modalSlide .3s ease}
-@keyframes modalSlide{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.modal-header{display:flex;justify-content:space-between;align-items:center;padding:1.2rem;border-bottom:1px solid var(--border)}
-.modal-close{background:rgba(255,255,255,0.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}
-.modal-body{padding:1.2rem}
-.announcement-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:.8rem;position:relative}
-.announcement-item h4{font-size:.9rem;font-weight:600;color:var(--accent);margin-bottom:.4rem}
-.announcement-item p{font-size:.8rem;color:var(--muted);line-height:1.5}
-.announcement-item .date{font-size:.7rem;color:var(--muted);margin-top:.5rem;opacity:.7}
-.btn-delete-ann{position:absolute;top:10px;right:10px;background:rgba(239,68,68,0.2);color:var(--danger);border:none;width:28px;height:28px;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center}
-.admin-mode .btn-delete-ann{display:flex}
-
-.admin-panel{background:rgba(245,158,11,0.1);border:1px solid var(--warning);border-radius:12px;padding:1rem;margin-bottom:1rem;display:none}
-.admin-panel.active{display:block}
-.admin-panel h3{color:var(--warning);font-size:1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem}
-.form-group{margin-bottom:.8rem}
-.form-group label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:.3rem}
-.form-control{width:100%;padding:.7rem;background:var(--darker);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:.85rem}
-.form-control:focus{outline:none;border-color:var(--accent)}
-.toast-container{position:fixed;top:70px;right:1rem;z-index:3000;display:flex;flex-direction:column;gap:.5rem}
-.toast{background:var(--card);border:1px solid var(--border);border-left:4px solid var(--success);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;min-width:250px;animation:slideInRight .3s ease}
-@keyframes slideInRight{from{opacity:0;transform:translateX(100%)}to{opacity:1;transform:translateX(0)}}
-.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer}
-@media(max-width:768px){.menu-toggle{display:block}}
+:root{--p:#3b82f6;--s:#60a5fa;--a:#a855f7;--d:#0a0a1a;--dd:#050510;--c:#1a1a2e;--b:rgba(255,255,255,.08);--m:#9ca3af;--ok:#10b981;--err:#ef4444;--warn:#f59e0b}
+body{background:var(--d);color:#fff;min-height:100vh;overflow-x:hidden;background-size:cover;background-position:center;background-attachment:fixed}
+.nav{position:fixed;top:0;left:0;right:0;height:56px;background:var(--dd);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;border-bottom:1px solid var(--b)}
+.brand{display:flex;align-items:center;gap:.6rem;font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.1rem}
+.logo{width:34px;height:34px;border-radius:8px;overflow:hidden;background:linear-gradient(135deg,var(--p),var(--s));display:flex;align-items:center;justify-content:center}
+.logo img{width:100%;height:100%;object-fit:cover}
+.nav-r{display:flex;align-items:center;gap:.6rem}
+.bal{background:linear-gradient(135deg,var(--ok),#059669);padding:.35rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600}
+.icb{background:var(--c);border:1px solid var(--b);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.ham{display:none;background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer}
+.side{position:fixed;top:56px;left:0;bottom:0;width:230px;background:var(--dd);border-right:1px solid var(--b);overflow-y:auto;z-index:99;transition:.3s;padding:.5rem 0}
+.lbl{padding:.3rem 1rem;font-size:.6rem;color:var(--m);letter-spacing:1px;text-transform:uppercase;font-weight:700}
+.mi{padding:.6rem 1rem;cursor:pointer;border-left:3px solid transparent;font-size:.82rem;color:#cbd5e1;display:flex;align-items:center;gap:.6rem}
+.mi:hover,.mi.on{background:rgba(59,130,246,.12);color:var(--s);border-left-color:var(--s)}
+.mi i{width:16px;text-align:center}
+.bd{margin-left:230px;margin-top:56px;padding:1rem;min-height:calc(100vh - 56px)}
+.pg{display:none}.pg.on{display:block;animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ph{margin-bottom:1rem}.ph h1{font-size:1.3rem}.ph p{color:var(--m);font-size:.8rem;margin-top:.2rem}
+.cd{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:1rem;margin-bottom:.9rem}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;padding-bottom:.6rem;border-bottom:1px solid var(--b)}
+.st{display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-bottom:1rem}
+.sc{background:var(--c);border:1px solid var(--b);border-radius:12px;padding:.9rem;display:flex;align-items:center;gap:.7rem}
+.si{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.si.b{background:rgba(59,130,246,.2);color:var(--p)}.si.g{background:rgba(16,185,129,.2);color:var(--ok)}
+.si.o{background:rgba(245,158,11,.2);color:var(--warn)}.si.r{background:rgba(239,68,68,.2);color:var(--err)}
+.sc h3{font-size:1.15rem}.sc p{color:var(--m);font-size:.7rem}
+.fg{margin-bottom:.7rem}.fg label{display:block;margin-bottom:.3rem;font-size:.8rem;color:#cbd5e1}
+.fc{width:100%;padding:.6rem;background:var(--dd);border:1px solid var(--b);border-radius:8px;color:#fff;font-size:.85rem}
+.fc:focus{outline:none;border-color:var(--s)}
+textarea.fc{min-height:80px;resize:vertical}
+.bt{padding:.6rem 1rem;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.82rem;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
+.bp{background:linear-gradient(135deg,var(--p),var(--s));color:#fff}.bp:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(59,130,246,.4)}
+.bg{background:var(--ok);color:#fff}.be{background:var(--err);color:#fff}.bw{background:var(--warn);color:#fff}
+.bo{background:transparent;border:1px solid var(--b);color:#fff}
+.bb{width:100%;justify-content:center}.bs{padding:.3rem .6rem;font-size:.7rem}
+.tr{overflow-x:auto}table{width:100%;border-collapse:collapse}
+th{background:var(--dd);padding:.6rem;text-align:left;color:var(--s);font-size:.75rem;font-weight:600}
+td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
+.bad{padding:.2rem .5rem;border-radius:50px;font-size:.65rem;font-weight:600;display:inline-block}
+.bad.p{background:rgba(245,158,11,.2);color:var(--warn)}.bad.w{background:rgba(139,92,246,.2);color:#a78bfa}
+.bad.c{background:rgba(16,185,129,.2);color:var(--ok)}.bad.x{background:rgba(239,68,68,.2);color:var(--err)}
+.bad.i{background:rgba(59,130,246,.2);color:var(--s)}.bad.pr{background:rgba(168,85,247,.2);color:var(--a)}
+/* PENGUMUMAN */
+.ann-card{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(168,85,247,.08));border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:1rem;margin-bottom:.9rem;position:relative;overflow:hidden}
+.ann-card::before{content:'';position:absolute;top:-40%;right:-10%;width:140px;height:140px;background:radial-gradient(circle,rgba(59,130,246,.18),transparent 70%);border-radius:50%}
+.ann-h{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;position:relative;z-index:1}
+.ann-h i{font-size:1.4rem;color:var(--warn);animation:pl 2s infinite}
+@keyframes pl{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.ann-h b{font-size:.95rem}
+.ann-body{position:relative;z-index:1;font-size:.82rem;color:#cbd5e1;line-height:1.6}
+.ann-body .t{font-weight:700;color:#fff;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.ann-body .d{font-size:.7rem;color:var(--m);margin-top:.4rem}
+.ann-empty{text-align:center;color:var(--m);font-size:.8rem;padding:.5rem}
+.ann-list .ai{background:rgba(255,255,255,.03);border:1px solid var(--b);border-radius:10px;padding:.9rem;margin-bottom:.7rem}
+.ann-list .ai h4{font-size:.9rem;color:var(--s);margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.ann-list .ai p{font-size:.8rem;color:var(--m);line-height:1.5}
+.ann-list .ai .d{font-size:.7rem;color:var(--m);margin-top:.4rem;opacity:.7}
+/* APK */
+.apk-card{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(5,150,105,.06));border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:1.1rem;margin-bottom:.9rem}
+.apk-h{display:flex;align-items:center;gap:.9rem;margin-bottom:.8rem}
+.apk-ic{width:52px;height:52px;background:linear-gradient(135deg,var(--ok),#059669);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;box-shadow:0 4px 15px rgba(16,185,129,.3)}
+.apk-h h3{font-size:1rem}.apk-h p{font-size:.72rem;color:var(--m)}
+.apk-v{display:inline-block;background:rgba(16,185,129,.2);color:var(--ok);padding:.15rem .5rem;border-radius:5px;font-size:.65rem;font-weight:600;margin-top:.2rem}
+.apk-note{background:rgba(255,255,255,.04);border:1px solid var(--b);border-radius:8px;padding:.6rem;font-size:.75rem;color:var(--m);margin-bottom:.8rem}
+.dl-btn{background:linear-gradient(135deg,var(--ok),#059669);color:#fff;border:none;padding:.8rem;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:.3s}
+.dl-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(16,185,129,.4)}
+.dl-btn:disabled{opacity:.6;cursor:wait}
+.pbar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:.7rem;overflow:hidden;display:none}
+.pbar.on{display:block}.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),#34d399);transition:width .2s}
+.ptxt{font-size:.72rem;color:var(--m);text-align:center;margin-top:.4rem;display:none}.ptxt.on{display:block}
+/* MODAL */
+.md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:1rem}
+.md.on{display:flex}
+.mdc{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:1.2rem;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;animation:ms .3s}
+@keyframes ms{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.mdc h2{margin-bottom:.8rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
+.mcl{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+/* TOAST */
+.ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.7rem 1rem;border-radius:10px;font-weight:600;font-size:.8rem;z-index:10000;transform:translateY(120px);opacity:0;transition:.3s;max-width:90%;box-shadow:0 5px 20px rgba(0,0,0,.4)}
+.ts.on{transform:translateY(0);opacity:1}.ts.e{background:var(--err)}.ts.w{background:var(--warn)}.ts.i{background:var(--p)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:98;display:none}.ov.on{display:block}
+@media(max-width:768px){.ham{display:block}.side{transform:translateX(-100%)}.side.on{transform:translateX(0)}.bd{margin-left:0}.st{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
-<nav class="navbar">
-    <div class="navbar-brand">
-        <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-        <div class="logo-icon"><i class="fas fa-bolt" style="color:#fff"></i></div>
-        <span>DEZSTORE</span>
-    </div>
-    <div class="navbar-user">
-        <div class="balance-badge"><i class="fas fa-wallet"></i> Rp 0</div>
-        <button class="btn-icon" onclick="toggleSidebar()"><i class="fas fa-user"></i></button>
-    </div>
-</nav>
-
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-menu">
-        <div class="menu-label">Menu Utama</div>
-        <div class="menu-item active" onclick="showPage('home')"><i class="fas fa-home"></i> Beranda</div>
-        <div class="menu-item" onclick="showPage('order')"><i class="fas fa-shopping-cart"></i> Order Baru</div>
-        <div class="menu-label">Lainnya</div>
-        <div class="menu-item" onclick="openAnnouncementModal()"><i class="fas fa-bullhorn"></i> Pengumuman</div>
-        <div class="menu-item" onclick="downloadAPK()"><i class="fas fa-download"></i> Download APK</div>
-        <!-- Tombol Rahasia Admin -->
-        <div class="menu-item" style="color:var(--warning)" onclick="toggleAdminMode()"><i class="fas fa-user-shield"></i> Mode Admin</div>
-        <div class="menu-item" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i> Logout</div>
-    </div>
-</aside>
-
-<main class="main-content">
-    <div id="page-home" class="page active">
-        <div class="page-header">
-            <h1>Halo, Member! 👋</h1>
-            <p>Selamat datang di DEZSTORE SMM Panel Termurah.</p>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card"><div class="stat-icon green"><i class="fas fa-wallet"></i></div><div class="stat-info"><h3>Rp 0</h3><p>Saldo</p></div></div>
-            <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div><div class="stat-info"><h3>0</h3><p>Order</p></div></div>
-        </div>
-
-        <!-- PANEL ADMIN (Hanya muncul jika Mode Admin aktif) -->
-        <div class="admin-panel" id="adminPanel">
-            <h3><i class="fas fa-user-shield"></i> Panel Tambah Pengumuman</h3>
-            <div class="form-group">
-                <label>Judul Pengumuman</label>
-                <input type="text" class="form-control" id="adminAnnTitle" placeholder="Contoh: 🎉 Promo Akhir Tahun!">
-            </div>
-            <div class="form-group">
-                <label>Isi Pengumuman</label>
-                <textarea class="form-control" id="adminAnnContent" rows="3" placeholder="Tulis detail pengumuman di sini..."></textarea>
-            </div>
-            <button class="btn btn-primary btn-block" onclick="addAnnouncement()">
-                <i class="fas fa-plus"></i> Tambah Pengumuman
-            </button>
-        </div>
-
-        <!-- PENGUMUMAN TERBARU -->
-        <div class="announcement-card">
-            <div class="announcement-header">
-                <i class="fas fa-bullhorn"></i>
-                <span class="announcement-title">Pengumuman Terbaru</span>
-            </div>
-            <div class="announcement-content" id="announcementContent">Memuat...</div>
-            <div class="announcement-date" id="announcementDate">-</div>
-            <button class="btn btn-primary btn-block" style="margin-top:1rem;font-size:.8rem;" onclick="openAnnouncementModal()">
-                <i class="fas fa-list"></i> Lihat Semua Pengumuman
-            </button>
-        </div>
-
-        <!-- DOWNLOAD APK -->
-        <div class="apk-card">
-            <div class="apk-header">
-                <div class="apk-icon"><i class="fab fa-android"></i></div>
-                <div class="apk-info">
-                    <h3>DEZSTORE APK (PPS)</h3>
-                    <p>Aplikasi resmi untuk akses lebih cepat & stabil.</p>
-                    <span class="apk-version">v2.1.0 • 15.4 MB</span>
-                </div>
-            </div>
-            <button class="btn-download-apk" onclick="downloadAPK()" id="btnDownloadApk">
-                <i class="fas fa-download"></i> Download APK Sekarang
-            </button>
-        </div>
-    </div>
-    
-    <!-- Placeholder Pages -->
-    <div id="page-order" class="page"><div class="page-header"><h1>Order Baru</h1></div><div class="card"><p>Halaman Order</p></div></div>
-</main>
-
-<!-- Modal Pengumuman -->
-<div class="modal-overlay" id="announcementModal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3><i class="fas fa-bullhorn" style="color:var(--warning);margin-right:.5rem;"></i> Semua Pengumuman</h3>
-            <button class="modal-close" onclick="closeAnnouncementModal()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="modal-body" id="announcementList"></div>
-    </div>
+<div class="nav">
+  <div class="brand"><button class="ham" onclick="tSide()"><i class="fas fa-bars"></i></button><div class="logo"><img src="logo.png" onerror="this.parentNode.innerHTML='<i class=\'fas fa-bolt\'></i>'"></div><span id="brandName">DEZSTORE</span></div>
+  <div class="nav-r"><div class="bal"><i class="fas fa-wallet"></i> <span id="navBal">Rp 0</span></div><button class="icb" onclick="tSide()"><i class="fas fa-user"></i></button></div>
+</div>
+<div class="ov" id="ov" onclick="tSide()"></div>
+<div class="side" id="side">
+  <div class="lbl">Menu</div>
+  <div class="mi on" onclick="go('home',this)"><i class="fas fa-home"></i> Beranda</div>
+  <div class="mi" onclick="go('order',this)"><i class="fas fa-shopping-cart"></i> Order Baru</div>
+  <div class="mi" onclick="go('hist',this)"><i class="fas fa-history"></i> Riwayat Order</div>
+  <div class="mi" onclick="go('dep',this)"><i class="fas fa-wallet"></i> Deposit Saldo</div>
+  <div class="lbl">Info</div>
+  <div class="mi" onclick="go('ann',this)"><i class="fas fa-bullhorn"></i> Pengumuman</div>
+  <div class="mi" onclick="go('apk',this)"><i class="fas fa-download"></i> Download APK</div>
+  <div class="mi" onclick="go('help',this)"><i class="fas fa-headset"></i> Bantuan</div>
+  <div class="lbl">Akun</div>
+  <div class="mi" onclick="doLogout()" style="color:var(--err)"><i class="fas fa-sign-out-alt"></i> Logout</div>
 </div>
 
-<div class="toast-container" id="toastContainer"></div>
+<div class="bd">
+  <!-- HOME -->
+  <div class="pg on" id="home">
+    <div class="ph"><h1>👋 Selamat Datang, <span id="helloName">Member</span>!</h1><p id="helloTag">Beranda SMM Panel DEZSTORE</p></div>
+    <div class="st">
+      <div class="sc"><div class="si b"><i class="fas fa-wallet"></i></div><div><h3 id="hBal">Rp 0</h3><p>Saldo</p></div></div>
+      <div class="sc"><div class="si g"><i class="fas fa-shopping-cart"></i></div><div><h3 id="hOrd">0</h3><p>Total Order</p></div></div>
+      <div class="sc"><div class="si o"><i class="fas fa-clock"></i></div><div><h3 id="hPend">0</h3><p>Menunggu</p></div></div>
+      <div class="sc"><div class="si r"><i class="fas fa-check"></i></div><div><h3 id="hDone">0</h3><p>Selesai</p></div></div>
+    </div>
+    <!-- PENGUMUMAN TERBARU -->
+    <div class="ann-card">
+      <div class="ann-h"><i class="fas fa-bullhorn"></i><b>Pengumuman Admin</b></div>
+      <div class="ann-body" id="homeAnn"><div class="ann-empty">Memuat pengumuman...</div></div>
+      <button class="bt bp bb" style="margin-top:.7rem;font-size:.75rem" onclick="go('ann',document.querySelectorAll('.mi')[4])"><i class="fas fa-list"></i> Lihat Semua</button>
+    </div>
+    <!-- QUICK APK -->
+    <div class="apk-card">
+      <div class="apk-h"><div class="apk-ic"><i class="fab fa-android"></i></div><div><h3>DEZSTORE APK</h3><p>Akses lebih cepat tanpa browser</p><span class="apk-v" id="qApkV">v-</span></div></div>
+      <button class="dl-btn" onclick="go('apk',document.querySelectorAll('.mi')[5])"><i class="fas fa-download"></i> Download APK</button>
+    </div>
+    <!-- ORDER TERBARU -->
+    <div class="cd"><div class="ch"><h3 style="font-size:.95rem"><i class="fas fa-chart-bar" style="color:var(--s);margin-right:.4rem"></i>Order Terbaru</h3><button class="bt bp bs" onclick="go('hist',document.querySelectorAll('.mi')[2])">Semua</button></div>
+      <div class="tr"><table><thead><tr><th>ID</th><th>Layanan</th><th>Jumlah</th><th>Total</th><th>Status</th></tr></thead><tbody id="hTb"><tr><td colspan="5" style="text-align:center;color:var(--m)">Belum ada order</td></tr></tbody></table></div>
+    </div>
+  </div>
 
+  <!-- ORDER -->
+  <div class="pg" id="order">
+    <div class="ph"><h1>🛒 Order Baru</h1><p>Pilih layanan & buat pesanan</p></div>
+    <div class="cd">
+      <div class="fg"><label>Kategori</label><select class="fc" id="oCat" onchange="oFillSvc()"><option value="">Memuat...</option></select></div>
+      <div class="fg"><label>Layanan</label><select class="fc" id="oSvc" onchange="oCalc()"><option value="">Pilih kategori dulu</option></select></div>
+      <div class="fg"><label>Harga / 1000</label><input class="fc" id="oPrice" readonly></div>
+      <div class="g2"><div class="fg"><label>Min</label><input class="fc" id="oMin" readonly></div><div class="fg"><label>Max</label><input class="fc" id="oMax" readonly></div></div>
+      <div class="fg"><label>Link / Target</label><input class="fc" id="oLink" placeholder="https://... atau @username"></div>
+      <div class="fg"><label>Jumlah</label><input type="number" class="fc" id="oQty" oninput="oCalc()" placeholder="0"></div>
+      <div class="fg"><label>Total</label><input class="fc" id="oTotal" readonly value="Rp 0"></div>
+      <button class="bt bp bb" onclick="submitOrder()"><i class="fas fa-paper-plane"></i> Buat Order</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="pg" id="hist">
+    <div class="ph"><h1>📜 Riwayat Order</h1><p>Status pesanan Anda</p></div>
+    <div class="cd"><div class="tr"><table><thead><tr><th>ID</th><th>Layanan</th><th>Qty</th><th>Total</th><th>Status</th></tr></thead><tbody id="histTb"></tbody></table></div></div>
+  </div>
+
+  <!-- DEPOSIT -->
+  <div class="pg" id="dep">
+    <div class="ph"><h1>💰 Deposit Saldo</h1><p>Isi ulang saldo akun Anda</p></div>
+    <div class="cd"><h3 style="margin-bottom:.6rem;font-size:.95rem">Metode Pembayaran</h3><div id="payList" class="g2"></div></div>
+    <div class="cd"><div class="fg"><label>Jumlah (Rp)</label><input type="number" class="fc" id="dAmt" placeholder="min 10000"></div>
+      <div class="fg"><label>Bukti Transfer</label><input type="file" class="fc" id="dProof" accept="image/*"></div>
+      <button class="bt bg bb" onclick="submitDep()"><i class="fas fa-paper-plane"></i> Kirim Deposit</button></div>
+  </div>
+
+  <!-- ANNOUNCEMENTS -->
+  <div class="pg" id="ann">
+    <div class="ph"><h1>📢 Pengumuman</h1><p>Informasi terbaru dari admin</p></div>
+    <div class="ann-list" id="annList"><div class="ann-empty">Memuat...</div></div>
+  </div>
+
+  <!-- APK -->
+  <div class="pg" id="apk">
+    <div class="ph"><h1>📱 Download APK</h1><p>Aplikasi resmi DEZSTORE</p></div>
+    <div class="apk-card">
+      <div class="apk-h"><div class="apk-ic"><i class="fab fa-android"></i></div><div><h3>DEZSTORE APK</h3><p>PPS • Tanpa iklan • Notifikasi real-time</p><span class="apk-v" id="aVer">v-</span></div></div>
+      <div class="apk-note" id="aNote"><i class="fas fa-info-circle"></i> Ukuran: -</div>
+      <button class="dl-btn" id="dlBtn" onclick="downloadAPK()"><i class="fas fa-download"></i> Download APK Sekarang</button>
+      <div class="pbar" id="pbar"><i id="pbarFill"></i></div>
+      <div class="ptxt" id="ptxt">Memulai download...</div>
+    </div>
+    <div class="cd" style="font-size:.75rem;color:var(--m)"><i class="fas fa-shield-alt" style="color:var(--ok)"></i> File langsung terdownload ke perangkat Anda (tanpa membuka halaman web). Jika muncul peringatan "Sumber tidak dikenal", pilih <b>Simpan/Tetap Download</b>.</div>
+  </div>
+
+  <!-- HELP -->
+  <div class="pg" id="help">
+    <div class="ph"><h1>🎧 Bantuan</h1><p>Hubungi admin atau buat tiket</p></div>
+    <div class="cd"><div class="g2"><div class="fg"><label>WhatsApp</label><input class="fc" id="cWa" readonly></div><div class="fg"><label>Telegram</label><input class="fc" id="cTg" readonly></div></div></div>
+    <div class="cd"><h3 style="margin-bottom:.6rem;font-size:.95rem">Buat Tiket</h3>
+      <div class="fg"><label>Subjek</label><input class="fc" id="tSub"></div>
+      <div class="fg"><label>Pesan</label><textarea class="fc" id="tMsg"></textarea></div>
+      <button class="bt bp bb" onclick="submitTiket()"><i class="fas fa-paper-plane"></i> Kirim Tiket</button></div>
+    <div class="cd"><h3 style="margin-bottom:.6rem;font-size:.95rem">Tiket Saya</h3><div class="tr"><table><thead><tr><th>Subjek</th><th>Status</th></tr></thead><tbody id="tikTb"></tbody></table></div></div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="md on" id="mLogin"><div class="mdc" style="text-align:center">
+  <div class="logo" style="margin:0 auto .8rem;width:54px;height:54px"><img src="logo.png" onerror="this.parentNode.innerHTML='<i class=\'fas fa-bolt\' style=\'font-size:1.4rem\'></i>'"></div>
+  <h2 style="justify-content:center">🔐 Masuk Member</h2>
+  <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Masuk ke akun DEZSTORE Anda</p>
+  <div class="fg" style="text-align:left"><label>Username</label><input class="fc" id="liUser" placeholder="username"></div>
+  <div class="fg" style="text-align:left"><label>Password <small style="color:var(--m)">(opsional)</small></label><input type="password" class="fc" id="liPass" placeholder="password"></div>
+  <button class="bt bp bb" style="padding:.7rem" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+  <div id="liInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--err)"></div>
+</div></div>
+
+<!-- UPDATE MODAL -->
+<div class="md" id="mUpd"><div class="mdc" style="text-align:center">
+  <h2 style="justify-content:center"><i class="fas fa-rocket" style="color:var(--a)"></i> Update Tersedia!</h2>
+  <p id="updMsg" style="color:var(--m);font-size:.8rem;margin-bottom:.8rem"></p>
+  <button class="bt bg bb" onclick="downloadAPK();closeM('mUpd')"><i class="fas fa-download"></i> Update via APK</button>
+  <button class="bt bo bb" style="margin-top:.4rem" onclick="closeM('mUpd')">Nanti</button>
+</div></div>
+
+<div class="ts" id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
-// ================= 1. INISIALISASI DATA (LocalStorage) =================
-// Cek apakah ada data di LocalStorage, jika tidak, pakai data default
-let announcementsData = JSON.parse(localStorage.getItem('dez_announcements')) || [
-    { id: 1, title: "🎉 Promo Akhir Tahun!", content: "Dapatkan diskon 30% untuk semua layanan Followers & Likes. Gunakan kode: DEZSTORE30", date: "23 Nov 2026" },
-    { id: 2, title: "📱 Download Aplikasi DEZSTORE", content: "Download aplikasi PPS kami untuk pengalaman yang lebih cepat dan notifikasi real-time!", date: "20 Nov 2026" }
-];
+// ===== FIREBASE (SAMA PERSIS DENGAN ADMIN) =====
+var fc={apiKey:"AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",authDomain:"dezstore-78d09.firebaseapp.com",projectId:"dezstore-78d09",storageBucket:"dezstore-78d09.firebasestorage.app",messagingSenderId:"815388782850",appId:"1:815388782850:web:de678f5df5380be276921b"};
+firebase.initializeApp(fc);
+var db=firebase.firestore();
+var ME=JSON.parse(localStorage.getItem('dez_member')||'null'); // {id,username,balance}
 
-let isAdminMode = false;
+// ===== HELPERS =====
+function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' '+e:'');setTimeout(()=>t.className='ts',3000)}
+function rp(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
+function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');if(window.innerWidth<=768)tSide(false);var f={home:loadHome,order:loadOrder,hist:loadHist,dep:loadDep,ann:loadAnn,apk:loadApk,help:loadHelp};if(f[id])f[id]()}
+function openM(id){document.getElementById(id).classList.add('on')}
+function closeM(id){document.getElementById(id).classList.remove('on')}
+function tSide(f){var s=document.getElementById('side'),o=document.getElementById('ov');var on=(f===undefined)?!s.classList.contains('on'):f;s.classList.toggle('on',on);o.classList.toggle('on',on)}
+function doLogout(){if(confirm('Logout?')){localStorage.removeItem('dez_member');location.reload()}}
 
-// ================= 2. FUNGSI RENDER PENGUMUMAN =================
-function renderAnnouncements() {
-    // Render yang terbaru di kartu utama
-    if (announcementsData.length > 0) {
-        const latest = announcementsData[0];
-        document.getElementById('announcementContent').textContent = latest.content;
-        document.getElementById('announcementDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${latest.date}`;
-    } else {
-        document.getElementById('announcementContent').textContent = "Belum ada pengumuman dari admin.";
-        document.getElementById('announcementDate').innerHTML = "";
-    }
-
-    // Render semua di dalam Modal
-    const listContainer = document.getElementById('announcementList');
-    listContainer.innerHTML = announcementsData.map(ann => `
-        <div class="announcement-item">
-            <button class="btn-delete-ann" onclick="deleteAnnouncement(${ann.id})" title="Hapus">
-                <i class="fas fa-trash"></i>
-            </button>
-            <h4>${ann.title}</h4>
-            <p>${ann.content}</p>
-            <div class="date"><i class="far fa-clock"></i> ${ann.date}</div>
-        </div>
-    `).join('');
+// ===== LOGIN MEMBER =====
+function doLogin(){
+  var u=document.getElementById('liUser').value.trim(),p=document.getElementById('liPass').value;
+  if(!u){document.getElementById('liInfo').textContent='Masukkan username!';return}
+  db.collection('users').where('username','==',u).get().then(s=>{
+    if(s.empty){document.getElementById('liInfo').textContent='❌ Username tidak ditemukan';return}
+    var d=s.docs[0],x=d.data();
+    if(x.status==='banned'){document.getElementById('liInfo').textContent='❌ Akun dibanned';return}
+    if(x.password!==undefined&&x.password!==p){document.getElementById('liInfo').textContent='❌ Password salah';return}
+    ME={id:d.id,username:x.username,balance:x.balance||0};
+    localStorage.setItem('dez_member',JSON.stringify(ME));
+    closeM('mLogin');document.getElementById('liInfo').textContent='';
+    T('✅ Selamat datang, '+x.username+'!');
+    boot();
+  }).catch(e=>document.getElementById('liInfo').textContent='❌ '+e.message);
 }
 
-// ================= 3. FUNGSI ADMIN (TAMBAH & HAPUS) =================
-function toggleAdminMode() {
-    if (!isAdminMode) {
-        const pin = prompt("Masukkan PIN Admin (Default: 1234):");
-        if (pin === "1234") {
-            isAdminMode = true;
-            document.getElementById('adminPanel').classList.add('active');
-            document.body.classList.add('admin-mode');
-            showToast("Mode Admin Aktif! Anda bisa menambah/menghapus pengumuman.", "success");
-        } else {
-            showToast("PIN Salah!", "error");
-        }
-    } else {
-        isAdminMode = false;
-        document.getElementById('adminPanel').classList.remove('active');
-        document.body.classList.remove('admin-mode');
-        showToast("Mode Admin Nonaktif", "warning");
-    }
+// ===== TEMA DINAMIS (dari admin) =====
+function applyTheme(){
+  db.collection('settings').doc('theme').get().then(d=>{
+    if(!d.exists)return;var t=d.data(),r=document.documentElement.style;
+    if(t.colors){var c=t.colors;if(c.p)r.setProperty('--p',c.p);if(c.s)r.setProperty('--s',c.s);if(c.a)r.setProperty('--a',c.a);if(c.b)r.setProperty('--d',c.b);if(c.c)r.setProperty('--c',c.c);if(c.t)r.setProperty('--m',c.t)}
+    if(t.background)document.body.style.backgroundImage='url('+t.background+')';
+    if(t.logo){var im=document.querySelectorAll('.logo img');im.forEach(i=>i.src=t.logo)}
+  });
+}
+function applySite(){
+  db.collection('settings').doc('website').get().then(d=>{
+    if(!d.exists)return;var s=d.data();
+    if(s.name){document.getElementById('brandName').textContent=s.name;document.title=s.name+' - SMM Panel'}
+    if(s.tagline)document.getElementById('helloTag').textContent=s.tagline;
+    if(s.contactWA)document.getElementById('cWa').value=s.contactWA;
+    if(s.contactTelegram)document.getElementById('cTg').value=s.contactTelegram;
+  });
 }
 
-function addAnnouncement() {
-    const title = document.getElementById('adminAnnTitle').value.trim();
-    const content = document.getElementById('adminAnnContent').value.trim();
-    
-    if (!title || !content) {
-        showToast("Judul dan Isi tidak boleh kosong!", "error");
-        return;
-    }
-
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-
-    const newAnn = {
-        id: Date.now(), // ID unik berdasarkan waktu
-        title: title,
-        content: content,
-        date: dateStr
-    };
-
-    // Tambahkan ke paling atas array
-    announcementsData.unshift(newAnn);
-    
-    // Simpan ke LocalStorage
-    localStorage.setItem('dez_announcements', JSON.stringify(announcementsData));
-    
-    // Reset form & render ulang
-    document.getElementById('adminAnnTitle').value = '';
-    document.getElementById('adminAnnContent').value = '';
-    renderAnnouncements();
-    showToast("Pengumuman berhasil ditambahkan!", "success");
+// ===== PENGUMUMAN =====
+function typeBadge(t){var m={info:['i','Info'],warning:['p','Warning'],success:['c','Success'],promo:['pr','Promo']};var x=m[t]||['i',t];return '<span class="bad '+x[0]+'">'+x[1]+'</span>'}
+function fmtDate(ts){if(!ts)return'';var d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
+function loadAnnData(cb){db.collection('announcements').where('active','==',true).orderBy('createdAt','desc').get().then(s=>{var a=[];s.forEach(d=>a.push(d.data()));cb(a)}).catch(()=>cb([]))}
+function renderHomeAnn(){
+  loadAnnData(a=>{
+    var el=document.getElementById('homeAnn');
+    if(!a.length){el.innerHTML='<div class="ann-empty">Belum ada pengumuman.</div>';return}
+    var x=a[0];el.innerHTML='<div class="t">'+typeBadge(x.type)+' '+x.title+'</div>'+x.message+'<div class="d"><i class="far fa-calendar"></i> '+fmtDate(x.createdAt)+'</div>';
+  });
+}
+function loadAnn(){
+  loadAnnData(a=>{
+    var el=document.getElementById('annList');
+    if(!a.length){el.innerHTML='<div class="ann-empty">Belum ada pengumuman.</div>';return}
+    el.innerHTML=a.map(x=>'<div class="ai"><h4>'+typeBadge(x.type)+' '+x.title+'</h4><p>'+x.message+'</p><div class="d"><i class="far fa-clock"></i> '+fmtDate(x.createdAt)+'</div></div>').join('');
+  });
 }
 
-function deleteAnnouncement(id) {
-    if (confirm("Yakin ingin menghapus pengumuman ini?")) {
-        announcementsData = announcementsData.filter(ann => ann.id !== id);
-        localStorage.setItem('dez_announcements', JSON.stringify(announcementsData));
-        renderAnnouncements();
-        showToast("Pengumuman dihapus.", "warning");
-    }
+// ===== DOWNLOAD APK (SINKRON ADMIN) =====
+function getApk(){
+  // prioritas: Firestore settings/apk (jika admin nanti tulis ke sana), fallback localStorage 'apk'
+  var ls=JSON.parse(localStorage.getItem('apk')||'{}');
+  return ls;
+}
+function loadApk(){
+  var a=getApk();
+  document.getElementById('aVer').textContent='v'+(a.ver||'-');
+  document.getElementById('qApkV').textContent='v'+(a.ver||'-');
+  document.getElementById('aNote').innerHTML='<i class="fas fa-info-circle"></i> Ukuran: '+(a.size||'-')+(a.note?' • '+a.note:'');
+  if(!a.url){document.getElementById('dlBtn').disabled=true;document.getElementById('dlBtn').innerHTML='<i class="fas fa-ban"></i> APK belum diatur admin';}
+}
+function normUrl(u){
+  var m=u.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if(m)return'https://drive.google.com/uc?export=download&id='+m[1];
+  var m2=u.match(/[?&]id=([^&]+)/);
+  if(/drive\.google/.test(u)&&m2)return'https://drive.google.com/uc?export=download&id='+m2[1];
+  return u;
+}
+function downloadAPK(){
+  var a=getApk();
+  if(!a.url){T('❌ APK belum diatur admin!',1);return}
+  var btn=document.getElementById('dlBtn'),bar=document.getElementById('pbar'),fill=document.getElementById('pbarFill'),ptxt=document.getElementById('ptxt');
+  var url=normUrl(a.url),name='DEZSTORE'+(a.ver?'-v'+a.ver:'')+'.apk';
+  btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Mengunduh...';
+  bar.classList.add('on');ptxt.classList.add('on');ptxt.textContent='Menghubungkan...';
+  var pr=0,ti=setInterval(()=>{pr=Math.min(pr+Math.random()*12,90);fill.style.width=pr+'%';ptxt.textContent='Mengunduh... '+Math.round(pr)+'%'},250);
+  // coba blob (langsung simpan, tanpa buka web)
+  fetch(url).then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{
+    clearInterval(ti);fill.style.width='100%';
+    var u=URL.createObjectURL(b),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();
+    setTimeout(()=>URL.revokeObjectURL(u),8000);
+    done();T('✅ APK terdownload!');
+  }).catch(()=>{
+    // fallback: anchor download / navigasi (file .apk otomatis tersimpan, bukan dibuka sebagai web)
+    clearInterval(ti);fill.style.width='100%';
+    var l=document.createElement('a');l.href=url;l.download=name;l.rel='noopener';document.body.appendChild(l);l.click();l.remove();
+    setTimeout(done,1200);T('⬇️ Download dimulai (cek notifikasi browser)');
+  });
+  function done(){btn.disabled=false;btn.innerHTML='<i class="fas fa-check-circle"></i> Download Selesai';setTimeout(()=>{btn.innerHTML='<i class="fas fa-download"></i> Download APK Sekarang';bar.classList.remove('on');ptxt.classList.remove('on');fill.style.width='0';loadApk()},3000)}
 }
 
-// ================= 4. FUNGSI DOWNLOAD APK =================
-function downloadAPK() {
-    const btn = document.getElementById('btnDownloadApk');
-    const originalText = btn.innerHTML;
-    
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memulai Download...';
-    btn.style.opacity = '0.7';
-    
-    // GANTI URL INI dengan link hosting file APK Anda
-    const apkUrl = 'https://example.com/dezstore-pps-v2.1.0.apk'; 
-    
-    setTimeout(() => {
-        const link = document.createElement('a');
-        link.href = apkUrl;
-        link.download = 'DEZSTORE_PPS_v2.1.0.apk'; 
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        btn.innerHTML = '<i class="fas fa-check-circle"></i> Download Dimulai!';
-        showToast("APK sedang didownload. Cek folder Download Anda!", "success");
-        
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.style.opacity = '1';
-        }, 3000);
-    }, 800);
+// ===== STATS & REALTIME =====
+function loadHome(){
+  document.getElementById('helloName').textContent=ME?ME.username:'Member';
+  renderHomeAnn();loadApk();
+  if(!ME)return;
+  db.collection('users').doc(ME.id).onSnapshot(d=>{if(d.exists){var b=d.data().balance||0;ME.balance=b;document.getElementById('hBal').textContent=rp(b);document.getElementById('navBal').textContent=rp(b)}});
+  db.collection('orders').where('userId','==',ME.id).onSnapshot(s=>{
+    var tot=s.size,p=0,c=0;s.forEach(d=>{var st=d.data().status;if(st==='pending')p++;if(st==='completed')c++});
+    document.getElementById('hOrd').textContent=tot;document.getElementById('hPend').textContent=p;document.getElementById('hDone').textContent=c;
+    var rows=[];s.forEach(d=>rows.push({id:d.id,...d.data()}));rows.sort((a,b)=>(b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0)-(a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0));
+    document.getElementById('hTb').innerHTML=rows.slice(0,5).map(o=>'<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>').join('')||'<tr><td colspan="5" style="text-align:center;color:var(--m)">Belum ada order</td></tr>';
+  });
 }
 
-// ================= 5. FUNGSI UI UMUM =================
-function showPage(pageId) {
-    document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-    document.getElementById('page-' + pageId).classList.add('active');
-    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('active');
+// ===== ORDER =====
+var SVC=[];
+function loadOrder(){
+  db.collection('services').get().then(s=>{
+    SVC=[];s.forEach(d=>SVC.push(d.data()));
+    var cats={};SVC.forEach(x=>{if(x.categoryName)cats[x.categoryName]=1});
+    var sel=document.getElementById('oCat');sel.innerHTML='<option value="">Pilih kategori</option>'+Object.keys(cats).map(c=>'<option>'+c+'</option>').join('');
+    oFillSvc();
+  });
+}
+function oFillSvc(){
+  var c=document.getElementById('oCat').value,sel=document.getElementById('oSvc');
+  var list=SVC.filter(x=>x.categoryName===c);
+  sel.innerHTML='<option value="">Pilih layanan</option>'+list.map((x,i)=>'<option value="'+i+'">'+x.name+'</option>').join('');
+  oCalc();
+}
+function oCalc(){
+  var c=document.getElementById('oCat').value,i=document.getElementById('oSvc').value;
+  var x=SVC.filter(s=>s.categoryName===c)[i];
+  if(!x){document.getElementById('oPrice').value='';document.getElementById('oMin').value='';document.getElementById('oMax').value='';document.getElementById('oTotal').value='Rp 0';return}
+  document.getElementById('oPrice').value=rp(x.price);document.getElementById('oMin').value=x.min;document.getElementById('oMax').value=x.max;
+  var q=parseInt(document.getElementById('oQty').value)||0;
+  document.getElementById('oTotal').value=rp(Math.round(x.price*q/1000));
+}
+function submitOrder(){
+  if(!ME){T('Login dulu!',1);return}
+  var c=document.getElementById('oCat').value,i=document.getElementById('oSvc').value;
+  var x=SVC.filter(s=>s.categoryName===c)[i];
+  var link=document.getElementById('oLink').value.trim(),q=parseInt(document.getElementById('oQty').value)||0;
+  if(!x||!link||!q){T('Lengkapi semua kolom!',1);return}
+  if(q<x.min||q>x.max){T('Qty harus '+x.min+'-'+x.max,1);return}
+  var total=Math.round(x.price*q/1000);
+  if(total>ME.balance){T('Saldo tidak cukup!',1);return}
+  var d=db.collection('users').doc(ME.id);
+  db.runTransaction(t=>t.get(d).then(u=>{
+    if((u.data().balance||0)<total)throw'Saldo kurang';
+    t.update(d,{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});
+    t.add(db.collection('orders'),{userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  })).then(()=>{T('✅ Order dibuat!');document.getElementById('oLink').value='';document.getElementById('oQty').value='';oCalc();go('hist',document.querySelectorAll('.mi')[2])}).catch(e=>T('❌ '+e,1));
 }
 
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
+// ===== HISTORY =====
+function loadHist(){
+  if(!ME){document.getElementById('histTb').innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--m)">Login dulu</td></tr>';return}
+  db.collection('orders').where('userId','==',ME.id).orderBy('createdAt','desc').get().then(s=>{
+    var h='';s.forEach(d=>{var o=d.data();h+='<tr><td><b>'+d.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>'});
+    document.getElementById('histTb').innerHTML=h||'<tr><td colspan="5" style="text-align:center;color:var(--m)">Belum ada</td></tr>';
+  });
 }
 
-function openAnnouncementModal() {
-    document.getElementById('announcementModal').classList.add('active');
-    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('active');
+// ===== DEPOSIT =====
+function loadDep(){
+  db.collection('settings').doc('payment').get().then(d=>{
+    var p=(d.exists&&d.data())||{};var ms=[['qris','QRIS'],['dana','DANA'],['gopay','GoPay'],['ovo','OVO'],['shopeepay','ShopeePay'],['bca','BCA']];
+    document.getElementById('payList').innerHTML=ms.map(m=>'<div class="cd" style="margin:0;padding:.6rem"><b style="font-size:.8rem">'+m[1]+'</b><br><small style="color:var(--s);font-size:.7rem;word-break:break-all">'+(p[m[0]]||'-')+'</small></div>').join('');
+  });
+}
+function submitDep(){
+  if(!ME){T('Login dulu!',1);return}
+  var amt=parseInt(document.getElementById('dAmt').value)||0,f=document.getElementById('dProof').files[0];
+  if(amt<10000){T('Min Rp 10.000!',1);return}
+  var go2=proof=>{db.collection('deposits').add({userId:ME.id,username:ME.username,method:'manual',methodName:'Transfer',amount:amt,proof:proof||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Deposit dikirim!');document.getElementById('dAmt').value='';document.getElementById('dProof').value=''})};
+  if(f){var r=new FileReader();r.onload=e=>go2(e.target.result);r.readAsDataURL(f)}else go2('');
 }
 
-function closeAnnouncementModal() {
-    document.getElementById('announcementModal').classList.remove('active');
+// ===== HELP / TIKET =====
+function loadHelp(){
+  applySite();
+  if(!ME){document.getElementById('tikTb').innerHTML='<tr><td colspan="2" style="text-align:center;color:var(--m)">Login dulu</td></tr>';return}
+  db.collection('tickets').where('userId','==',ME.id).orderBy('createdAt','desc').get().then(s=>{
+    var h='';s.forEach(d=>{var t=d.data();h+='<tr><td>'+(t.subject||'-')+'</td><td><span class="bad '+(t.status==='open'?'p':'c')+'">'+t.status+'</span></td></tr>'});
+    document.getElementById('tikTb').innerHTML=h||'<tr><td colspan="2" style="text-align:center;color:var(--m)">Belum ada</td></tr>';
+  });
+}
+function submitTiket(){
+  if(!ME){T('Login dulu!',1);return}
+  var s=document.getElementById('tSub').value.trim(),m=document.getElementById('tMsg').value.trim();
+  if(!s||!m){T('Lengkapi subjek & pesan!',1);return}
+  db.collection('tickets').add({userId:ME.id,username:ME.username,subject:s,message:m,status:'open',replies:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Tiket terkirim!');document.getElementById('tSub').value='';document.getElementById('tMsg').value='';loadHelp()});
 }
 
-document.getElementById('announcementModal').addEventListener('click', function(e) {
-    if (e.target === this) closeAnnouncementModal();
-});
-
-function showToast(message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    let icon = 'fa-check-circle', color = 'var(--success)';
-    if (type === 'error') { icon = 'fa-times-circle'; color = 'var(--danger)'; }
-    if (type === 'warning') { icon = 'fa-exclamation-triangle'; color = 'var(--warning)'; }
-    
-    toast.style.borderLeftColor = color;
-    toast.innerHTML = `<i class="fas ${icon}" style="color:${color}"></i><span class="toast-message">${message}</span>`;
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(100%)';
-        setTimeout(() => toast.remove(), 300);
-    }, 4000);
+// ===== UPDATE CHECK =====
+function checkUpdate(){
+  db.collection('settings').doc('version').get().then(d=>{
+    if(!d.exists)return;var v=d.data();var cur=localStorage.getItem('dez_appver')||'0';
+    if(v.version&&v.version!==cur){document.getElementById('updMsg').textContent=(v.message||'Ada versi baru!')+' (v'+v.version+')';openM('mUpd')}
+  });
 }
 
-// Jalankan saat halaman dimuat
-document.addEventListener('DOMContentLoaded', () => {
-    renderAnnouncements();
-    setTimeout(() => showToast('Selamat datang di DEZSTORE! 👋', 'success'), 1000);
-});
+// ===== PWA =====
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+
+// ===== BOOT =====
+function boot(){applyTheme();applySite();loadHome();checkUpdate();setInterval(loadAnnData,30000)}
+if(ME){closeM('mLogin');boot()}else{document.getElementById('liUser').focus()}
 </script>
 </body>
     </html>
