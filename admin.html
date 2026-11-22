@@ -271,7 +271,7 @@ var p=prompt('🔐 Password:');
 if(p!==PW){alert('❌ Salah!');location.href='index.html'}
 
 // ===== URL API PPS (WAJIB GANTI DENGAN URL CLOUDFLARE WORKER KAMU) =====
-var PPS_URL='https://dez-proxy.pemulihana475.workers.dev/';
+var PPS_URL='https://dezstore-api.dezstore300.workers.dev/';
 
 function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
