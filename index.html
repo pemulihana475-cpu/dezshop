@@ -20,7 +20,7 @@ body{background:var(--d);color:#fff;min-height:100vh;overflow-x:hidden;backgroun
 .logo img{width:100%;height:100%;object-fit:cover}
 .nav-r{display:flex;align-items:center;gap:.6rem}
 .bal{background:linear-gradient(135deg,var(--ok),#059669);padding:.35rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600;display:flex;align-items:center;gap:.3rem}
-.icb{background:var(--c);border:1px solid var(--b);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;position:relative}
+.icb{background:var(--c);border:1px solid var(--b);color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem}
 .ham{display:none;background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer}
 .side{position:fixed;top:56px;left:0;bottom:0;width:240px;background:var(--dd);border-right:1px solid var(--b);overflow-y:auto;z-index:99;transition:.3s;padding:.5rem 0}
 .lbl{padding:.3rem 1rem;font-size:.6rem;color:var(--m);letter-spacing:1px;text-transform:uppercase;font-weight:700}
@@ -287,190 +287,483 @@ var ME=JSON.parse(localStorage.getItem('dez_member')||'null');
 var currentVoucher=null;
 var orderMode='single';
 var SVC=[];
-var cachedApk=null;
 
-function getCached(key, maxAge){
-  var c=localStorage.getItem('cache_'+key);
-  if(!c) return null;
-  try{var obj=JSON.parse(c);if(Date.now()-obj.ts < maxAge) return obj.data;}catch(e){}
-  return null;
-}
-function setCached(key, data){localStorage.setItem('cache_'+key, JSON.stringify({ts:Date.now(), data:data}));}
+// Tampilkan error JS ke toast (berguna debug di HP)
+window.addEventListener('error',function(e){try{T('JS Error: '+(e.message||e.error),'e')}catch(x){}});
 
-function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' '+e:'');setTimeout(function(){t.className='ts'},3000)}
+function getCached(key,maxAge){var c=localStorage.getItem('cache_'+key);if(!c)return null;try{var o=JSON.parse(c);if(Date.now()-o.ts<maxAge)return o.data}catch(e){}return null}
+function setCached(key,data){localStorage.setItem('cache_'+key,JSON.stringify({ts:Date.now(),data:data}))}
+function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' '+e:'');setTimeout(function(){t.className='ts'},3500)}
 function rp(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
 
-function go(id,el){
-  document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on')});
-  document.querySelectorAll('.mi').forEach(function(x){x.classList.remove('on')});
-  document.getElementById(id).classList.add('on');
-  if(el) el.classList.add('on');
-  if(window.innerWidth<=768) tSide(false);
-  var f={home:loadHome,order:loadOrder,hist:loadHist,mutasi:loadMutasi,dep:loadDep,ann:loadAnn,apk:loadApk,profile:loadProfile,help:loadHelp};
-  if(f[id]) f[id]();
-}
+function go(id,el){document.querySelectorAll('.pg').forEach(function(x){x.classList.remove('on')});document.querySelectorAll('.mi').forEach(function(x){x.classList.remove('on')});document.getElementById(id).classList.add('on');if(el)el.classList.add('on');if(window.innerWidth<=768)tSide(false);var f={home:loadHome,order:loadOrder,hist:loadHist,mutasi:loadMutasi,dep:loadDep,ann:loadAnn,apk:loadApk,profile:loadProfile,help:loadHelp};if(f[id])f[id]()}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function tSide(f){var s=document.getElementById('side'),o=document.getElementById('ov');var on=(f===undefined)?!s.classList.contains('on'):f;s.classList.toggle('on',on);o.classList.toggle('on',on)}
 function doLogout(){if(confirm('Yakin ingin logout?')){localStorage.removeItem('dez_member');location.reload()}}
 function switchToRegister(){closeM('mLogin');document.getElementById('mRegister').classList.add('on');document.getElementById('regInfo').textContent=''}
 function switchToLogin(){closeM('mRegister');document.getElementById('mLogin').classList.add('on');document.getElementById('liInfo').textContent=''}
 
+// ===== LOGIN =====
 function doLogin(){
-  var u=document.getElementById('liUser').value.trim(),p=document.getElementById('liPass').value;
-  if(!u){document.getElementById('liInfo').textContent='Masukkan username!';return}
+  var u=document.getElementById('liUser').value.trim();
+  var p=document.getElementById('liPass').value;
+  var info=document.getElementById('liInfo');
+  if(!u){info.textContent='Masukkan username!';return}
+  info.textContent='Memeriksa akun...';
   db.collection('users').where('username','==',u).get().then(function(s){
-    if(s.empty){document.getElementById('liInfo').textContent='❌ Username tidak ditemukan';return}
-    var d=s.docs[0],x=d.data();
-    if(x.status==='banned'){document.getElementById('liInfo').textContent='❌ Akun dibanned';return}
-    if(x.password!==undefined && x.password!==p){document.getElementById('liInfo').textContent='❌ Password salah';return}
+    if(s.empty){info.textContent='❌ Username tidak ditemukan';return}
+    var d=s.docs[0];
+    var x=d.data();
+    if(x.status==='banned'){info.textContent='❌ Akun dibanned';return}
+    // Jika user TIDAK punya field password (dibuat admin), izinkan login tanpa cek password
+    if(x.password!==undefined && x.password!=='' && x.password!==p){info.textContent='❌ Password salah';return}
     ME={id:d.id,username:x.username,balance:x.balance||0};
     localStorage.setItem('dez_member',JSON.stringify(ME));
-    closeM('mLogin');T('✅ Selamat datang, '+x.username+'!');boot();
-  }).catch(function(e){document.getElementById('liInfo').textContent='❌ '+e.message});
+    info.textContent='';
+    closeM('mLogin');
+    T('✅ Selamat datang, '+x.username+'!');
+    boot();
+  }).catch(function(e){info.textContent='❌ '+e.message});
 }
 
+// ===== REGISTER =====
 function doRegister(){
-  var u=document.getElementById('regUser').value.trim(),e=document.getElementById('regEmail').value.trim();
-  var w=document.getElementById('regWa').value.trim(),p=document.getElementById('regPass').value;
-  if(!u||!e||!w||!p){document.getElementById('regInfo').textContent='❌ Semua kolom wajib diisi!';return}
-  if(u.length<3){document.getElementById('regInfo').textContent='❌ Username minimal 3 karakter!';return}
-  if(p.length<6){document.getElementById('regInfo').textContent='❌ Password minimal 6 karakter!';return}
-  document.getElementById('regInfo').textContent='Memeriksa...';
+  var u=document.getElementById('regUser').value.trim();
+  var e=document.getElementById('regEmail').value.trim();
+  var w=document.getElementById('regWa').value.trim();
+  var p=document.getElementById('regPass').value;
+  var info=document.getElementById('regInfo');
+  if(!u||!e||!w||!p){info.textContent='❌ Semua kolom wajib diisi!';return}
+  if(u.length<3){info.textContent='❌ Username minimal 3 karakter!';return}
+  if(p.length<6){info.textContent='❌ Password minimal 6 karakter!';return}
+  info.textContent='Memeriksa...';
   db.collection('users').where('username','==',u).get().then(function(s){
-    if(!s.empty){document.getElementById('regInfo').textContent='❌ Username sudah digunakan!';return}
+    if(!s.empty){info.textContent='❌ Username sudah digunakan!';return}
     var newUser={username:u,email:e,whatsapp:w,password:p,balance:0,status:'active',totalOrders:0,totalSpend:0,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-    db.collection('users').add(newUser).then(function(docRef){
-      ME={id:docRef.id,username:u,balance:0};localStorage.setItem('dez_member',JSON.stringify(ME));
-      closeM('mRegister');T('✅ Registrasi berhasil!');boot();
-    }).catch(function(err){document.getElementById('regInfo').textContent='❌ Gagal: '+err.message});
-  });
+    return db.collection('users').add(newUser);
+  }).then(function(docRef){
+    if(!docRef)return;
+    ME={id:docRef.id,username:u,balance:0};
+    localStorage.setItem('dez_member',JSON.stringify(ME));
+    closeM('mRegister');
+    T('✅ Registrasi berhasil!');
+    boot();
+  }).catch(function(err){info.textContent='❌ Gagal: '+err.message});
 }
 
+// ===== THEME & SITE =====
 function applyTheme(){
   var cached=getCached('theme',5*60*1000);
   if(cached){applyThemeData(cached);return}
   db.collection('settings').doc('theme').get().then(function(d){
-    if(!d.exists) return;var t=d.data();setCached('theme',t);applyThemeData(t);
-  }).catch(function(err){console.log('Theme error:',err)});
+    if(!d.exists)return;
+    var t=d.data();setCached('theme',t);applyThemeData(t);
+  }).catch(function(){});
 }
 function applyThemeData(t){
   var r=document.documentElement.style;
   if(t.colors){var c=t.colors;if(c.p)r.setProperty('--p',c.p);if(c.s)r.setProperty('--s',c.s);if(c.a)r.setProperty('--a',c.a);if(c.b)r.setProperty('--d',c.b);if(c.c)r.setProperty('--c',c.c);if(c.t)r.setProperty('--m',c.t)}
-  if(t.background) document.body.style.backgroundImage='url('+t.background+')';
+  if(t.background)document.body.style.backgroundImage='url('+t.background+')';
   if(t.logo){document.querySelectorAll('.logo img').forEach(function(i){i.src=t.logo})}
 }
-
 function applySite(){
   var cached=getCached('site',5*60*1000);
   if(cached){applySiteData(cached);return}
   db.collection('settings').doc('website').get().then(function(d){
-    if(!d.exists) return;var s=d.data();setCached('site',s);applySiteData(s);
-  }).catch(function(err){console.log('Site error:',err)});
+    if(!d.exists)return;
+    var s=d.data();setCached('site',s);applySiteData(s);
+  }).catch(function(){});
 }
 function applySiteData(s){
   if(s.name){document.getElementById('brandName').textContent=s.name;document.title=s.name+' - SMM Panel'}
-  if(s.tagline) document.getElementById('helloTag').textContent=s.tagline;
+  if(s.tagline)document.getElementById('helloTag').textContent=s.tagline;
   if(s.contactWA){document.getElementById('cWa').value=s.contactWA;document.getElementById('floWa').href='https://wa.me/'+s.contactWA.replace(/[^0-9]/g,'')}
-  if(s.contactTelegram) document.getElementById('cTg').value=s.contactTelegram;
+  if(s.contactTelegram)document.getElementById('cTg').value=s.contactTelegram;
 }
 
+// ===== ANNOUNCEMENTS =====
 function typeBadge(t){var m={info:['i','Info'],warning:['p','Warning'],success:['c','Success'],promo:['pr','Promo']};var x=m[t]||['i',t];return '<span class="bad '+x[0]+'">'+x[1]+'</span>'}
 function fmtDate(ts){if(!ts)return'';var d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}
-
 function loadAnnData(cb){
   var cached=getCached('ann',10*60*1000);
   if(cached){cb(cached);return}
   db.collection('announcements').get().then(function(s){
-    var a=[];s.forEach(function(d){var x=d.data();if(x.active!==false) a.push(x)});
+    var a=[];
+    s.forEach(function(d){var x=d.data();if(x.active!==false)a.push(x)});
     a.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});
-    setCached('ann',a);cb(a);
+    setCached('ann',a);
+    cb(a);
   }).catch(function(){cb([])});
 }
-function renderHomeAnn(){loadAnnData(function(a){var el=document.getElementById('homeAnn');if(!a.length){el.innerHTML='<div class="ann-empty">Belum ada pengumuman.</div>';return}var x=a[0];el.innerHTML='<div class="t">'+typeBadge(x.type)+' '+x.title+'</div>'+x.message+'<div class="d"><i class="far fa-calendar"></i> '+fmtDate(x.createdAt)+'</div>'})}
-function loadAnn(){loadAnnData(function(a){var el=document.getElementById('annList');if(!a.length){el.innerHTML='<div class="empty-state">Belum ada pengumuman.</div>';return}el.innerHTML=a.map(function(x){return '<div class="ai"><h4>'+typeBadge(x.type)+' '+x.title+'</h4><p>'+x.message+'</p><div class="d"><i class="far fa-clock"></i> '+fmtDate(x.createdAt)+'</div></div>'}).join('')})}
+function renderHomeAnn(){
+  loadAnnData(function(a){
+    var el=document.getElementById('homeAnn');
+    if(!a.length){el.innerHTML='<div class="ann-empty">Belum ada pengumuman.</div>';return}
+    var x=a[0];
+    el.innerHTML='<div class="t">'+typeBadge(x.type)+' '+x.title+'</div>'+x.message+'<div class="d"><i class="far fa-calendar"></i> '+fmtDate(x.createdAt)+'</div>';
+  });
+}
+function loadAnn(){
+  loadAnnData(function(a){
+    var el=document.getElementById('annList');
+    if(!a.length){el.innerHTML='<div class="empty-state">Belum ada pengumuman.</div>';return}
+    var h='';
+    for(var i=0;i<a.length;i++){var x=a[i];h+='<div class="ai"><h4>'+typeBadge(x.type)+' '+x.title+'</h4><p>'+x.message+'</p><div class="d"><i class="far fa-clock"></i> '+fmtDate(x.createdAt)+'</div></div>'}
+    el.innerHTML=h;
+  });
+}
 
+// ===== APK =====
 function getApk(){
   return new Promise(function(resolve){
     var cached=getCached('apk',30*60*1000);
     if(cached){resolve(cached);return}
     db.collection('settings').doc('apk').get().then(function(d){
-      if(d.exists){cachedApk=d.data();localStorage.setItem('apk',JSON.stringify(cachedApk));setCached('apk',cachedApk);resolve(cachedApk)}
-      else{var ls=JSON.parse(localStorage.getItem('apk')||'{}');resolve(ls)}
+      if(d.exists){var a=d.data();setCached('apk',a);localStorage.setItem('apk',JSON.stringify(a));resolve(a)}
+      else resolve(JSON.parse(localStorage.getItem('apk')||'{}'));
     }).catch(function(){resolve(JSON.parse(localStorage.getItem('apk')||'{}'))});
   });
 }
-function loadApk(){getApk().then(function(a){document.getElementById('aVer').textContent='v'+(a.ver||'-');document.getElementById('qApkV').textContent='v'+(a.ver||'-');document.getElementById('aNote').innerHTML='<i class="fas fa-info-circle"></i> Ukuran: '+(a.size||'-')+(a.note?' • '+a.note:'');if(!a.url){document.getElementById('dlBtn').disabled=true;document.getElementById('dlBtn').innerHTML='<i class="fas fa-ban"></i> APK belum diatur admin'}else{document.getElementById('dlBtn').disabled=false;document.getElementById('dlBtn').innerHTML='<i class="fas fa-download"></i> Download APK Sekarang'}})}
-function downloadAPK(){getApk().then(function(a){if(!a.url){T('❌ APK belum diatur admin!',1);return}var btn=document.getElementById('dlBtn');btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Memulai...';var l=document.createElement('a');l.href=a.url;l.download='DEZSTORE.apk';document.body.appendChild(l);l.click();l.remove();setTimeout(function(){btn.disabled=false;btn.innerHTML='<i class="fas fa-download"></i> Download APK Sekarang';T('✅ Download dimulai!')},1500)})}
+function loadApk(){
+  getApk().then(function(a){
+    document.getElementById('aVer').textContent='v'+(a.ver||'-');
+    document.getElementById('qApkV').textContent='v'+(a.ver||'-');
+    document.getElementById('aNote').innerHTML='<i class="fas fa-info-circle"></i> Ukuran: '+(a.size||'-')+(a.note?' • '+a.note:'');
+    var btn=document.getElementById('dlBtn');
+    if(!a.url){btn.disabled=true;btn.innerHTML='<i class="fas fa-ban"></i> APK belum diatur admin'}
+    else{btn.disabled=false;btn.innerHTML='<i class="fas fa-download"></i> Download APK Sekarang'}
+  });
+}
+function downloadAPK(){
+  getApk().then(function(a){
+    if(!a.url){T('❌ APK belum diatur admin!',1);return}
+    var btn=document.getElementById('dlBtn');
+    btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Memulai...';
+    var l=document.createElement('a');
+    l.href=a.url;l.download='DEZSTORE.apk';
+    document.body.appendChild(l);l.click();l.remove();
+    setTimeout(function(){btn.disabled=false;btn.innerHTML='<i class="fas fa-download"></i> Download APK Sekarang';T('✅ Download dimulai!')},1500);
+  });
+}
 
-function loadServices(){return new Promise(function(resolve){var cached=getCached('services',15*60*1000);if(cached && cached.length>0){SVC=cached;resolve(cached);return}db.collection('services').get().then(function(s){SVC=[];s.forEach(function(d){SVC.push(d.data())});setCached('services',SVC);resolve(SVC)}).catch(function(err){console.log('Services error:',err);resolve(SVC)})})}
+// ===== SERVICES =====
+function loadServices(){
+  return new Promise(function(resolve){
+    var cached=getCached('services',15*60*1000);
+    if(cached&&cached.length>0){SVC=cached;resolve(cached);return}
+    db.collection('services').get().then(function(s){
+      SVC=[];s.forEach(function(d){SVC.push(d.data())});
+      setCached('services',SVC);resolve(SVC);
+    }).catch(function(){resolve(SVC)});
+  });
+}
 
-function setOrderMode(mode){orderMode=mode;document.getElementById('modeSingle').classList.toggle('active',mode==='single');document.getElementById('modeMass').classList.toggle('active',mode==='mass');document.getElementById('singleInput').style.display=mode==='single'?'block':'none';document.getElementById('massInput').style.display=mode==='mass'?'block':'none';oCalc()}
+// ===== ORDER =====
+function setOrderMode(mode){
+  orderMode=mode;
+  document.getElementById('modeSingle').classList.toggle('active',mode==='single');
+  document.getElementById('modeMass').classList.toggle('active',mode==='mass');
+  document.getElementById('singleInput').style.display=mode==='single'?'block':'none';
+  document.getElementById('massInput').style.display=mode==='mass'?'block':'none';
+  oCalc();
+}
+function loadOrder(){
+  loadServices().then(function(){
+    var cats={};
+    SVC.forEach(function(x){if(x.categoryName)cats[x.categoryName]=1});
+    var keys=Object.keys(cats).sort();
+    var h='<option value="">Pilih kategori</option>';
+    for(var i=0;i<keys.length;i++)h+='<option>'+keys[i]+'</option>';
+    document.getElementById('oCat').innerHTML=h;
+    document.getElementById('oSvc').innerHTML='<option value="">Pilih kategori dulu</option>';
+  });
+}
+function oFillSvc(){
+  var c=document.getElementById('oCat').value;
+  if(!c){document.getElementById('oSvc').innerHTML='<option value="">Pilih kategori dulu</option>';oCalc();return}
+  var list=SVC.filter(function(x){return x.categoryName===c});
+  var h='<option value="">Pilih layanan</option>';
+  for(var i=0;i<list.length;i++)h+='<option value="'+i+'">'+list[i].name+' ('+rp(list[i].price)+'/1000)</option>';
+  document.getElementById('oSvc').innerHTML=h;
+  oCalc();
+}
+function oCalc(){
+  var c=document.getElementById('oCat').value;
+  var i=document.getElementById('oSvc').value;
+  if(!c||i===''){document.getElementById('oPrice').value='';document.getElementById('oMinMax').value='';document.getElementById('oTotal').value='Rp 0';return}
+  var list=SVC.filter(function(s){return s.categoryName===c});
+  var x=list[parseInt(i)];
+  if(!x){document.getElementById('oPrice').value='';document.getElementById('oMinMax').value='';document.getElementById('oTotal').value='Rp 0';return}
+  document.getElementById('oPrice').value=rp(x.price);
+  document.getElementById('oMinMax').value=x.min+' - '+x.max;
+  var q=parseInt(document.getElementById('oQty').value)||0;
+  var total=Math.round(x.price*q/1000);
+  if(currentVoucher){
+    if(currentVoucher.type==='percent')total=total-(total*currentVoucher.vl/100);
+    else total=total-currentVoucher.vl;
+    if(total<0)total=0;
+  }
+  document.getElementById('oTotal').value=rp(total);
+}
+function checkVoucher(){
+  var code=document.getElementById('oVoucher').value.trim().toUpperCase();
+  var vi=document.getElementById('vouchInfo');
+  if(!code){T('Masukkan kode voucher!',1);return}
+  function apply(found){
+    if(found){
+      currentVoucher={id:found.id,code:found.code,type:found.type,vl:found.vl};
+      vi.style.display='block';
+      vi.textContent='✅ Voucher valid! Diskon '+(found.type==='percent'?found.vl+'%':rp(found.vl));
+    }else{
+      T('❌ Voucher tidak ditemukan!',1);
+      currentVoucher=null;
+      vi.style.display='none';
+    }
+    oCalc();
+  }
+  var cached=getCached('vouchers',10*60*1000);
+  if(cached){apply(cached.find(function(v){return v.code===code&&v.active!==false}));return}
+  db.collection('vouchers').get().then(function(s){
+    var vchs=[];
+    s.forEach(function(d){var x=d.data();x.id=d.id;if(x.active!==false)vchs.push(x)});
+    setCached('vouchers',vchs);
+    apply(vchs.find(function(v){return v.code===code}));
+  }).catch(function(){apply(null)});
+}
+function submitOrder(){
+  if(!ME){T('Silakan login!',1);return}
+  var c=document.getElementById('oCat').value;
+  var i=document.getElementById('oSvc').value;
+  if(!c||i===''){T('Pilih layanan yang valid!',1);return}
+  var list=SVC.filter(function(s){return s.categoryName===c});
+  var x=list[parseInt(i)];
+  if(!x){T('Layanan tidak valid!',1);return}
+  if(orderMode==='single'){
+    var link=document.getElementById('oLink').value.trim();
+    var q=parseInt(document.getElementById('oQty').value)||0;
+    if(!link||!q){T('Lengkapi link dan jumlah!',1);return}
+    if(q<x.min||q>x.max){T('Jumlah harus '+x.min+' - '+x.max,1);return}
+    processSingleOrder(x,link,q);
+  }else{
+    var data=document.getElementById('oMassData').value.trim();
+    if(!data){T('Isi data mass order!',1);return}
+    processMassOrder(x,data);
+  }
+}
+function processSingleOrder(x,link,q){
+  var total=Math.round(x.price*q/1000);
+  if(currentVoucher){
+    if(currentVoucher.type==='percent')total=Math.round(total-(total*currentVoucher.vl/100));
+    else total=Math.round(total-currentVoucher.vl);
+    if(total<0)total=0;
+  }
+  if(total>ME.balance){T('Saldo tidak cukup!',1);return}
+  var vc=currentVoucher;
+  db.runTransaction(function(t){
+    return t.get(db.collection('users').doc(ME.id)).then(function(u){
+      if((u.data().balance||0)<total)throw 'Saldo kurang';
+      t.update(db.collection('users').doc(ME.id),{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});
+      var od={userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+      if(vc){od.voucherUsed=vc.code;t.update(db.collection('vouchers').doc(vc.id),{used:firebase.firestore.FieldValue.increment(1)})}
+      t.add(db.collection('orders'),od);
+    });
+  }).then(function(){
+    T('✅ Order berhasil!');
+    currentVoucher=null;
+    document.getElementById('oVoucher').value='';
+    document.getElementById('vouchInfo').style.display='none';
+    document.getElementById('oLink').value='';
+    document.getElementById('oQty').value='';
+    oCalc();
+    go('hist',document.querySelectorAll('.mi')[2]);
+  }).catch(function(e){T('❌ '+e,1)});
+}
+function processMassOrder(x,data){
+  var lines=data.split('\n').filter(function(l){return l.trim()!==''});
+  if(lines.length>20){T('Maksimal 20 order per batch!',1);return}
+  T('Memproses '+lines.length+' order...','i');
+  var idx=0,success=0,fail=0;
+  function processNext(){
+    if(idx>=lines.length){
+      T('✅ Selesai! Berhasil: '+success+', Gagal: '+fail,fail>0?'w':'');
+      document.getElementById('oMassData').value='';
+      go('hist',document.querySelectorAll('.mi')[2]);
+      return;
+    }
+    var parts=lines[idx].split('|').map(function(s){return s.trim()});
+    idx++;
+    if(parts.length!==2){fail++;processNext();return}
+    var link=parts[0],q=parseInt(parts[1]);
+    if(!link||!q||q<x.min||q>x.max){fail++;processNext();return}
+    var total=Math.round(x.price*q/1000);
+    db.runTransaction(function(t){
+      return t.get(db.collection('users').doc(ME.id)).then(function(u){
+        if((u.data().balance||0)<total)throw 'Saldo kurang';
+        t.update(db.collection('users').doc(ME.id),{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});
+        t.add(db.collection('orders'),{userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+      });
+    }).then(function(){success++;processNext()}).catch(function(){fail++;processNext()});
+  }
+  processNext();
+}
 
-function loadOrder(){loadServices().then(function(){var cats={};SVC.forEach(function(x){if(x.categoryName) cats[x.categoryName]=1});var catKeys=Object.keys(cats).sort();document.getElementById('oCat').innerHTML='<option value="">Pilih kategori</option>'+catKeys.map(function(c){return '<option>'+c+'</option>'}).join('');document.getElementById('oSvc').innerHTML='<option value="">Pilih kategori dulu</option>'})}
-function oFillSvc(){var c=document.getElementById('oCat').value;if(!c){document.getElementById('oSvc').innerHTML='<option value="">Pilih kategori dulu</option>';oCalc();return}var list=SVC.filter(function(x){return x.categoryName===c});document.getElementById('oSvc').innerHTML='<option value="">Pilih layanan</option>'+list.map(function(x,i){return '<option value="'+i+'">'+x.name+' (Rp '+rp(x.price)+'/1000)</option>'}).join('');oCalc()}
-function oCalc(){var c=document.getElementById('oCat').value,i=document.getElementById('oSvc').value;if(!c||i===''){document.getElementById('oPrice').value='';document.getElementById('oMinMax').value='';document.getElementById('oTotal').value='Rp 0';return}var list=SVC.filter(function(s){return s.categoryName===c});var x=list[parseInt(i)];if(!x){document.getElementById('oPrice').value='';document.getElementById('oMinMax').value='';document.getElementById('oTotal').value='Rp 0';return}document.getElementById('oPrice').value=rp(x.price);document.getElementById('oMinMax').value=x.min+' - '+x.max;var q=parseInt(document.getElementById('oQty').value)||0;var total=Math.round(x.price*q/1000);if(currentVoucher){if(currentVoucher.type==='percent') total=total-(total*currentVoucher.vl/100);else total=total-currentVoucher.vl;if(total<0) total=0}document.getElementById('oTotal').value=rp(total)}
+// ===== HISTORY & MUTASI =====
+function statusBadge(st){var m={completed:'c',cancelled:'x',processing:'w'};return '<span class="bad '+(m[st]||'p')+'">'+st+'</span>'}
+function loadHist(){
+  if(!ME){document.getElementById('histTb').innerHTML='<tr><td colspan="5" class="empty-state">Silakan login</td></tr>';return}
+  db.collection('orders').where('userId','==',ME.id).get().then(function(s){
+    var rows=[];
+    s.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()))});
+    rows.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});
+    var h='';
+    for(var i=0;i<rows.length;i++){var o=rows[i];h+='<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td>'+statusBadge(o.status)+'</td></tr>'}
+    document.getElementById('histTb').innerHTML=h||'<tr><td colspan="5" class="empty-state">Belum ada order</td></tr>';
+  }).catch(function(e){document.getElementById('histTb').innerHTML='<tr><td colspan="5" class="empty-state">Error: '+e.message+'</td></tr>'});
+}
+function loadMutasi(){
+  if(!ME){document.getElementById('mutTb').innerHTML='<tr><td colspan="3" class="empty-state">Silakan login</td></tr>';return}
+  Promise.all([
+    db.collection('deposits').where('userId','==',ME.id).get(),
+    db.collection('orders').where('userId','==',ME.id).get()
+  ]).then(function(r){
+    var mut=[];
+    r[0].forEach(function(d){var x=d.data();if(x.status==='approved')mut.push({date:x.createdAt,desc:'Deposit '+x.methodName,amount:x.amount,plus:true})});
+    r[1].forEach(function(d){var x=d.data();mut.push({date:x.createdAt,desc:'Order #'+d.id.substring(0,6)+' ('+x.serviceName+')',amount:x.total,plus:false})});
+    mut.sort(function(a,b){var ta=a.date&&a.date.toMillis?a.date.toMillis():0;var tb=b.date&&b.date.toMillis?b.date.toMillis():0;return tb-ta});
+    var h='';
+    for(var i=0;i<mut.length;i++){
+      var m=mut[i];
+      var dd=m.date&&m.date.toDate?m.date.toDate():new Date();
+      var ds=dd.toLocaleDateString('id-ID')+' '+dd.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+      var col=m.plus?'var(--ok)':'var(--err)';
+      h+='<tr><td style="font-size:.7rem">'+ds+'</td><td>'+m.desc+'</td><td style="color:'+col+';font-weight:600">'+(m.plus?'+':'-')+rp(m.amount)+'</td></tr>';
+    }
+    document.getElementById('mutTb').innerHTML=h||'<tr><td colspan="3" class="empty-state">Belum ada mutasi</td></tr>';
+  }).catch(function(e){document.getElementById('mutTb').innerHTML='<tr><td colspan="3" class="empty-state">Error: '+e.message+'</td></tr>'});
+}
 
-function checkVoucher(){var code=document.getElementById('oVoucher').value.trim().toUpperCase();if(!code){T('Masukkan kode voucher!',1);return}var cached=getCached('vouchers',10*60*1000);if(cached){var found=cached.find(function(v){return v.code===code && v.active!==false});if(found){currentVoucher={id:found.id,code:found.code,type:found.type,vl:found.vl};document.getElementById('vouchInfo').style.display='block';document.getElementById('vouchInfo').textContent='✅ Voucher valid! Diskon '+(found.type==='percent'?found.vl+'%':'Rp '+found.vl);oCalc()}else{T('❌ Voucher tidak ditemukan!',1);currentVoucher=null;document.getElementById('vouchInfo').style.display='none';oCalc()}return}db.collection('vouchers').get().then(function(s){var vchs=[];s.forEach(function(d){var x=d.data();x.id=d.id;if(x.active!==false) vchs.push(x)});setCached('vouchers',vchs);var found=vchs.find(function(v){return v.code===code});if(found){currentVoucher={id:found.id,code:found.code,type:found.type,vl:found.vl};document.getElementById('vouchInfo').style.display='block';document.getElementById('vouchInfo').textContent='✅ Voucher valid! Diskon '+(found.type==='percent'?found.vl+'%':'Rp '+found.vl)}else{T('❌ Voucher tidak ditemukan!',1);currentVoucher=null;document.getElementById('vouchInfo').style.display='none'}oCalc()})}
+// ===== DEPOSIT =====
+function loadDep(){
+  var cached=getCached('payment',10*60*1000);
+  if(cached){renderPayment(cached);return}
+  db.collection('settings').doc('payment').get().then(function(d){
+    var p=(d.exists&&d.data())||{};setCached('payment',p);renderPayment(p);
+  }).catch(function(){});
+}
+function renderPayment(p){
+  var ms=[['qris','QRIS'],['dana','DANA'],['gopay','GoPay'],['ovo','OVO'],['shopeepay','ShopeePay'],['bca','BCA']];
+  var h='';
+  for(var i=0;i<ms.length;i++)h+='<div class="cd" style="margin:0;padding:.6rem"><b style="font-size:.8rem">'+ms[i][1]+'</b><br><small style="color:var(--s);font-size:.7rem;word-break:break-all">'+(p[ms[i][0]]||'-')+'</small></div>';
+  document.getElementById('payList').innerHTML=h;
+}
+function submitDep(){
+  if(!ME){T('Silakan login!',1);return}
+  var amt=parseInt(document.getElementById('dAmt').value)||0;
+  var f=document.getElementById('dProof').files[0];
+  if(amt<10000){T('Minimal deposit Rp 10.000!',1);return}
+  function go2(proof){
+    db.collection('deposits').add({userId:ME.id,username:ME.username,method:'manual',methodName:'Transfer',amount:amt,proof:proof||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+      T('✅ Permintaan deposit dikirim!');
+      document.getElementById('dAmt').value='';
+      document.getElementById('dProof').value='';
+    }).catch(function(e){T('❌ '+e.message,1)});
+  }
+  if(f){var r=new FileReader();r.onload=function(e){go2(e.target.result)};r.readAsDataURL(f)}else go2('');
+}
 
-function submitOrder(){if(!ME){T('Silakan login!',1);return}var c=document.getElementById('oCat').value,i=document.getElementById('oSvc').value;if(!c||i===''){T('Pilih layanan yang valid!',1);return}var list=SVC.filter(function(s){return s.categoryName===c});var x=list[parseInt(i)];if(!x){T('Layanan tidak valid!',1);return}if(orderMode==='single'){var link=document.getElementById('oLink').value.trim(),q=parseInt(document.getElementById('oQty').value)||0;if(!link||!q){T('Lengkapi link dan jumlah!',1);return}if(q<x.min||q>x.max){T('Jumlah harus '+x.min+' - '+x.max,1);return}processSingleOrder(x,link,q)}else{var data=document.getElementById('oMassData').value.trim();if(!data){T('Isi data mass order!',1);return}processMassOrder(x,data)}}
+// ===== PROFILE =====
+function loadProfile(){
+  if(!ME)return;
+  db.collection('users').doc(ME.id).get().then(function(d){
+    var x=d.data();
+    document.getElementById('pUser').value=x.username;
+    document.getElementById('pEmail').value=x.email||'-';
+    document.getElementById('pWa').value=x.whatsapp||'-';
+    var base=window.location.href.split('?')[0];
+    document.getElementById('refLink').value=base+'?ref='+x.username;
+  }).catch(function(){});
+  db.collection('users').where('referredBy','==',ME.username).get().then(function(s){
+    document.getElementById('refCount').textContent=s.size;
+    document.getElementById('refBonus').textContent=rp(s.size*5000);
+  }).catch(function(){});
+}
+function copyRef(){var el=document.getElementById('refLink');el.select();try{document.execCommand('copy');T('✅ Link referral disalin!')}catch(e){T('Salin manual',1)}}
 
-function processSingleOrder(x,link,q){var total=Math.round(x.price*q/1000);if(currentVoucher){if(currentVoucher.type==='percent') total=Math.round(total-(total*currentVoucher.vl/100));else total=Math.round(total-currentVoucher.vl);if(total<0) total=0}if(total>ME.balance){T('Saldo tidak cukup!',1);return}db.runTransaction(function(t){return t.get(db.collection('users').doc(ME.id)).then(function(u){if((u.data().balance||0)<total) throw 'Saldo kurang';t.update(db.collection('users').doc(ME.id),{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});var orderData={userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(currentVoucher){orderData.voucherUsed=currentVoucher.code;t.update(db.collection('vouchers').doc(currentVoucher.id),{used:firebase.firestore.FieldValue.increment(1)})}t.add(db.collection('orders'),orderData)})}).then(function(){T('✅ Order berhasil!');currentVoucher=null;document.getElementById('oVoucher').value='';document.getElementById('vouchInfo').style.display='none';document.getElementById('oLink').value='';document.getElementById('oQty').value='';oCalc();go('hist',document.querySelectorAll('.mi')[2])}).catch(function(e){T('❌ '+e,1)})}
-
-function processMassOrder(x,data){var lines=data.split('\n').filter(function(l){return l.trim()!==''});if(lines.length>20){T('Maksimal 20 order per batch!',1);return}T('Memproses '+lines.length+' order...','i');var idx=0,success=0,fail=0;function processNext(){if(idx>=lines.length){T('✅ Selesai! Berhasil: '+success+', Gagal: '+fail,fail>0?'w':'ok');document.getElementById('oMassData').value='';go('hist',document.querySelectorAll('.mi')[2]);return}var line=lines[idx];idx++;var parts=line.split('|').map(function(s){return s.trim()});if(parts.length!==2){fail++;processNext();return}var link=parts[0],q=parseInt(parts[1]);if(!link||!q||q<x.min||q>x.max){fail++;processNext();return}var total=Math.round(x.price*q/1000);db.runTransaction(function(t){return t.get(db.collection('users').doc(ME.id)).then(function(u){if((u.data().balance||0)<total) throw 'Saldo kurang';t.update(db.collection('users').doc(ME.id),{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});t.add(db.collection('orders'),{userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()})})}).then(function(){success++;processNext()}).catch(function(){fail++;processNext()})}processNext()}
-
-function loadHist(){if(!ME){document.getElementById('histTb').innerHTML='<tr><td colspan="5" class="empty-state">Silakan login</td></tr>';return}db.collection('orders').where('userId','==',ME.id).get().then(function(s){var rows=[];s.forEach(function(d){rows.push({id:d.id,...d.data()})});rows.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});var h='';rows.forEach(function(o){h+='<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>'});document.getElementById('histTb').innerHTML=h||'<tr><td colspan="5" class="empty-state">Belum ada order</td></tr>'}).catch(function(err){document.getElementById('histTb').innerHTML='<tr><td colspan="5" class="empty-state">Error: '+err.message+'</td></tr>'})}
-
-function loadMutasi(){if(!ME){document.getElementById('mutTb').innerHTML='<tr><td colspan="3" class="empty-state">Silakan login</td></tr>';return}Promise.all([db.collection('deposits').where('userId','==',ME.id).get(),db.collection('orders').where('userId','==',ME.id).get()]).then(function(results){var deps=results[0],ords=results[1],mut=[];deps.forEach(function(d){var x=d.data();if(x.status==='approved') mut.push({date:x.createdAt,type:'Deposit',desc:'Deposit '+x.methodName,amount:x.amount,isPlus:true})});ords.forEach(function(d){var x=d.data();mut.push({date:x.createdAt,type:'Order',desc:'Order #'+d.id.substring(0,6)+' ('+x.serviceName+')',amount:x.total,isPlus:false})});mut.sort(function(a,b){var ta=a.date&&a.date.toMillis?a.date.toMillis():0;var tb=b.date&&b.date.toMillis?b.date.toMillis():0;return tb-ta});var h='';mut.forEach(function(m){var d=m.date&&m.date.toDate?m.date.toDate():new Date();var dateStr=d.toLocaleDateString('id-ID')+' '+d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});var amountStr=(m.isPlus?'+':'-') + rp(m.amount);var color=m.isPlus?'var(--ok)':'var(--err)';h+='<tr><td style="font-size:.7rem">'+dateStr+'</td><td>'+m.desc+'</td><td style="color:'+color+';font-weight:600">'+amountStr+'</td></tr>'});document.getElementById('mutTb').innerHTML=h||'<tr><td colspan="3" class="empty-state">Belum ada mutasi</td></tr>'}).catch(function(err){document.getElementById('mutTb').innerHTML='<tr><td colspan="3" class="empty-state">Error: '+err.message+'</td></tr>'})}
-
-function loadDep(){var cached=getCached('payment',10*60*1000);if(cached){renderPayment(cached);return}db.collection('settings').doc('payment').get().then(function(d){var p=(d.exists&&d.data())||{};setCached('payment',p);renderPayment(p)})}
-function renderPayment(p){var ms=[['qris','QRIS'],['dana','DANA'],['gopay','GoPay'],['ovo','OVO'],['shopeepay','ShopeePay'],['bca','BCA']];document.getElementById('payList').innerHTML=ms.map(function(m){return '<div class="cd" style="margin:0;padding:.6rem"><b style="font-size:.8rem">'+m[1]+'</b><br><small style="color:var(--s);font-size:.7rem;word-break:break-all">'+(p[m[0]]||'-')+'</small></div>'}).join('')}
-function submitDep(){if(!ME){T('Silakan login!',1);return}var amt=parseInt(document.getElementById('dAmt').value)||0,f=document.getElementById('dProof').files[0];if(amt<10000){T('Minimal deposit Rp 10.000!',1);return}var go2=function(proof){db.collection('deposits').add({userId:ME.id,username:ME.username,method:'manual',methodName:'Transfer',amount:amt,proof:proof||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){T('✅ Permintaan deposit dikirim!');document.getElementById('dAmt').value='';document.getElementById('dProof').value=''})};if(f){var r=new FileReader();r.onload=function(e){go2(e.target.result)};r.readAsDataURL(f)}else go2('')}
-
-function loadProfile(){if(!ME) return;db.collection('users').doc(ME.id).get().then(function(d){var x=d.data();document.getElementById('pUser').value=x.username;document.getElementById('pEmail').value=x.email||'-';document.getElementById('pWa').value=x.whatsapp||'-';var baseUrl=window.location.href.split('?')[0];document.getElementById('refLink').value=baseUrl+'?ref='+x.username});db.collection('users').where('referredBy','==',ME.username).get().then(function(s){document.getElementById('refCount').textContent=s.size;document.getElementById('refBonus').textContent='Rp '+(s.size*5000).toLocaleString('id-ID')})}
-function copyRef(){var el=document.getElementById('refLink');el.select();document.execCommand('copy');T('✅ Link referral disalin!')}
-
+// ===== HELP =====
 function loadHelp(){applySite()}
-function submitTiket(){if(!ME){T('Silakan login!',1);return}var s=document.getElementById('tSub').value.trim(),m=document.getElementById('tMsg').value.trim();if(!s||!m){T('Lengkapi subjek & pesan!',1);return}db.collection('tickets').add({userId:ME.id,username:ME.username,subject:s,message:m,status:'open',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){T('✅ Tiket terkirim!');document.getElementById('tSub').value='';document.getElementById('tMsg').value=''})}
+function submitTiket(){
+  if(!ME){T('Silakan login!',1);return}
+  var s=document.getElementById('tSub').value.trim();
+  var m=document.getElementById('tMsg').value.trim();
+  if(!s||!m){T('Lengkapi subjek & pesan!',1);return}
+  db.collection('tickets').add({userId:ME.id,username:ME.username,subject:s,message:m,status:'open',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(function(){
+    T('✅ Tiket terkirim!');
+    document.getElementById('tSub').value='';
+    document.getElementById('tMsg').value='';
+  }).catch(function(e){T('❌ '+e.message,1)});
+}
 
-// ✅ CHECK UPDATE YANG SUDAH DIPERBAIKI
+// ===== UPDATE =====
 function checkUpdate(){
   db.collection('settings').doc('version').get().then(function(d){
-    if(!d.exists) return;
+    if(!d.exists)return;
     var v=d.data();
     var cur=localStorage.getItem('dez_appver')||'0';
-    if(v.version && v.version!==cur){
+    if(v.version&&v.version!==cur){
       getApk().then(function(apk){
         var msg=(v.message||'Ada versi baru!')+' (v'+v.version+')';
+        var act=document.getElementById('updBtnAction');
         if(!apk.url){
-          document.getElementById('updMsg').innerHTML=msg+'<br><br><small style="color:var(--warn)"><i class="fas fa-exclamation-triangle"></i> APK belum tersedia. Silakan hubungi admin untuk update manual.</small>';
-          document.getElementById('updBtnAction').innerHTML='<button class="bt bo bb" onclick="closeM(\'mUpd\')"><i class="fas fa-times"></i> Tutup</button>';
-        } else {
+          document.getElementById('updMsg').innerHTML=msg+'<br><br><small style="color:var(--warn)"><i class="fas fa-exclamation-triangle"></i> APK belum tersedia. Hubungi admin.</small>';
+          act.innerHTML='<button class="bt bo bb" onclick="closeM(\'mUpd\')">Tutup</button>';
+        }else{
           document.getElementById('updMsg').textContent=msg;
-          document.getElementById('updBtnAction').innerHTML='<button class="bt bg bb" onclick="downloadAPK();closeM(\'mUpd\')"><i class="fas fa-download"></i> Update via APK</button><button class="bt bo bb" style="margin-top:.5rem" onclick="closeM(\'mUpd\')"><i class="fas fa-clock"></i> Nanti Saja</button>';
+          act.innerHTML='<button class="bt bg bb" onclick="downloadAPK();closeM(\'mUpd\')"><i class="fas fa-download"></i> Update via APK</button><button class="bt bo bb" style="margin-top:.5rem" onclick="closeM(\'mUpd\')">Nanti</button>';
         }
         document.getElementById('mUpd').classList.add('on');
       });
     }
-  }).catch(function(err){console.log('Update check error:',err)});
+  }).catch(function(){});
 }
 
+// ===== HOME =====
 function loadHome(){
   document.getElementById('helloName').textContent=ME?ME.username:'Member';
-  renderHomeAnn();loadApk();
-  if(!ME) return;
-  db.collection('users').doc(ME.id).onSnapshot(function(d){if(d.exists){ME.balance=d.data().balance||0;document.getElementById('hBal').textContent=rp(ME.balance);document.getElementById('navBal').textContent=rp(ME.balance)}});
-  db.collection('orders').where('userId','==',ME.id).onSnapshot(function(s){var tot=s.size,p=0,c=0;s.forEach(function(d){var st=d.data().status;if(st==='pending')p++;if(st==='completed')c++});document.getElementById('hOrd').textContent=tot;document.getElementById('hPend').textContent=p;document.getElementById('hDone').textContent=c;var rows=[];s.forEach(function(d){rows.push({id:d.id,...d.data()})});rows.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});document.getElementById('hTb').innerHTML=rows.slice(0,4).map(function(o){return '<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>'}).join('')||'<tr><td colspan="4" class="empty-state">Belum ada order</td></tr>'})}
+  renderHomeAnn();
+  loadApk();
+  if(!ME)return;
+  db.collection('users').doc(ME.id).onSnapshot(function(d){
+    if(d.exists){
+      ME.balance=d.data().balance||0;
+      document.getElementById('hBal').textContent=rp(ME.balance);
+      document.getElementById('navBal').textContent=rp(ME.balance);
+    }
+  });
+  db.collection('orders').where('userId','==',ME.id).onSnapshot(function(s){
+    var tot=s.size,p=0,c=0;
+    s.forEach(function(d){var st=d.data().status;if(st==='pending')p++;if(st==='completed')c++});
+    document.getElementById('hOrd').textContent=tot;
+    document.getElementById('hPend').textContent=p;
+    document.getElementById('hDone').textContent=c;
+    var rows=[];
+    s.forEach(function(d){rows.push(Object.assign({id:d.id},d.data()))});
+    rows.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});
+    var h='';
+    var top=rows.slice(0,4);
+    for(var i=0;i<top.length;i++){var o=top[i];h+='<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+statusBadge(o.status)+'</td></tr>'}
+    document.getElementById('hTb').innerHTML=h||'<tr><td colspan="4" class="empty-state">Belum ada order</td></tr>';
+  });
 }
 
+// ===== BOOT =====
 function boot(){
-  applyTheme();applySite();renderHomeAnn();loadApk();checkUpdate();
-  if(!ME) return;
-  document.getElementById('helloName').textContent=ME.username;
-  db.collection('users').doc(ME.id).onSnapshot(function(d){if(d.exists){ME.balance=d.data().balance||0;document.getElementById('hBal').textContent=rp(ME.balance);document.getElementById('navBal').textContent=rp(ME.balance)}});
-  db.collection('orders').where('userId','==',ME.id).onSnapshot(function(s){var tot=s.size,p=0,c=0;s.forEach(function(d){var st=d.data().status;if(st==='pending')p++;if(st==='completed')c++});document.getElementById('hOrd').textContent=tot;document.getElementById('hPend').textContent=p;document.getElementById('hDone').textContent=c;var rows=[];s.forEach(function(d){rows.push({id:d.id,...d.data()})});rows.sort(function(a,b){var ta=a.createdAt&&a.createdAt.toMillis?a.createdAt.toMillis():0;var tb=b.createdAt&&b.createdAt.toMillis?b.createdAt.toMillis():0;return tb-ta});document.getElementById('hTb').innerHTML=rows.slice(0,4).map(function(o){return '<tr><td><b>'+o.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>'}).join('')||'<tr><td colspan="4" class="empty-state">Belum ada order</td></tr>'})}
+  applyTheme();
+  applySite();
+  checkUpdate();
+  loadHome();
 }
 
 if(ME){closeM('mLogin');boot()}else{document.getElementById('liUser').focus()}
 </script>
-</body/>  
-</html>
+</body>
+  </html>
