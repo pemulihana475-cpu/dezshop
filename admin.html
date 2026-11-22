@@ -1,4 +1,4 @@
-<<!DOCTYPE html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -84,9 +84,10 @@ textarea.fc{min-height:60px;resize:vertical}
 <div class="mi" onclick="go('vch',this)"><i class="fas fa-ticket-alt"></i> Voucher</div>
 <div class="lbl">Keuangan</div>
 <div class="mi" onclick="go('pay',this)"><i class="fas fa-credit-card"></i> Payment</div>
-<div class="mi" onclick="go('qrs',this)"><i class="fas fa-qrcode"></i> QRIS</div>
+<div class="mi" onclick="go('qrs',this)"><i class="fas -qrcode"></i> QRIS</div>
 <div class="lbl">Integrasi</div>
 <div class="mi" onclick="go('api',this)"><i class="fas fa-plug"></i> API PPS</div>
+<div class="mi" onclick="go('mrk',this)"><i class="fas fa-percentage"></i> Markup Harga</div>
 <div class="mi" onclick="go('wa',this)"><i class="fab fa-whatsapp"></i> WhatsApp</div>
 <div class="lbl">Pengaturan</div>
 <div class="mi" onclick="go('set',this)"><i class="fas fa-cog"></i> Website</div>
@@ -177,8 +178,35 @@ textarea.fc{min-height:60px;resize:vertical}
 <button class="bt bw" onclick="syncPPS()">Sync</button>
 <div id="apiRes" style="margin-top:.5rem"></div>
 </div>
+</div><div class="pg" id="mrk">
+<h1>💰 Markup Harga</h1>
+<div class="cd">
+<h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Setiap kali klik "Sync PPS", harga akan otomatis naik sesuai persentase di bawah ini.</p>
+<div class="g2">
+  <div class="fg">
+    <label>Persentase Markup (%)</label>
+    <input type="number" class="fc" id="mrkPercent" placeholder="20" value="20">
+  </div>
+  <div class="fg">
+    <label>Pembulatan Harga</label>
+    <select class="fc" id="mrkRound">
+      <option value="0">Tanpa pembulatan</option>
+      <option value="10">Ke puluhan</option>
+      <option value="100" selected>Ke ratusan</option>
+      <option value="500">Ke 500-an</option>
+      <option value="1000">Ke ribuan</option>
+      <option value="5000">Ke 5 ribuan</option>
+    </select>
+  </div>
 </div>
-
+<button class="bt bp" onclick="saveMrk()">💾 Simpan Pengaturan</button>
+<button class="bt bg" onclick="syncPPS()">🔄 Sync PPS dengan Markup</button>
+<div id="mrkInfo" style="margin-top:.8rem;padding:.6rem;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem">
+  <b>Contoh:</b> Harga PPS Rp 6.998 + Markup 20% = Rp 8.400
+</div>
+</div>
+</div>
 <div class="pg" id="wa">
 <h1>📱 WhatsApp</h1>
 <div class="cd"><div class="fg"><label>Token Fonnte</label><input class="fc" id="fntToken"></div><div class="fg"><label>Nomor Admin</label><input class="fc" id="waNum" placeholder="62895..."></div><button class="bt bg" onclick="saveWa()">Simpan</button><button class="bt bp" onclick="testWa()">Test</button><div id="waRes" style="margin-top:.5rem"></div></div>
@@ -273,13 +301,26 @@ if(p!==PW){alert('❌ Salah!');location.href='index.html'}
 // ===== URL API PPS (WAJIB GANTI DENGAN URL CLOUDFLARE WORKER KAMU) =====
 var PPS_URL='https://dezstore-api.dezstore300.workers.dev/';
 
-function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog};if(f[id])f[id]()}
+function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:log:loadLog,mrk:loadMrk};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
 // ===== API PPS =====
+function loadMrk(){
+  db.collection('settings').doc('markup').get().then(d=>{
+    if(d.exists){
+      document.getElementById('mrkPercent').value=d.data().percent||20;
+      document.getElementById('mrkRound').value=d.data().round||100;
+    }
+  });
+}
+function saveMrk(){
+  var p=parseInt(document.getElementById('mrkPercent').value)||20;
+  var r=parseInt(document.getElementById('mrkRound').value)||100;
+  db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')});
+}
 function loadApi(){document.getElementById('apiKey').value=localStorage.getItem('ak')||'';document.getElementById('apiSec').value=localStorage.getItem('sk')||''}
 function saveApi(){localStorage.setItem('ak',document.getElementById('apiKey').value.trim());localStorage.setItem('sk',document.getElementById('apiSec').value.trim());T('✅ API disimpan!')}
 function testApi(){
@@ -295,20 +336,28 @@ function testApi(){
 function syncPPS(){
   var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
   if(!k||!s){T('❌ API belum diset!',1);return}
-  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dengan Cloudflare Worker kamu!',1);return}
-  var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
-  fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-  .then(r=>r.json())
-  .then(d=>{
-    if(d.data){
-      var b=db.batch(),c=0;
-      d.data.forEach(x=>{b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:parseInt(x.price)||0,min:parseInt(x.min)||0,max:parseInt(x.max)||0});c++});
-      b.commit().then(()=>{T('✅ '+c+' layanan disync!');loadSvc()});
-    } else T('❌ Gagal ambil data!',1);
-  })
-  .catch(e=>T('❌ '+e.message,1));
+  db.collection('settings').doc('markup').get().then(m=>{
+    var MARKUP_PERCENT=20, ROUND_UP=100;
+    if(m.exists){MARKUP_PERCENT=m.data().percent||20;ROUND_UP=m.data().round||100}
+    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
+    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.data){
+        var b=db.batch(),c=0;
+        d.data.forEach(x=>{
+          var hargaAsli=parseInt(x.price)||0;
+          var hargaBaru=hargaAsli+(hargaAsli*MARKUP_PERCENT/100);
+          if(ROUND_UP>0){hargaBaru=Math.ceil(hargaBaru/ROUND_UP)*ROUND_UP}
+          b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hargaBaru,min:parseInt(x.min)||0,max:parseInt(x.max)||0});
+          c++;
+        });
+        b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MARKUP_PERCENT+'%!');loadSvc()});
+      } else T('❌ Gagal ambil data!',1);
+    })
+    .catch(e=>T('❌ '+e.message,1));
+  });
 }
-
 // ===== DASHBOARD =====
 function loadDash(){db.collection('users').get().then(s=>document.getElementById('d1').textContent=s.size);db.collection('orders').get().then(s=>{document.getElementById('d2').textContent=s.size;var p=0,c=0;s.forEach(d=>{if(d.data().status==='pending')p++;if(d.data().status==='completed')c++});document.getElementById('d5').textContent=p;document.getElementById('d6').textContent=c});db.collection('deposits').where('status','==','approved').get().then(s=>{var t=0;s.forEach(d=>t+=(d.data().amount||0));document.getElementById('d3').textContent=s.size;document.getElementById('d4').textContent='Rp '+t.toLocaleString('id-ID')})}
 
@@ -484,4 +533,4 @@ function chgPass(){var o=document.getElementById('pOld').value,n=document.getEle
 loadDash();
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>                                                                    </htm
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
