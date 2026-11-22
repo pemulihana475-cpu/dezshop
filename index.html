@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEZSTORE - SMM Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>DEZSTORE - SMM Panel Termurah</title>
 <link rel="manifest" id="manifestLink">
 <meta name="theme-color" content="#3b82f6">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,46 +16,47 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 :root{--secondary:#3b82f6;--accent:#60a5fa;--darker:#0a0a1a;--dark:#111128;--card:#1a1a2e;--border:rgba(255,255,255,0.08);--muted:#9ca3af;--success:#10b981;--danger:#ef4444;--warning:#f59e0b}
-body{background:var(--darker);color:#fff;min-height:100vh}
+body{background:var(--darker);color:#fff;min-height:100vh;overflow-x:hidden}
 .navbar{position:fixed;top:0;left:0;right:0;height:60px;background:var(--dark);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:1000}
 .navbar-brand{display:flex;align-items:center;gap:.5rem;font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:900}
 .logo-icon{width:35px;height:35px;background:linear-gradient(135deg,var(--secondary),var(--accent));border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .logo-icon img{width:100%;height:100%;object-fit:cover}
-.navbar-user{display:flex;align-items:center;gap:1rem}
-.balance-badge{background:linear-gradient(135deg,var(--success),#059669);padding:.4rem 1rem;border-radius:50px;font-size:.85rem;font-weight:600}
-.btn-icon{background:var(--card);border:1px solid var(--border);color:#fff;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.navbar-user{display:flex;align-items:center;gap:.8rem}
+.balance-badge{background:linear-gradient(135deg,var(--success),#059669);padding:.4rem .8rem;border-radius:50px;font-size:.8rem;font-weight:600}
+.btn-icon{background:var(--card);border:1px solid var(--border);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem}
 .sidebar{position:fixed;top:60px;left:0;bottom:0;width:260px;background:var(--dark);border-right:1px solid var(--border);overflow-y:auto;z-index:999;transition:.3s}
 .sidebar-menu{padding:1rem 0}
 .menu-label{padding:.5rem 1.5rem;font-size:.7rem;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.menu-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.5rem;color:#cbd5e1;cursor:pointer;transition:.2s;border-left:3px solid transparent}
+.menu-item{display:flex;align-items:center;gap:.8rem;padding:.8rem 1.5rem;color:#cbd5e1;cursor:pointer;transition:.2s;border-left:3px solid transparent;font-size:.9rem}
 .menu-item:hover{background:rgba(59,130,246,0.1);color:#fff}
 .menu-item.active{background:rgba(59,130,246,0.15);color:var(--accent);border-left-color:var(--accent)}
 .menu-item i{width:20px;text-align:center}
-.main-content{margin-left:260px;margin-top:60px;padding:1.5rem;min-height:calc(100vh - 60px)}
+.main-content{margin-left:260px;margin-top:60px;padding:1.2rem;min-height:calc(100vh - 60px)}
 .page{display:none}
 .page.active{display:block;animation:fadeIn .3s}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.page-header{margin-bottom:1.5rem}
-.page-header h1{font-size:1.5rem;font-weight:700}
-.page-header p{color:var(--muted);font-size:.9rem;margin-top:.3rem}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.page-header{margin-bottom:1.2rem}
+.page-header h1{font-size:1.4rem;font-weight:700}
+.page-header p{color:var(--muted);font-size:.85rem;margin-top:.2rem}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;margin-bottom:1rem}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.2rem;display:flex;align-items:center;gap:1rem}
-.stat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1.2rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:.8rem}
+.stat-icon{width:45px;height:45px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
 .stat-icon.blue{background:rgba(59,130,246,0.2);color:var(--secondary)}
 .stat-icon.green{background:rgba(16,185,129,0.2);color:var(--success)}
 .stat-icon.orange{background:rgba(245,158,11,0.2);color:var(--warning)}
 .stat-icon.red{background:rgba(239,68,68,0.2);color:var(--danger)}
-.stat-info h3{font-size:1.5rem;font-weight:700}
-.stat-info p{color:var(--muted);font-size:.85rem}
-.form-group{margin-bottom:1rem}
-.form-group label{display:block;margin-bottom:.5rem;font-weight:500;color:#cbd5e1;font-size:.9rem}
-.form-control{width:100%;padding:.8rem;background:var(--darker);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:.95rem}
+.stat-icon.purple{background:rgba(168,85,247,0.2);color:#a855f7}
+.stat-info h3{font-size:1.2rem;font-weight:700}
+.stat-info p{color:var(--muted);font-size:.75rem}
+.form-group{margin-bottom:.9rem}
+.form-group label{display:block;margin-bottom:.4rem;font-weight:500;color:#cbd5e1;font-size:.85rem}
+.form-control{width:100%;padding:.7rem;background:var(--darker);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:.9rem}
 .form-control:focus{outline:none;border-color:var(--accent)}
 select.form-control{appearance:none}
-textarea.form-control{resize:vertical;min-height:100px}
-.btn{padding:.7rem 1.3rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;transition:.2s}
+textarea.form-control{resize:vertical;min-height:90px}
+.btn{padding:.65rem 1.2rem;border-radius:8px;border:none;font-weight:600;cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:.4rem;transition:.2s}
 .btn-primary{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(59,130,246,0.4)}
 .btn-success{background:var(--success);color:#fff}
@@ -63,31 +64,41 @@ textarea.form-control{resize:vertical;min-height:100px}
 .btn-block{width:100%;justify-content:center}
 .table-responsive{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{background:var(--darker);padding:.8rem;text-align:left;color:var(--accent);font-size:.85rem;font-weight:600}
-td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cbd5e1}
-.badge-status{padding:.3rem .7rem;border-radius:50px;font-size:.75rem;font-weight:600;display:inline-block}
+th{background:var(--darker);padding:.7rem;text-align:left;color:var(--accent);font-size:.8rem;font-weight:600}
+td{padding:.7rem;border-bottom:1px solid var(--border);font-size:.85rem;color:#cbd5e1}
+.badge-status{padding:.25rem .6rem;border-radius:50px;font-size:.7rem;font-weight:600;display:inline-block}
 .badge-pending{background:rgba(245,158,11,0.2);color:var(--warning)}
 .badge-processing{background:rgba(139,92,246,0.2);color:#a78bfa}
 .badge-completed{background:rgba(16,185,129,0.2);color:var(--success)}
 .badge-cancelled{background:rgba(239,68,68,0.2);color:var(--danger)}
 .auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;background:linear-gradient(135deg,var(--darker),var(--dark))}
-.auth-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
-.auth-box h1{font-family:'Orbitron',sans-serif;font-size:1.8rem;text-align:center;margin-bottom:.5rem;background:linear-gradient(135deg,var(--secondary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
-.auth-box .subtitle{text-align:center;color:var(--muted);margin-bottom:1.5rem;font-size:.9rem}
-.auth-error{background:rgba(239,68,68,0.1);border:1px solid var(--danger);color:var(--danger);padding:.8rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem;display:none}
-.auth-success{background:rgba(16,185,129,0.1);border:1px solid var(--success);color:var(--success);padding:.8rem;border-radius:8px;margin-bottom:1rem;font-size:.9rem;display:none}
-.auth-switch{text-align:center;margin-top:1rem;color:var(--muted);font-size:.9rem}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.8rem;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+.auth-box h1{font-family:'Orbitron',sans-serif;font-size:1.6rem;text-align:center;margin-bottom:.4rem;background:linear-gradient(135deg,var(--secondary),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+.auth-box .subtitle{text-align:center;color:var(--muted);margin-bottom:1.2rem;font-size:.85rem}
+.auth-error{background:rgba(239,68,68,0.1);border:1px solid var(--danger);color:var(--danger);padding:.7rem;border-radius:8px;margin-bottom:.8rem;font-size:.85rem;display:none}
+.auth-success{background:rgba(16,185,129,0.1);border:1px solid var(--success);color:var(--success);padding:.7rem;border-radius:8px;margin-bottom:.8rem;font-size:.85rem;display:none}
+.auth-switch{text-align:center;margin-top:.8rem;color:var(--muted);font-size:.85rem}
 .auth-switch a{color:var(--accent);cursor:pointer;font-weight:600}
 .qr-display{text-align:center;padding:1rem;background:var(--darker);border-radius:12px;margin-bottom:1rem;border:2px solid var(--accent)}
-.qr-display img{max-width:220px;border-radius:10px}
-.toast{position:fixed;bottom:20px;right:20px;background:var(--success);color:#fff;padding:1rem 1.5rem;border-radius:10px;font-weight:600;z-index:9999;transform:translateY(100px);opacity:0;transition:.3s}
+.qr-display img{max-width:200px;border-radius:10px}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--success);color:#fff;padding:.9rem 1.3rem;border-radius:10px;font-weight:600;font-size:.85rem;z-index:9999;transform:translateY(100px);opacity:0;transition:.3s;max-width:90%}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.error{background:var(--danger)}
 .menu-toggle{display:none;background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer}
-.install-banner{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff;padding:1rem;display:none;align-items:center;justify-content:space-between;z-index:9998;box-shadow:0 -5px 20px rgba(0,0,0,0.3)}
-.install-banner.show{display:flex}
-.install-banner .btn-install{background:#fff;color:var(--secondary);padding:.5rem 1rem;border-radius:8px;border:none;font-weight:700;cursor:pointer}
-.install-banner .btn-close{background:none;border:none;color:#fff;font-size:1.3rem;cursor:pointer;margin-left:.5rem}
+.update-banner{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:.8rem 1rem;display:none;align-items:center;justify-content:space-between;z-index:9998;box-shadow:0 -5px 20px rgba(0,0,0,0.3)}
+.update-banner.show{display:flex}
+.update-banner .btn-update{background:#fff;color:#10b981;padding:.4rem .8rem;border-radius:6px;border:none;font-weight:700;cursor:pointer;font-size:.8rem}
+.update-banner .btn-snooze{background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer}
+.toast-notification{position:fixed;top:75px;right:15px;background:var(--card);border-left:4px solid var(--success);padding:.8rem 1rem;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:9997;transform:translateX(400px);opacity:0;transition:all .3s ease;max-width:300px;font-size:.85rem}
+.toast-notification.show{transform:translateX(0);opacity:1}
+.toast-notification.error{border-left-color:var(--danger)}
+.toast-notification.warning{border-left-color:var(--warning)}
+.refresh-indicator{position:fixed;top:70px;right:15px;background:var(--card);padding:.4rem .8rem;border-radius:50px;font-size:.75rem;color:var(--muted);display:none;align-items:center;gap:.4rem;z-index:9996;border:1px solid var(--border)}
+.refresh-indicator.show{display:flex}
+.refresh-indicator .spinner{width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.referral-card{background:linear-gradient(135deg,var(--secondary),var(--accent));color:#fff;padding:1.2rem;border-radius:12px;margin-bottom:1rem}
+.referral-code{font-size:1.8rem;font-weight:900;letter-spacing:2px;margin:.8rem 0;font-family:'Orbitron',sans-serif}
 @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0}.menu-toggle{display:block}.stats-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -95,10 +106,7 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 
 <div class="auth-page" id="authPage">
 <div class="auth-box">
-<h1>
-  <img src="logo.png" style="height:40px;vertical-align:middle;margin-right:8px">
-  DEZSTORE
-</h1>
+<h1>⚡ DEZSTORE</h1>
 <p class="subtitle" id="authSubtitle">SMM Panel Termurah</p>
 <div class="auth-error" id="authError"></div>
 <div class="auth-success" id="authSuccess"></div>
@@ -121,11 +129,9 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 
 <div id="mainApp" style="display:none">
 <div class="navbar">
-<div style="display:flex;align-items:center;gap:1rem">
+<div style="display:flex;align-items:center;gap:.8rem">
 <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
-<div class="navbar-brand"><div class="logo-icon">
-  <img src="logo.png" style="width:100%;height:100%;object-fit:contain;border-radius:8px">
-</div> DEZSTORE</div>
+<div class="navbar-brand"><div class="logo-icon">⚡</div> DEZSTORE</div>
 </div>
 <div class="navbar-user">
 <div class="balance-badge">💰 Rp <span id="userBalance">0</span></div>
@@ -143,6 +149,8 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 <div class="menu-item" onclick="showPage('deposit')"><i class="fas fa-wallet"></i> Deposit</div>
 <div class="menu-item" onclick="showPage('deposit-history')"><i class="fas fa-history"></i> Riwayat Deposit</div>
 <div class="menu-item" onclick="showPage('pricelist')"><i class="fas fa-tags"></i> Daftar Harga</div>
+<div class="menu-item" onclick="showPage('voucher')"><i class="fas fa-ticket-alt"></i> Voucher</div>
+<div class="menu-item" onclick="showPage('referral')"><i class="fas fa-user-plus"></i> Referral</div>
 <div class="menu-label">Bantuan</div>
 <div class="menu-item" onclick="showPage('ticket')"><i class="fas fa-headset"></i> Tiket</div>
 <div class="menu-item" onclick="showPage('contact')"><i class="fas fa-comments"></i> Kontak</div>
@@ -163,17 +171,19 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 </div>
 
 <div class="page" id="page-order">
-<div class="page-header"><h1>🛒 Buat Order Baru</h1><p>Pilih layanan dan isi detail order</p></div>
+<div class="page-header"><h1>🛒 Buat Order Baru</h1><p>Pilih layanan dan isi detail</p></div>
 <div class="card">
 <div class="form-group"><label>Kategori</label><select class="form-control" id="orderCategory" onchange="onCategoryChange()"><option value="">-- Pilih Kategori --</option></select></div>
 <div class="form-group"><label>Layanan</label><select class="form-control" id="orderService" onchange="onServiceChange()"><option value="">-- Pilih Layanan --</option></select></div>
 <div class="form-group"><label>Target (Username/Link)</label><input type="text" class="form-control" id="orderTarget" placeholder="@username atau link"></div>
 <div class="form-group"><label>Jumlah</label><input type="number" class="form-control" id="orderQty" placeholder="Min: 100" oninput="calcPrice()"></div>
+<div class="form-group"><label>Voucher (Opsional)</label><input type="text" class="form-control" id="orderVoucher" placeholder="Kode voucher" oninput="applyVoucherToOrder()"></div>
 <div class="form-group"><label>Deskripsi (Opsional)</label><textarea class="form-control" id="orderDesc" placeholder="Catatan tambahan..."></textarea></div>
-<div style="background:var(--darker);padding:1rem;border-radius:8px;margin-bottom:1rem">
-<div style="display:flex;justify-content:space-between;margin-bottom:.5rem"><span>Harga per 1000:</span><span id="pricePer1k">Rp 0</span></div>
-<div style="display:flex;justify-content:space-between;margin-bottom:.5rem"><span>Min - Max:</span><span id="priceMinMax">0 - 0</span></div>
-<div style="display:flex;justify-content:space-between;font-size:1.2rem;font-weight:700;color:var(--accent)"><span>Total:</span><span id="priceTotal">Rp 0</span></div>
+<div style="background:var(--darker);padding:.8rem;border-radius:8px;margin-bottom:1rem">
+<div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.85rem"><span>Harga per 1000:</span><span id="pricePer1k">Rp 0</span></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.85rem"><span>Min - Max:</span><span id="priceMinMax">0 - 0</span></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:.4rem;font-size:.85rem" id="discountRow" style="display:none"><span>Diskon Voucher:</span><span id="discountAmount" style="color:var(--success)">- Rp 0</span></div>
+<div style="display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:var(--accent);border-top:1px solid var(--border);padding-top:.5rem;margin-top:.5rem"><span>Total:</span><span id="priceTotal">Rp 0</span></div>
 </div>
 <button class="btn btn-primary btn-block" onclick="submitOrder()">🚀 Submit Order</button>
 </div>
@@ -187,10 +197,10 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 <div class="page" id="page-deposit">
 <div class="page-header"><h1>💰 Deposit Saldo</h1></div>
 <div class="card">
-<div class="form-group"><label>Metode Pembayaran</label><select class="form-control" id="depMethod" onchange="onDepMethodChange()"><option value="">-- Pilih Metode --</option><option value="qris">QRIS</option><option value="dana">DANA</option><option value="gopay">GoPay</option><option value="bca">Transfer BCA</option></select></div>
+<div class="form-group"><label>Metode Pembayaran</label><select class="form-control" id="depMethod" onchange="onDepMethodChange()"><option value="">-- Pilih Metode --</option><option value="qris">QRIS</option><option value="dana">DANA</option><option value="gopay">GoPay</option><option value="ovo">OVO</option><option value="shopeepay">ShopeePay</option><option value="bca">Transfer BCA</option></select></div>
 <div class="form-group"><label>Jumlah Deposit (Min. Rp 10.000)</label><input type="number" class="form-control" id="depAmount" placeholder="10000" min="10000" oninput="calcDepTotal()"></div>
 <div class="form-group"><label>Kode Unik (3 digit)</label><input type="text" class="form-control" id="depCode" placeholder="Contoh: 123" maxlength="3"></div>
-<div style="background:var(--darker);padding:1rem;border-radius:8px;margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:var(--accent)"><span>Total Transfer:</span><span id="depTotal">Rp 0</span></div></div>
+<div style="background:var(--darker);padding:.8rem;border-radius:8px;margin-bottom:1rem"><div style="display:flex;justify-content:space-between;font-size:1rem;font-weight:700;color:var(--accent)"><span>Total Transfer:</span><span id="depTotal">Rp 0</span></div></div>
 <div id="depPaymentInfo" style="display:none;background:var(--darker);padding:1rem;border-radius:8px;margin-bottom:1rem"></div>
 <button class="btn btn-primary btn-block" onclick="submitDeposit()">💳 Buat Deposit</button>
 </div>
@@ -209,53 +219,76 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 </div>
 </div>
 
+<div class="page" id="page-voucher">
+<div class="page-header"><h1>🎟️ Voucher Saya</h1><p>Gunakan kode diskon untuk order</p></div>
+<div class="card">
+<h3 style="margin-bottom:.8rem">🎁 Tukar Kode Voucher</h3>
+<div class="form-group"><div style="display:flex;gap:.5rem"><input type="text" class="form-control" id="userVoucherCode" placeholder="Masukkan kode voucher"><button class="btn btn-primary" onclick="applyVoucher()">Gunakan</button></div></div>
+<div id="voucherResult" style="margin-top:.8rem"></div>
+</div>
+<div class="card"><h3 style="margin-bottom:.8rem">📋 Voucher Aktif Saya</h3><div id="myVouchersList"></div></div>
+</div>
+
+<div class="page" id="page-referral">
+<div class="page-header"><h1>👥 Program Referral</h1><p>Ajak teman, dapat saldo!</p></div>
+<div class="referral-card">
+<h3 style="margin-bottom:.4rem">💰 Kode Referral Kamu</h3>
+<div class="referral-code" id="myReferralCode">-</div>
+<div style="display:flex;gap:.5rem;flex-wrap:wrap">
+<button class="btn" style="background:#fff;color:var(--secondary)" onclick="copyReferralCode()">📋 Salin</button>
+<button class="btn" style="background:#25D366;color:#fff" onclick="shareReferralWA()">📱 Share WA</button>
+</div>
+</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-icon green"><i class="fas fa-users"></i></div><div class="stat-info"><h3 id="myRefCount">0</h3><p>Teman Diajak</p></div></div>
+<div class="stat-card"><div class="stat-icon blue"><i class="fas fa-coins"></i></div><div class="stat-info"><h3 id="myRefEarning">Rp 0</h3><p>Total Komisi</p></div></div>
+</div>
+<div class="card">
+<h3 style="margin-bottom:.8rem">📖 Cara Kerja</h3>
+<p style="color:var(--muted);line-height:1.7;font-size:.85rem">1️⃣ Bagikan kode referral ke teman<br>2️⃣ Teman daftar & deposit min. Rp 50.000<br>3️⃣ Kamu dapat bonus Rp 5.000 + komisi 10%<br>4️⃣ Teman dapat bonus Rp 3.000 otomatis!</p>
+</div>
+<div class="card"><h3 style="margin-bottom:.8rem">👥 Teman yang Kamu Ajak</h3><div class="table-responsive"><table><thead><tr><th>Username</th><th>Tanggal</th><th>Deposit</th><th>Komisi</th></tr></thead><tbody id="myReferralList"></tbody></table></div></div>
+</div>
+
 <div class="page" id="page-ticket">
 <div class="page-header"><h1>🎫 Tiket Bantuan</h1></div>
 <div class="card">
-<h3 style="margin-bottom:1rem">Buat Tiket Baru</h3>
+<h3 style="margin-bottom:.8rem">Buat Tiket Baru</h3>
 <div class="form-group"><label>Order ID (jika ada)</label><input type="text" class="form-control" id="ticketOrderId" placeholder="DZ12345678"></div>
 <div class="form-group"><label>Subjek</label><input type="text" class="form-control" id="ticketSubject" placeholder="Masalah yang dialami"></div>
 <div class="form-group"><label>Pesan</label><textarea class="form-control" id="ticketMessage" placeholder="Jelaskan masalah kamu..."></textarea></div>
 <button class="btn btn-primary" onclick="submitTicket()">📨 Kirim Tiket</button>
 </div>
-<div class="card"><h3 style="margin-bottom:1rem">Tiket Saya</h3><div class="table-responsive"><table><thead><tr><th>ID</th><th>Tanggal</th><th>Subjek</th><th>Status</th><th>Balasan</th></tr></thead><tbody id="ticketTable"></tbody></table></div></div>
+<div class="card"><h3 style="margin-bottom:.8rem">Tiket Saya</h3><div class="table-responsive"><table><thead><tr><th>ID</th><th>Tanggal</th><th>Subjek</th><th>Status</th><th>Balasan</th></tr></thead><tbody id="ticketTable"></tbody></table></div></div>
 </div>
 
 <div class="page" id="page-contact">
 <div class="page-header"><h1>📞 Kontak</h1></div>
 <div class="card">
-<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--darker);border-radius:8px;margin-bottom:.5rem"><i class="fab fa-whatsapp" style="font-size:2rem;color:#25D366"></i><div><h4>WhatsApp</h4><p style="color:var(--muted)">0895-277-43462</p></div></div>
-<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--darker);border-radius:8px"><i class="fas fa-envelope" style="font-size:2rem;color:var(--accent)"></i><div><h4>Email</h4><p style="color:var(--muted)">dezstore300@gmail.com</p></div></div>
+<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--darker);border-radius:8px;margin-bottom:.5rem"><i class="fab fa-whatsapp" style="font-size:2rem;color:#25D366"></i><div><h4>WhatsApp</h4><p style="color:var(--muted);font-size:.85rem">0895-277-43462</p></div></div>
+<div style="display:flex;align-items:center;gap:1rem;padding:1rem;background:var(--darker);border-radius:8px"><i class="fas fa-envelope" style="font-size:2rem;color:var(--accent)"></i><div><h4>Email</h4><p style="color:var(--muted);font-size:.85rem">dezstore300@gmail.com</p></div></div>
 </div>
 </div>
 
 <div class="page" id="page-guide">
 <div class="page-header"><h1>📖 Panduan</h1></div>
 <div class="card">
-<h3>1️⃣ Cara Daftar</h3><p style="color:var(--muted);margin-bottom:1rem">Klik "Daftar" di halaman login, isi data lengkap, lalu login.</p>
-<h3>2️⃣ Cara Deposit</h3><p style="color:var(--muted);margin-bottom:1rem">Pilih menu Deposit → Pilih metode → Masukkan jumlah → Transfer → Tunggu konfirmasi admin.</p>
-<h3>3️⃣ Cara Order</h3><p style="color:var(--muted);margin-bottom:1rem">Pilih menu Order → Pilih kategori & layanan → Isi target & jumlah → Submit order.</p>
-<h3>4️⃣ Cara Cek Status</h3><p style="color:var(--muted)">Menu Status Order untuk melihat progress semua order.</p>
+<h3 style="margin-bottom:.5rem">1️⃣ Cara Daftar</h3><p style="color:var(--muted);margin-bottom:1rem;font-size:.85rem">Klik "Daftar" di halaman login, isi data lengkap, lalu login.</p>
+<h3 style="margin-bottom:.5rem">2️⃣ Cara Deposit</h3><p style="color:var(--muted);margin-bottom:1rem;font-size:.85rem">Pilih menu Deposit → Pilih metode → Masukkan jumlah → Transfer → Tunggu konfirmasi admin.</p>
+<h3 style="margin-bottom:.5rem">3️⃣ Cara Order</h3><p style="color:var(--muted);margin-bottom:1rem;font-size:.85rem">Pilih menu Order → Pilih kategori & layanan → Isi target & jumlah → Submit order.</p>
+<h3 style="margin-bottom:.5rem">4️⃣ Cara Cek Status</h3><p style="color:var(--muted);font-size:.85rem">Menu Status Order untuk melihat progress semua order.</p>
 </div>
 </div>
 </div>
 </div>
 
-<!-- BANNER INSTALL APLIKASI -->
-<div class="install-banner" id="installBanner">
-  <div style="display:flex;align-items:center;gap:.8rem">
-    <div class="logo-icon" style="width:40px;height:40px;background:#fff;color:var(--secondary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem">⚡</div>
-    <div>
-      <div style="font-weight:700">📱 Install DEZSTORE</div>
-      <div style="font-size:.8rem;opacity:.9">Jadikan aplikasi di HP kamu!</div>
-    </div>
-  </div>
-  <div>
-    <button class="btn-install" onclick="installApp()">Install</button>
-    <button class="btn-close" onclick="document.getElementById('installBanner').classList.remove('show')">✕</button>
-  </div>
+<div class="update-banner" id="updateBanner">
+<div style="display:flex;align-items:center;gap:.6rem"><div style="font-size:1.3rem">🔄</div><div><div style="font-weight:700;font-size:.9rem" id="updateTitle">Update Baru!</div><div style="font-size:.75rem;opacity:.9" id="updateMessage">Versi baru tersedia</div></div></div>
+<div><button class="btn-update" onclick="forceUpdate()">Update</button><button class="btn-snooze" onclick="snoozeUpdate()">✕</button></div>
 </div>
 
+<div id="toastContainer" style="position:fixed;top:75px;right:15px;z-index:9997"></div>
+<div class="refresh-indicator" id="refreshIndicator"><div class="spinner"></div><span>Memperbarui...</span></div>
 <div class="toast" id="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -263,528 +296,122 @@ td{padding:.8rem;border-bottom:1px solid var(--border);font-size:.9rem;color:#cb
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-// ============================================
-// 🔥 FIREBASE CONFIG
-// ============================================
-var firebaseConfig = {
-  apiKey: "AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",
-  authDomain: "dezstore-78d09.firebaseapp.com",
-  projectId: "dezstore-78d09",
-  storageBucket: "dezstore-78d09.firebasestorage.app",
-  messagingSenderId: "815388782850",
-  appId: "1:815388782850:web:de678f5df5380be276921b"
-};
+var firebaseConfig={apiKey:"AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",authDomain:"dezstore-78d09.firebaseapp.com",projectId:"dezstore-78d09",storageBucket:"dezstore-78d09.firebasestorage.app",messagingSenderId:"815388782850",appId:"1:815388782850:web:de678f5df5380be276921b"};
 firebase.initializeApp(firebaseConfig);
-var auth = firebase.auth();
-var db = firebase.firestore();
+var auth=firebase.auth();
+var db=firebase.firestore();
 
-// ============================================
-// 📱 PWA SETUP (Manifest & Service Worker Inline)
-// ============================================
-(function setupPWA() {
-  // Buat manifest.json secara inline
-  var manifest = {
-    name: "DEZSTORE - SMM Panel",
-    short_name: "DEZSTORE",
-    description: "Suntik Sosmed Termurah & Tercepat",
-    start_url: "/index.html",
-    display: "standalone",
-    background_color: "#0a0a1a",
-    theme_color: "#3b82f6",
-    orientation: "portrait",
-    icons: [
-      { src: "logo.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
-      { src: "logo.png", sizes: "512x512", type: "image/png", purpose: "any maskable" }
-    ]
-  };
-  var blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-  var url = URL.createObjectURL(blob);
-  document.getElementById('manifestLink').href = url;
-  
-  // Buat service worker secara inline
-  var swCode = `
-    const CACHE_NAME = 'dezstore-v1';
-    const urlsToCache = ['/', '/index.html', '/admin.html', '/logo.png'];
-    self.addEventListener('install', event => {
-      event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
-    });
-    self.addEventListener('fetch', event => {
-      event.respondWith(caches.match(event.request).then(r => r || fetch(event.request)));
-    });
-  `;
-  var swBlob = new Blob([swCode], { type: 'application/javascript' });
-  var swUrl = URL.createObjectURL(swBlob);
-  
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register(swUrl).catch(err => console.log('SW error:', err));
-  }
-  
-  // Setup install prompt
-  var deferredPrompt = null;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    setTimeout(() => {
-      document.getElementById('installBanner').classList.add('show');
-    }, 3000);
-  });
-  
-  window.installApp = function() {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(result => {
-        if (result.outcome === 'accepted') {
-          showToast('✅ Aplikasi berhasil di-install!');
-        }
-        document.getElementById('installBanner').classList.remove('show');
-        deferredPrompt = null;
-      });
-    } else {
-      showToast('ℹ️ Buka menu Chrome (⋮) → "Install aplikasi"', true);
-    }
-  };
-  
-  window.addEventListener('appinstalled', () => {
-    showToast('🎉 DEZSTORE sudah jadi aplikasi!');
-    document.getElementById('installBanner').classList.remove('show');
-  });
-})();
-
-// ============================================
-// 📦 DATA & CONFIG
-// ============================================
-var SERVICE_ID_MAP = {
-  'IG001': '52258', 'IG002': '54688', 'IG003': '54379', 'IG004': '49816', 'IG005': '55197',
-  'TT001': '54970', 'TT002': '54479', 'TT003': '54197', 'TT004': '52966',
-  'WA001': '55249', 'WA002': '55249', 'WA003': '54206'
-};
-
-var DEFAULT_SERVICES = [
-  {serviceId:'IG001',category:'instagram',categoryName:'Instagram',name:'Instagram Followers Indonesia',price:45000,min:100,max:100000},
-  {serviceId:'IG002',category:'instagram',categoryName:'Instagram',name:'Instagram Followers Worldwide',price:20000,min:100,max:500000},
-  {serviceId:'IG003',category:'instagram',categoryName:'Instagram',name:'Instagram Likes',price:15000,min:50,max:50000},
-  {serviceId:'IG004',category:'instagram',categoryName:'Instagram',name:'Instagram Views',price:8000,min:100,max:1000000},
-  {serviceId:'IG005',category:'instagram',categoryName:'Instagram',name:'Instagram Comments',price:35000,min:10,max:1000},
-  {serviceId:'TT001',category:'tiktok',categoryName:'TikTok',name:'TikTok Followers',price:25000,min:100,max:100000},
-  {serviceId:'TT002',category:'tiktok',categoryName:'TikTok',name:'TikTok Likes',price:12000,min:50,max:100000},
-  {serviceId:'TT003',category:'tiktok',categoryName:'TikTok',name:'TikTok Views',price:5000,min:100,max:5000000},
-  {serviceId:'TT004',category:'tiktok',categoryName:'TikTok',name:'TikTok Shares',price:15000,min:50,max:50000},
-  {serviceId:'WA001',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Followers',price:35000,min:100,max:50000},
-  {serviceId:'WA002',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Views',price:15000,min:100,max:100000},
-  {serviceId:'WA003',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Reactions',price:25000,min:50,max:10000}
+var DEFAULT_SERVICES=[
+{serviceId:'IG001',category:'instagram',categoryName:'Instagram',name:'Instagram Followers Indonesia',price:45000,min:100,max:100000},
+{serviceId:'IG002',category:'instagram',categoryName:'Instagram',name:'Instagram Followers Worldwide',price:20000,min:100,max:500000},
+{serviceId:'IG003',category:'instagram',categoryName:'Instagram',name:'Instagram Likes',price:15000,min:50,max:50000},
+{serviceId:'IG004',category:'instagram',categoryName:'Instagram',name:'Instagram Views',price:8000,min:100,max:1000000},
+{serviceId:'IG005',category:'instagram',categoryName:'Instagram',name:'Instagram Comments',price:35000,min:10,max:1000},
+{serviceId:'TT001',category:'tiktok',categoryName:'TikTok',name:'TikTok Followers',price:25000,min:100,max:100000},
+{serviceId:'TT002',category:'tiktok',categoryName:'TikTok',name:'TikTok Likes',price:12000,min:50,max:100000},
+{serviceId:'TT003',category:'tiktok',categoryName:'TikTok',name:'TikTok Views',price:5000,min:100,max:5000000},
+{serviceId:'TT004',category:'tiktok',categoryName:'TikTok',name:'TikTok Shares',price:15000,min:50,max:50000},
+{serviceId:'WA001',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Followers',price:35000,min:100,max:50000},
+{serviceId:'WA002',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Views',price:15000,min:100,max:100000},
+{serviceId:'WA003',category:'whatsapp',categoryName:'WhatsApp Channel',name:'WA Channel Reactions',price:25000,min:50,max:10000}
 ];
 
-var PAYMENT_INFO = {
-  qris:{name:'QRIS',number:'089694453911',fee:0},
-  dana:{name:'DANA',number:'089694453911',fee:0},
-  gopay:{name:'GoPay',number:'089694453911',fee:0},
-  bca:{name:'Transfer BCA',number:'8969445391',fee:2500}
-};
+var PAYMENT_INFO={qris:{name:'QRIS',number:'089694453911',fee:0},dana:{name:'DANA',number:'089694453911',fee:0},gopay:{name:'GoPay',number:'089694453911',fee:0},ovo:{name:'OVO',number:'089694453911',fee:0},shopeepay:{name:'ShopeePay',number:'089694453911',fee:0},bca:{name:'Transfer BCA',number:'8969445391',fee:2500}};
 
-var WA_ADMIN = '089527743462';
-var currentUser = null;
-var currentUserData = null;
-var servicesCache = [];
-var QRIS_IMAGE_DATA = '';
+var WA_ADMIN='089527743462';
+var currentUser=null;
+var currentUserData=null;
+var servicesCache=[];
+var QRIS_IMAGE_DATA='';
+var CURRENT_VERSION='1.0.0';
+var autoRefreshInterval=null;
+var lastOrderStatus={};
+var lastDepositStatus={};
+var activeVoucher=null;
 
-// ============================================
-// 🎨 LOAD TEMA DARI FIRESTORE
-// ============================================
-function loadWebsiteTheme() {
-  db.collection('settings').doc('theme').onSnapshot(doc => {
-    if (!doc.exists) return;
-    var t = doc.data();
-    var root = document.documentElement;
-    if (t.colors) {
-      if (t.colors.primary) root.style.setProperty('--secondary', t.colors.primary);
-      if (t.colors.secondary) root.style.setProperty('--accent', t.colors.secondary);
-      if (t.colors.bg) root.style.setProperty('--darker', t.colors.bg);
-      if (t.colors.card) root.style.setProperty('--card', t.colors.card);
-    }
-    if (t.background) {
-      document.body.style.backgroundImage = 'url(' + t.background + ')';
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-      document.body.style.backgroundAttachment = 'fixed';
-    }
-    if (t.logo) {
-      var logoIcons = document.querySelectorAll('.logo-icon');
-      logoIcons.forEach(el => {
-        el.innerHTML = '<img src="' + t.logo + '" style="width:100%;height:100%;object-fit:contain;border-radius:8px">';
-      });
-    }
-    if (t.banner) {
-      var homePage = document.getElementById('page-home');
-      if (homePage) {
-        var existing = homePage.querySelector('.theme-banner');
-        if (existing) existing.remove();
-        var bannerHtml = '<div class="theme-banner" style="margin-bottom:1.5rem;border-radius:12px;overflow:hidden"><img src="' + t.banner + '" style="width:100%;max-height:200px;object-fit:cover"></div>';
-        homePage.insertAdjacentHTML('afterbegin', bannerHtml);
-      }
-    }
-  });
-}
+function loadQRISImage(){db.collection('settings').doc('payment').onSnapshot(doc=>{if(doc.exists){var s=doc.data();QRIS_IMAGE_DATA=s.qrisImage||'';if(s.qris)PAYMENT_INFO.qris.number=s.qris;if(s.dana)PAYMENT_INFO.dana.number=s.dana;if(s.gopay)PAYMENT_INFO.gopay.number=s.gopay;if(s.ovo)PAYMENT_INFO.ovo.number=s.ovo;if(s.shopeepay)PAYMENT_INFO.shopeepay.number=s.shopeepay;if(s.bca)PAYMENT_INFO.bca.number=s.bca;if(s.qrisFee!==undefined)PAYMENT_INFO.qris.fee=s.qrisFee;if(s.danaFee!==undefined)PAYMENT_INFO.dana.fee=s.danaFee;if(s.gopayFee!==undefined)PAYMENT_INFO.gopay.fee=s.gopayFee;if(s.ovoFee!==undefined)PAYMENT_INFO.ovo.fee=s.ovoFee;if(s.shopeepayFee!==undefined)PAYMENT_INFO.shopeepay.fee=s.shopeepayFee;if(s.bcaFee!==undefined)PAYMENT_INFO.bca.fee=s.bcaFee;if(document.getElementById('depMethod').value==='qris')onDepMethodChange()}})}
 
-// ============================================
-// ⚙️ SERVICES & QRIS
-// ============================================
-function loadQRISImage() {
-  db.collection('settings').doc('payment').onSnapshot(doc => {
-    if (doc.exists) {
-      var s = doc.data();
-      QRIS_IMAGE_DATA = s.qrisImage || '';
-      PAYMENT_INFO.qris.number = s.qris || PAYMENT_INFO.qris.number;
-      PAYMENT_INFO.dana.number = s.dana || PAYMENT_INFO.dana.number;
-      PAYMENT_INFO.gopay.number = s.gopay || PAYMENT_INFO.gopay.number;
-      PAYMENT_INFO.bca.number = s.bca || PAYMENT_INFO.bca.number;
-      PAYMENT_INFO.qris.fee = s.qrisFee || 0;
-      PAYMENT_INFO.dana.fee = s.danaFee || 0;
-      PAYMENT_INFO.gopay.fee = s.gopayFee || 0;
-      PAYMENT_INFO.bca.fee = s.bcaFee || 2500;
-      if (document.getElementById('depMethod').value === 'qris') onDepMethodChange();
-    }
-  });
-}
+function initServices(){db.collection('services').get().then(snap=>{if(snap.empty){var batch=db.batch();DEFAULT_SERVICES.forEach(s=>batch.set(db.collection('services').doc(s.serviceId),s));batch.commit().then(()=>loadServices())}else loadServices()})}
 
-function initServices() {
-  db.collection('services').get().then(snap => {
-    if (snap.empty) {
-      var batch = db.batch();
-      DEFAULT_SERVICES.forEach(s => batch.set(db.collection('services').doc(s.serviceId), s));
-      batch.commit().then(() => loadServices());
-    } else loadServices();
-  });
-}
+function loadServices(){db.collection('services').onSnapshot(snap=>{servicesCache=[];snap.forEach(doc=>servicesCache.push(doc.data()));populateCategories();renderPricelist()})}
 
-function loadServices() {
-  db.collection('services').onSnapshot(snap => {
-    servicesCache = [];
-    snap.forEach(doc => servicesCache.push(doc.data()));
-    populateCategories();
-    renderPricelist();
-  });
-}
+function populateCategories(){var categories=[];servicesCache.forEach(s=>{if(categories.indexOf(s.category)===-1)categories.push(s.category)});var catSelect=document.getElementById('orderCategory');catSelect.innerHTML='<option value="">-- Pilih Kategori --</option>';categories.forEach(cat=>{var catName=servicesCache.find(s=>s.category===cat)?.categoryName||cat;catSelect.innerHTML+='<option value="'+cat+'">'+catName+'</option>'});var filterSelect=document.getElementById('priceFilter');if(filterSelect){filterSelect.innerHTML='<option value="">Semua Kategori</option>';categories.forEach(cat=>{var catName=servicesCache.find(s=>s.category===cat)?.categoryName||cat;filterSelect.innerHTML+='<option value="'+cat+'">'+catName+'</option>'})}}
 
-function populateCategories() {
-  var categories = [];
-  servicesCache.forEach(s => { if(categories.indexOf(s.category) === -1) categories.push(s.category); });
-  var catSelect = document.getElementById('orderCategory');
-  catSelect.innerHTML = '<option value="">-- Pilih Kategori --</option>';
-  categories.forEach(cat => {
-    var catName = servicesCache.find(s => s.category === cat)?.categoryName || cat;
-    catSelect.innerHTML += '<option value="'+cat+'">'+catName+'</option>';
-  });
-  var filterSelect = document.getElementById('priceFilter');
-  if(filterSelect) {
-    filterSelect.innerHTML = '<option value="">Semua Kategori</option>';
-    categories.forEach(cat => {
-      var catName = servicesCache.find(s => s.category === cat)?.categoryName || cat;
-      filterSelect.innerHTML += '<option value="'+cat+'">'+catName+'</option>';
-    });
-  }
-}
+function showAuth(type){document.getElementById('loginForm').style.display=type==='login'?'block':'none';document.getElementById('registerForm').style.display=type==='register'?'block':'none';document.getElementById('authSubtitle').textContent=type==='login'?'Masuk ke akun DEZSTORE':'Buat akun baru';document.getElementById('authError').style.display='none';document.getElementById('authSuccess').style.display='none'}
 
-// ============================================
-// 🔐 AUTH
-// ============================================
-function showAuth(type) {
-  document.getElementById('loginForm').style.display = type === 'login' ? 'block' : 'none';
-  document.getElementById('registerForm').style.display = type === 'register' ? 'block' : 'none';
-  document.getElementById('authSubtitle').textContent = type === 'login' ? 'Masuk ke akun DEZSTORE' : 'Buat akun baru';
-  document.getElementById('authError').style.display = 'none';
-  document.getElementById('authSuccess').style.display = 'none';
-}
+function doLogin(){var email=document.getElementById('loginEmail').value.trim();var pass=document.getElementById('loginPass').value;var errEl=document.getElementById('authError');if(!email||!pass){errEl.textContent='❌ Email dan password wajib diisi!';errEl.style.display='block';return}auth.signInWithEmailAndPassword(email,pass).then(()=>showToast('✅ Login berhasil!')).catch(err=>{errEl.textContent='❌ '+err.message;errEl.style.display='block'})}
 
-function doLogin() {
-  var email = document.getElementById('loginEmail').value.trim();
-  var pass = document.getElementById('loginPass').value;
-  var errEl = document.getElementById('authError');
-  if(!email || !pass) { errEl.textContent = '❌ Email dan password wajib diisi!'; errEl.style.display = 'block'; return; }
-  auth.signInWithEmailAndPassword(email, pass).then(() => showToast('✅ Login berhasil!')).catch(err => { errEl.textContent = '❌ ' + err.message; errEl.style.display = 'block'; });
-}
+function doRegister(){var username=document.getElementById('regUsername').value.trim();var email=document.getElementById('regEmail').value.trim();var wa=document.getElementById('regWA').value.trim();var pass=document.getElementById('regPass').value;var errEl=document.getElementById('authError');var sucEl=document.getElementById('authSuccess');if(!username||!email||!wa||!pass){errEl.textContent='❌ Semua field wajib diisi!';errEl.style.display='block';return}if(pass.length<6){errEl.textContent='❌ Password minimal 6 karakter!';errEl.style.display='block';return}auth.createUserWithEmailAndPassword(email,pass).then(cred=>{return cred.user.updateProfile({displayName:username}).then(()=>{return db.collection('users').doc(cred.user.uid).set({username:username,email:email,whatsapp:wa,balance:0,createdAt:firebase.firestore.FieldValue.serverTimestamp(),totalOrders:0,totalSpend:0,status:'active',referralCode:'DEZ'+Math.random().toString(36).substring(2,8).toUpperCase(),referralEarning:0})})}).then(()=>{sucEl.textContent='✅ Registrasi berhasil! Silakan login.';sucEl.style.display='block';setTimeout(()=>showAuth('login'),1500)}).catch(err=>{errEl.textContent='❌ '+err.message;errEl.style.display='block'})}
 
-function doRegister() {
-  var username = document.getElementById('regUsername').value.trim();
-  var email = document.getElementById('regEmail').value.trim();
-  var wa = document.getElementById('regWA').value.trim();
-  var pass = document.getElementById('regPass').value;
-  var errEl = document.getElementById('authError');
-  var sucEl = document.getElementById('authSuccess');
-  if(!username || !email || !wa || !pass) { errEl.textContent = '❌ Semua field wajib diisi!'; errEl.style.display = 'block'; return; }
-  if(pass.length < 6) { errEl.textContent = '❌ Password minimal 6 karakter!'; errEl.style.display = 'block'; return; }
-  auth.createUserWithEmailAndPassword(email, pass).then(cred => {
-    return cred.user.updateProfile({displayName: username}).then(() => {
-      return db.collection('users').doc(cred.user.uid).set({
-        username: username, email: email, whatsapp: wa,
-        balance: 0, createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        totalOrders: 0, totalSpend: 0, status: 'active'
-      });
-    });
-  }).then(() => { sucEl.textContent = '✅ Registrasi berhasil! Silakan login.'; sucEl.style.display = 'block'; setTimeout(() => showAuth('login'), 1500); }).catch(err => { errEl.textContent = '❌ ' + err.message; errEl.style.display = 'block'; });
-}
+function doLogout(){if(confirm('Yakin logout?'))auth.signOut()}
 
-function doLogout() { if(confirm('Yakin ingin logout?')) auth.signOut(); }
+auth.onAuthStateChanged(user=>{if(user){currentUser=user;document.getElementById('authPage').style.display='none';document.getElementById('mainApp').style.display='block';document.getElementById('welcomeName').textContent=user.displayName||'User';initServices();loadQRISImage();loadUserData();loadUserOrders();loadUserDeposits();loadUserTickets();loadWebsiteTheme();loadMyVouchers();loadMyReferral();checkForUpdates();setTimeout(()=>startAutoRefresh(),3000);setTimeout(()=>{if(!currentUser)return;db.collection('orders').where('userId','==',currentUser.uid).get().then(snap=>{snap.forEach(doc=>{lastOrderStatus[doc.id]=doc.data().status})});db.collection('deposits').where('userId','==',currentUser.uid).get().then(snap=>{snap.forEach(doc=>{lastDepositStatus[doc.id]=doc.data().status})})},2000);setTimeout(()=>{if(currentUser)showToastNotif('👋','Selamat Datang!','Halo '+(currentUser.displayName||'User')+', semoga harimu menyenangkan!','success')},1500)}else{currentUser=null;currentUserData=null;document.getElementById('authPage').style.display='flex';document.getElementById('mainApp').style.display='none';if(autoRefreshInterval)clearInterval(autoRefreshInterval);document.getElementById('updateBanner').classList.remove('show')}});
 
-auth.onAuthStateChanged(user => {
-  if(user) {
-    currentUser = user;
-    document.getElementById('authPage').style.display = 'none';
-    document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('welcomeName').textContent = user.displayName || 'User';
-    initServices();
-    loadQRISImage();
-    loadUserData();
-    loadUserOrders();
-    loadUserDeposits();
-    loadUserTickets();
-    loadWebsiteTheme();
-  } else {
-    currentUser = null;
-    currentUserData = null;
-    document.getElementById('authPage').style.display = 'flex';
-    document.getElementById('mainApp').style.display = 'none';
-  }
-});
+function loadUserData(){db.collection('users').doc(currentUser.uid).onSnapshot(doc=>{if(doc.exists){currentUserData=doc.data();if(currentUserData.status==='banned'){alert('🚫 Akun kamu dibanned! Hubungi admin.');auth.signOut();return}document.getElementById('userBalance').textContent=(currentUserData.balance||0).toLocaleString('id-ID');document.getElementById('statBalance').textContent='Rp '+(currentUserData.balance||0).toLocaleString('id-ID')}})}
 
-function loadUserData() {
-  db.collection('users').doc(currentUser.uid).onSnapshot(doc => {
-    if(doc.exists) {
-      currentUserData = doc.data();
-      if (currentUserData.status === 'banned') {
-        alert('🚫 Akun kamu dibanned! Hubungi admin.');
-        auth.signOut();
-        return;
-      }
-      document.getElementById('userBalance').textContent = (currentUserData.balance || 0).toLocaleString('id-ID');
-      document.getElementById('statBalance').textContent = 'Rp ' + (currentUserData.balance || 0).toLocaleString('id-ID');
-    }
-  });
-}
+function showPage(page){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.menu-item').forEach(m=>m.classList.remove('active'));document.getElementById('page-'+page).classList.add('active');if(event&&event.currentTarget)event.currentTarget.classList.add('active');if(window.innerWidth<=768)document.getElementById('sidebar').classList.remove('open')}
 
-// ============================================
-// 📄 NAVIGATION
-// ============================================
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  if(event && event.currentTarget) event.currentTarget.classList.add('active');
-  if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
-}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+function onCategoryChange(){var cat=document.getElementById('orderCategory').value;var servSelect=document.getElementById('orderService');servSelect.innerHTML='<option value="">-- Pilih Layanan --</option>';if(cat)servicesCache.filter(s=>s.category===cat).forEach(item=>{servSelect.innerHTML+='<option value="'+item.serviceId+'" data-price="'+item.price+'" data-min="'+item.min+'" data-max="'+item.max+'">'+item.name+' - Rp '+item.price.toLocaleString('id-ID')+'/1000</option>'});calcPrice()}
 
-// ============================================
-// 🛒 ORDER
-// ============================================
-function onCategoryChange() {
-  var cat = document.getElementById('orderCategory').value;
-  var servSelect = document.getElementById('orderService');
-  servSelect.innerHTML = '<option value="">-- Pilih Layanan --</option>';
-  if(cat) servicesCache.filter(s => s.category === cat).forEach(item => {
-    servSelect.innerHTML += '<option value="'+item.serviceId+'" data-price="'+item.price+'" data-min="'+item.min+'" data-max="'+item.max+'">'+item.name+' - Rp '+item.price.toLocaleString('id-ID')+'/1000</option>';
-  });
-  calcPrice();
-}
+function onServiceChange(){calcPrice()}
 
-function onServiceChange() { calcPrice(); }
+function calcPrice(){var servSelect=document.getElementById('orderService');var option=servSelect.options[servSelect.selectedIndex];var qty=parseInt(document.getElementById('orderQty').value)||0;if(!option.value){document.getElementById('pricePer1k').textContent='Rp 0';document.getElementById('priceMinMax').textContent='0 - 0';document.getElementById('priceTotal').textContent='Rp 0';return}var price=parseInt(option.dataset.price);var min=parseInt(option.dataset.min);var max=parseInt(option.dataset.max);var total=Math.round((qty/1000)*price);if(activeVoucher){var discount=0;if(activeVoucher.type==='percent'){discount=Math.round(total*(activeVoucher.value/100));if(activeVoucher.maxDiscount&&discount>activeVoucher.maxDiscount)discount=activeVoucher.maxDiscount;total-=discount}else{discount=Math.min(activeVoucher.value,total);total-=discount}document.getElementById('discountRow').style.display='flex';document.getElementById('discountAmount').textContent='- Rp '+discount.toLocaleString('id-ID')}document.getElementById('pricePer1k').textContent='Rp '+price.toLocaleString('id-ID');document.getElementById('priceMinMax').textContent=min.toLocaleString('id-ID')+' - '+max.toLocaleString('id-ID');document.getElementById('priceTotal').textContent=qty>=min?'Rp '+total.toLocaleString('id-ID'):'Rp 0 (min '+min+')'}
 
-function calcPrice() {
-  var servSelect = document.getElementById('orderService');
-  var option = servSelect.options[servSelect.selectedIndex];
-  var qty = parseInt(document.getElementById('orderQty').value) || 0;
-  if(!option.value) {
-    document.getElementById('pricePer1k').textContent = 'Rp 0';
-    document.getElementById('priceMinMax').textContent = '0 - 0';
-    document.getElementById('priceTotal').textContent = 'Rp 0';
-    return;
-  }
-  var price = parseInt(option.dataset.price);
-  var min = parseInt(option.dataset.min);
-  var max = parseInt(option.dataset.max);
-  var total = Math.round((qty / 1000) * price);
-  document.getElementById('pricePer1k').textContent = 'Rp ' + price.toLocaleString('id-ID');
-  document.getElementById('priceMinMax').textContent = min.toLocaleString('id-ID') + ' - ' + max.toLocaleString('id-ID');
-  document.getElementById('priceTotal').textContent = qty >= min ? 'Rp ' + total.toLocaleString('id-ID') : 'Rp 0 (min '+min+')';
-}
+function applyVoucherToOrder(){var code=document.getElementById('orderVoucher').value.trim().toUpperCase();if(!code){activeVoucher=null;calcPrice();return}db.collection('vouchers').where('code','==',code).get().then(snap=>{if(snap.empty){activeVoucher=null;calcPrice();return}var v=snap.docs[0].data();var now=new Date();if(!v.active||now<new Date(v.startDate)||now>new Date(v.endDate)||v.used>=v.maxUse){activeVoucher=null;calcPrice();return}activeVoucher={id:snap.docs[0].id,code:v.code,type:v.type,value:v.value,minOrder:v.minOrder||0,maxDiscount:v.maxDiscount||0};calcPrice()})}
 
-function submitOrder() {
-  if(!currentUser) { showToast('❌ Login dulu!', true); return; }
-  var cat = document.getElementById('orderCategory').value;
-  var servSelect = document.getElementById('orderService');
-  var option = servSelect.options[servSelect.selectedIndex];
-  var target = document.getElementById('orderTarget').value.trim();
-  var qty = parseInt(document.getElementById('orderQty').value) || 0;
-  var desc = document.getElementById('orderDesc').value.trim();
-  if(!cat) { showToast('❌ Pilih kategori!', true); return; }
-  if(!option.value) { showToast('❌ Pilih layanan!', true); return; }
-  if(!target) { showToast('❌ Isi target!', true); return; }
-  if(qty < parseInt(option.dataset.min)) { showToast('❌ Jumlah di bawah minimum!', true); return; }
-  if(qty > parseInt(option.dataset.max)) { showToast('❌ Jumlah di atas maximum!', true); return; }
-  var price = parseInt(option.dataset.price);
-  var total = Math.round((qty / 1000) * price);
-  if((currentUserData.balance || 0) < total) { showToast('❌ Saldo tidak cukup! Silakan deposit dulu.', true); return; }
-  if(!confirm('Konfirmasi order:\n\nLayanan: '+option.text+'\nTarget: '+target+'\nJumlah: '+qty+'\nTotal: Rp '+total.toLocaleString('id-ID')+'\n\nLanjutkan?')) return;
-  var orderData = {
-    userId: currentUser.uid, username: currentUser.displayName, userEmail: currentUser.email,
-    category: cat, categoryName: servicesCache.find(s => s.category === cat)?.categoryName || cat,
-    serviceId: option.value, serviceName: option.text.split(' - ')[0],
-    target: target, qty: qty, pricePer1k: price, total: total,
-    description: desc, status: 'pending',
-    startCount: 0, remains: qty,
-    providerServiceId: SERVICE_ID_MAP[option.value] || option.value,
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  db.collection('orders').add(orderData).then(() => {
-    db.collection('users').doc(currentUser.uid).update({
-      balance: firebase.firestore.FieldValue.increment(-total),
-      totalOrders: firebase.firestore.FieldValue.increment(1),
-      totalSpend: firebase.firestore.FieldValue.increment(total)
-    });
-    showToast('✅ Order berhasil! Admin akan memproses.');
-    document.getElementById('orderTarget').value = '';
-    document.getElementById('orderQty').value = '';
-    document.getElementById('orderDesc').value = '';
-    calcPrice();
-  }).catch(err => showToast('❌ ' + err.message, true));
-}
+function submitOrder(){if(!currentUser){showToast('❌ Login dulu!',true);return}var cat=document.getElementById('orderCategory').value;var servSelect=document.getElementById('orderService');var option=servSelect.options[servSelect.selectedIndex];var target=document.getElementById('orderTarget').value.trim();var qty=parseInt(document.getElementById('orderQty').value)||0;var desc=document.getElementById('orderDesc').value.trim();if(!cat){showToast('❌ Pilih kategori!',true);return}if(!option.value){showToast('❌ Pilih layanan!',true);return}if(!target){showToast('❌ Isi target!',true);return}if(qty<parseInt(option.dataset.min)){showToast('❌ Jumlah di bawah minimum!',true);return}if(qty>parseInt(option.dataset.max)){showToast('❌ Jumlah di atas maximum!',true);return}var price=parseInt(option.dataset.price);var total=Math.round((qty/1000)*price);var discount=0;if(activeVoucher&&total>=activeVoucher.minOrder){if(activeVoucher.type==='percent'){discount=Math.round(total*(activeVoucher.value/100));if(activeVoucher.maxDiscount&&discount>activeVoucher.maxDiscount)discount=activeVoucher.maxDiscount}else{discount=Math.min(activeVoucher.value,total)}total-=discount}if((currentUserData.balance||0)<total){showToast('❌ Saldo tidak cukup! Deposit dulu.',true);return}if(!confirm('Konfirmasi order:\n\nLayanan: '+option.text+'\nTarget: '+target+'\nJumlah: '+qty+'\nTotal: Rp '+total.toLocaleString('id-ID')+(discount>0?'\nDiskon: - Rp '+discount.toLocaleString('id-ID'):'')+'\n\nLanjutkan?'))return;var orderData={userId:currentUser.uid,username:currentUser.displayName,userEmail:currentUser.email,category:cat,categoryName:servicesCache.find(s=>s.category===cat)?.categoryName||cat,serviceId:option.value,serviceName:option.text.split(' - ')[0],target:target,qty:qty,pricePer1k:price,total:total,discount:discount,voucherCode:activeVoucher?activeVoucher.code:null,description:desc,status:'pending',startCount:0,remains:qty,createdAt:firebase.firestore.FieldValue.serverTimestamp()};db.collection('orders').add(orderData).then(docRef=>{db.collection('users').doc(currentUser.uid).update({balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});if(activeVoucher){db.collection('vouchers').doc(activeVoucher.id).update({used:firebase.firestore.FieldValue.increment(1)});db.collection('userVouchers').add({userId:currentUser.uid,code:activeVoucher.code,type:activeVoucher.type,value:activeVoucher.value,minOrder:activeVoucher.minOrder,createdAt:firebase.firestore.FieldValue.serverTimestamp()});activeVoucher=null;document.getElementById('orderVoucher').value=''}showToast('✅ Order berhasil! Admin akan memproses.');document.getElementById('orderTarget').value='';document.getElementById('orderQty').value='';document.getElementById('orderDesc').value='';document.getElementById('orderVoucher').value='';calcPrice()}).catch(err=>showToast('❌ '+err.message,true))}
 
-function loadUserOrders() {
-  db.collection('orders').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').limit(50).onSnapshot(snap => {
-    var orders = [];
-    snap.forEach(doc => orders.push({id: doc.id, ...doc.data()}));
-    document.getElementById('statOrders').textContent = orders.length;
-    document.getElementById('statPending').textContent = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
-    document.getElementById('statDone').textContent = orders.filter(o => o.status === 'completed').length;
-    var recentHtml = orders.slice(0, 5).map(o => '<tr><td><b>'+o.serviceId+'</b></td><td>'+o.serviceName+'</td><td>'+o.qty.toLocaleString('id-ID')+'</td><td>Rp '+o.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+o.status+'">'+getStatusText(o.status)+'</span></td></tr>').join('');
-    document.getElementById('recentOrders').innerHTML = recentHtml || '<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada order</td></tr>';
-    var statusHtml = orders.map(o => '<tr><td><b>'+o.serviceId+'</b></td><td>'+(o.createdAt?new Date(o.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+o.serviceName+'</td><td style="font-size:.8rem">'+o.target+'</td><td>'+o.qty.toLocaleString('id-ID')+'</td><td>Rp '+o.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+o.status+'">'+getStatusText(o.status)+'</span></td></tr>').join('');
-    document.getElementById('statusTable').innerHTML = statusHtml || '<tr><td colspan="7" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada order</td></tr>';
-  });
-}
+function loadUserOrders(){db.collection('orders').where('userId','==',currentUser.uid).orderBy('createdAt','desc').limit(50).onSnapshot(snap=>{var orders=[];snap.forEach(doc=>orders.push({id:doc.id,...doc.data()}));document.getElementById('statOrders').textContent=orders.length;document.getElementById('statPending').textContent=orders.filter(o=>o.status==='pending'||o.status==='processing').length;document.getElementById('statDone').textContent=orders.filter(o=>o.status==='completed').length;var recentHtml=orders.slice(0,5).map(o=>'<tr><td><b>'+o.serviceId+'</b></td><td>'+o.serviceName+'</td><td>'+o.qty.toLocaleString('id-ID')+'</td><td>Rp '+o.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+o.status+'">'+getStatusText(o.status)+'</span></td></tr>').join('');document.getElementById('recentOrders').innerHTML=recentHtml||'<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada order</td></tr>';var statusHtml=orders.map(o=>'<tr><td><b>'+o.serviceId+'</b></td><td>'+(o.createdAt?new Date(o.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+o.serviceName+'</td><td style="font-size:.75rem">'+o.target+'</td><td>'+o.qty.toLocaleString('id-ID')+'</td><td>Rp '+o.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+o.status+'">'+getStatusText(o.status)+'</span></td></tr>').join('');document.getElementById('statusTable').innerHTML=statusHtml||'<tr><td colspan="7" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada order</td></tr>'})}
 
-function getStatusText(status) {
-  var map = {pending:'⏳ Pending', processing:'⚙️ Processing', completed:'✅ Completed', cancelled:'❌ Cancelled'};
-  return map[status] || status;
-}
+function getStatusText(status){var map={pending:'⏳ Pending',processing:'⚙️ Processing',completed:'✅ Completed',cancelled:'❌ Cancelled'};return map[status]||status}
 
-// ============================================
-// 💰 DEPOSIT
-// ============================================
-function onDepMethodChange() {
-  var method = document.getElementById('depMethod').value;
-  var infoDiv = document.getElementById('depPaymentInfo');
-  if(method && PAYMENT_INFO[method]) {
-    var p = PAYMENT_INFO[method];
-    var qrImg = '';
-    if (method === 'qris' && QRIS_IMAGE_DATA && QRIS_IMAGE_DATA.length > 50) {
-      qrImg = '<div class="qr-display"><h4 style="color:var(--accent);margin-bottom:.8rem">📱 Scan QRIS DEZSTORE</h4><img src="'+QRIS_IMAGE_DATA+'" alt="QRIS"><p style="color:var(--muted);font-size:.8rem;margin-top:.8rem">Buka DANA/GoPay/OVO/Mobile Banking → Scan QR</p></div>';
-    }
-    infoDiv.style.display = 'block';
-    infoDiv.innerHTML = qrImg + '<h4 style="color:var(--accent);margin-bottom:.5rem">'+p.name+'</h4><p style="color:var(--muted);font-size:.9rem">Nomor: <b style="color:#fff">'+p.number+'</b></p><p style="color:var(--muted);font-size:.9rem">Biaya admin: <b style="color:#fff">Rp '+p.fee.toLocaleString('id-ID')+'</b></p>';
-  } else { infoDiv.style.display = 'none'; }
-  calcDepTotal();
-}
+function onDepMethodChange(){var method=document.getElementById('depMethod').value;var infoDiv=document.getElementById('depPaymentInfo');if(method&&PAYMENT_INFO[method]){var p=PAYMENT_INFO[method];var qrImg='';if(method==='qris'&&QRIS_IMAGE_DATA&&QRIS_IMAGE_DATA.length>50){qrImg='<div class="qr-display"><h4 style="color:var(--accent);margin-bottom:.6rem;font-size:.9rem">📱 Scan QRIS DEZSTORE</h4><img src="'+QRIS_IMAGE_DATA+'" alt="QRIS"><p style="color:var(--muted);font-size:.75rem;margin-top:.6rem">Buka DANA/GoPay/OVO/Mobile Banking → Scan QR</p></div>'}infoDiv.style.display='block';infoDiv.innerHTML=qrImg+'<h4 style="color:var(--accent);margin-bottom:.4rem;font-size:.95rem">'+p.name+'</h4><p style="color:var(--muted);font-size:.85rem">Nomor: <b style="color:#fff">'+p.number+'</b></p><p style="color:var(--muted);font-size:.85rem">Biaya admin: <b style="color:#fff">Rp '+p.fee.toLocaleString('id-ID')+'</b></p>'}else{infoDiv.style.display='none'}calcDepTotal()}
 
-function calcDepTotal() {
-  var amount = parseInt(document.getElementById('depAmount').value) || 0;
-  var code = parseInt(document.getElementById('depCode').value) || 0;
-  var method = document.getElementById('depMethod').value;
-  var fee = method && PAYMENT_INFO[method] ? PAYMENT_INFO[method].fee : 0;
-  document.getElementById('depTotal').textContent = 'Rp ' + (amount + code + fee).toLocaleString('id-ID');
-}
+function calcDepTotal(){var amount=parseInt(document.getElementById('depAmount').value)||0;var code=parseInt(document.getElementById('depCode').value)||0;var method=document.getElementById('depMethod').value;var fee=method&&PAYMENT_INFO[method]?PAYMENT_INFO[method].fee:0;document.getElementById('depTotal').textContent='Rp '+(amount+code+fee).toLocaleString('id-ID')}
 
-function submitDeposit() {
-  var method = document.getElementById('depMethod').value;
-  var amount = parseInt(document.getElementById('depAmount').value) || 0;
-  var code = document.getElementById('depCode').value || '000';
-  if(!method) { showToast('❌ Pilih metode!', true); return; }
-  if(amount < 10000) { showToast('❌ Minimal deposit Rp 10.000!', true); return; }
-  if(code.length !== 3) { showToast('❌ Kode unik harus 3 digit!', true); return; }
-  var fee = PAYMENT_INFO[method].fee;
-  var total = amount + parseInt(code) + fee;
-  var depData = {
-    userId: currentUser.uid, username: currentUser.displayName, userEmail: currentUser.email, userWA: currentUserData?.whatsapp || '',
-    method: method, methodName: PAYMENT_INFO[method].name,
-    amount: amount, code: code, fee: fee, total: total,
-    status: 'pending', createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  db.collection('deposits').add(depData).then(() => {
-    showToast('✅ Deposit dibuat! Tunggu konfirmasi admin.');
-    setTimeout(function() {
-      if (confirm('✅ Deposit berhasil dibuat!\n\nKirim bukti transfer via WhatsApp ke admin untuk percepat proses?')) {
-        var waMessage = 'Halo Admin DEZSTORE!\n\nSaya sudah melakukan deposit:\n\n👤 Nama: ' + currentUser.displayName + '\n📧 Email: ' + currentUser.email + '\n💰 Jumlah: Rp ' + amount.toLocaleString('id-ID') + '\n🔢 Kode Unik: ' + code + '\n💳 Total: Rp ' + total.toLocaleString('id-ID') + '\n📱 Metode: ' + PAYMENT_INFO[method].name + '\n\nBerikut bukti transfer saya. Mohon diproses! 🙏';
-        window.open('https://wa.me/62' + WA_ADMIN.substring(1) + '?text=' + encodeURIComponent(waMessage), '_blank');
-      }
-    }, 500);
-    document.getElementById('depAmount').value = '';
-    document.getElementById('depCode').value = '';
-    calcDepTotal();
-  }).catch(err => showToast('❌ ' + err.message, true));
-}
+function submitDeposit(){var method=document.getElementById('depMethod').value;var amount=parseInt(document.getElementById('depAmount').value)||0;var code=document.getElementById('depCode').value||'000';if(!method){showToast('❌ Pilih metode!',true);return}if(amount<10000){showToast('❌ Minimal deposit Rp 10.000!',true);return}if(code.length!==3){showToast('❌ Kode unik harus 3 digit!',true);return}var fee=PAYMENT_INFO[method].fee;var total=amount+parseInt(code)+fee;var depData={userId:currentUser.uid,username:currentUser.displayName,userEmail:currentUser.email,userWA:currentUserData?.whatsapp||'',method:method,methodName:PAYMENT_INFO[method].name,amount:amount,code:code,fee:fee,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()};db.collection('deposits').add(depData).then(()=>{showToast('✅ Deposit dibuat! Tunggu konfirmasi admin.');setTimeout(function(){if(confirm('✅ Deposit berhasil dibuat!\n\nKirim bukti transfer via WhatsApp ke admin?')){var waMessage='Halo Admin DEZSTORE!\n\nSaya sudah melakukan deposit:\n\n👤 Nama: '+currentUser.displayName+'\n📧 Email: '+currentUser.email+'\n💰 Jumlah: Rp '+amount.toLocaleString('id-ID')+'\n🔢 Kode Unik: '+code+'\n💳 Total: Rp '+total.toLocaleString('id-ID')+'\n📱 Metode: '+PAYMENT_INFO[method].name+'\n\nBerikut bukti transfer saya. Mohon diproses! 🙏';window.open('https://wa.me/62'+WA_ADMIN.substring(1)+'?text='+encodeURIComponent(waMessage),'_blank')}},500);document.getElementById('depAmount').value='';document.getElementById('depCode').value='';calcDepTotal()}).catch(err=>showToast('❌ '+err.message,true))}
 
-function loadUserDeposits() {
-  db.collection('deposits').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
-    var deps = [];
-    snap.forEach(doc => deps.push({id: doc.id, ...doc.data()}));
-    var html = deps.map(d => '<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(d.createdAt?new Date(d.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+d.methodName+'</td><td>Rp '+d.amount.toLocaleString('id-ID')+'</td><td>'+d.code+'</td><td>Rp '+d.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+(d.status==='approved'?'completed':d.status==='rejected'?'cancelled':'pending')+'">'+(d.status==='approved'?'✅ Approved':d.status==='rejected'?'❌ Rejected':'⏳ Pending')+'</span></td></tr>').join('');
-    document.getElementById('depHistoryTable').innerHTML = html || '<tr><td colspan="7" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada deposit</td></tr>';
-  });
-}
+function loadUserDeposits(){db.collection('deposits').where('userId','==',currentUser.uid).orderBy('createdAt','desc').onSnapshot(snap=>{var deps=[];snap.forEach(doc=>deps.push({id:doc.id,...doc.data()}));var html=deps.map(d=>'<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(d.createdAt?new Date(d.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+d.methodName+'</td><td>Rp '+d.amount.toLocaleString('id-ID')+'</td><td>'+d.code+'</td><td>Rp '+d.total.toLocaleString('id-ID')+'</td><td><span class="badge-status badge-'+(d.status==='approved'?'completed':d.status==='rejected'?'cancelled':'pending')+'">'+(d.status==='approved'?'✅ Approved':d.status==='rejected'?'❌ Rejected':'⏳ Pending')+'</span></td></tr>').join('');document.getElementById('depHistoryTable').innerHTML=html||'<tr><td colspan="7" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada deposit</td></tr>'})}
 
-// ============================================
-// 💎 PRICELIST
-// ============================================
-function renderPricelist() {
-  var filter = document.getElementById('priceFilter')?.value || '';
-  var html = '';
-  servicesCache.filter(s => !filter || s.category === filter).forEach(item => {
-    html += '<tr><td>'+item.serviceId+'</td><td>'+item.categoryName+'</td><td>'+item.name+'</td><td>Rp '+item.price.toLocaleString('id-ID')+'</td><td>'+item.min+'</td><td>'+item.max.toLocaleString('id-ID')+'</td></tr>';
-  });
-  document.getElementById('pricelistTable').innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:1rem;color:var(--muted)">Tidak ada layanan</td></tr>';
-}
+function renderPricelist(){var filter=document.getElementById('priceFilter')?.value||'';var html='';servicesCache.filter(s=>!filter||s.category===filter).forEach(item=>{html+='<tr><td>'+item.serviceId+'</td><td>'+item.categoryName+'</td><td>'+item.name+'</td><td>Rp '+item.price.toLocaleString('id-ID')+'</td><td>'+item.min+'</td><td>'+item.max.toLocaleString('id-ID')+'</td></tr>'});document.getElementById('pricelistTable').innerHTML=html||'<tr><td colspan="6" style="text-align:center;padding:1rem;color:var(--muted)">Tidak ada layanan</td></tr>'}
 
-// ============================================
-// 🎫 TICKET
-// ============================================
-function submitTicket() {
-  var orderId = document.getElementById('ticketOrderId').value.trim();
-  var subject = document.getElementById('ticketSubject').value.trim();
-  var message = document.getElementById('ticketMessage').value.trim();
-  if(!subject || !message) { showToast('❌ Subjek dan pesan wajib diisi!', true); return; }
-  var ticketData = {
-    userId: currentUser.uid, username: currentUser.displayName,
-    orderId: orderId, subject: subject, message: message,
-    status: 'open', replies: [],
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-  };
-  db.collection('tickets').add(ticketData).then(() => {
-    showToast('✅ Tiket terkirim!');
-    document.getElementById('ticketOrderId').value = '';
-    document.getElementById('ticketSubject').value = '';
-    document.getElementById('ticketMessage').value = '';
-    loadUserTickets();
-  }).catch(err => showToast('❌ ' + err.message, true));
-}
+function applyVoucher(){var code=document.getElementById('userVoucherCode').value.trim().toUpperCase();if(!code){showToast('❌ Masukkan kode!',true);return}db.collection('vouchers').where('code','==',code).get().then(snap=>{if(snap.empty){showToast('❌ Kode tidak valid!',true);return}var v=snap.docs[0].data();var now=new Date();var start=new Date(v.startDate);var end=new Date(v.endDate);if(!v.active){showToast('❌ Voucher tidak aktif!',true);return}if(now<start){showToast('❌ Voucher belum berlaku!',true);return}if(now>end){showToast('❌ Voucher sudah expired!',true);return}if(v.used>=v.maxUse){showToast('❌ Voucher sudah habis!',true);return}document.getElementById('voucherResult').innerHTML='<div style="background:rgba(16,185,129,0.1);border:1px solid var(--success);padding:.8rem;border-radius:8px;color:var(--success);font-size:.85rem">✅ Voucher <b>'+v.code+'</b> aktif! Diskon '+(v.type==='percent'?v.value+'%':'Rp '+v.value.toLocaleString('id-ID'))+' akan diterapkan saat order. Masukkan kode di halaman Order.</div>';showToast('✅ Voucher berhasil ditukar!')})}
 
-function loadUserTickets() {
-  db.collection('tickets').where('userId', '==', currentUser.uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
-    var tickets = [];
-    snap.forEach(doc => tickets.push({id: doc.id, ...doc.data()}));
-    var html = tickets.map(t => '<tr><td><b>'+t.id.substring(0,8)+'</b></td><td>'+(t.createdAt?new Date(t.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+t.subject+'</td><td><span class="badge-status badge-'+(t.status==='open'?'pending':'completed')+'">'+(t.status==='open'?'🔴 Open':'✅ Closed')+'</span></td><td>'+(t.replies||[]).length+' balasan</td></tr>').join('');
-    document.getElementById('ticketTable').innerHTML = html || '<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada tiket</td></tr>';
-  });
-}
+function loadMyVouchers(){if(!currentUser)return;db.collection('userVouchers').where('userId','==',currentUser.uid).orderBy('createdAt','desc').limit(10).get().then(snap=>{var html='';snap.forEach(doc=>{var v=doc.data();html+='<div style="background:var(--darker);padding:.8rem;border-radius:8px;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;font-size:.85rem"><div><b style="color:var(--accent)">'+v.code+'</b><br><small style="color:var(--muted)">'+(v.type==='percent'?v.value+'%':'Rp '+v.value.toLocaleString('id-ID'))+' • Min. Rp '+(v.minOrder||0).toLocaleString('id-ID')+'</small></div><span class="badge-status badge-completed">Aktif</span></div>'});document.getElementById('myVouchersList').innerHTML=html||'<p style="color:var(--muted);text-align:center;font-size:.85rem">Belum ada voucher</p>'})}
 
-// ============================================
-// 📢 TOAST
-// ============================================
-function showToast(msg, isError) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => t.className = 'toast', 3000);
-}
+function loadMyReferral(){if(!currentUser)return;db.collection('users').doc(currentUser.uid).get().then(doc=>{var u=doc.data();if(!u.referralCode){var code='DEZ'+Math.random().toString(36).substring(2,8).toUpperCase();db.collection('users').doc(currentUser.uid).update({referralCode:code,referralEarning:0});u.referralCode=code}document.getElementById('myReferralCode').textContent=u.referralCode;document.getElementById('myRefEarning').textContent='Rp '+(u.referralEarning||0).toLocaleString('id-ID')});db.collection('users').where('referredBy','==',currentUser.uid).get().then(snap=>{document.getElementById('myRefCount').textContent=snap.size;var html='';snap.forEach(doc=>{var u=doc.data();html+='<tr><td><b>'+(u.username||'-')+'</b></td><td>'+(u.createdAt?new Date(u.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>Rp '+(u.totalSpend||0).toLocaleString('id-ID')+'</td><td style="color:var(--success)">Rp '+Math.floor((u.totalSpend||0)*0.1).toLocaleString('id-ID')+'</td></tr>'});document.getElementById('myReferralList').innerHTML=html||'<tr><td colspan="4" style="text-align:center;color:var(--muted);font-size:.85rem">Belum ada teman</td></tr>'})}
+
+function copyReferralCode(){var code=document.getElementById('myReferralCode').textContent;navigator.clipboard.writeText(code).then(()=>showToast('✅ Kode disalin: '+code))}
+
+function shareReferralWA(){var code=document.getElementById('myReferralCode').textContent;var msg='🎉 Yuk daftar DEZSTORE — SMM Panel termurah!\n\nPakai kode referral saya: *'+code+'*\n\nDapat bonus saldo Rp 3.000 otomatis!\n\n👉 dezshop.vercel.app';window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank')}
+
+function submitTicket(){var orderId=document.getElementById('ticketOrderId').value.trim();var subject=document.getElementById('ticketSubject').value.trim();var message=document.getElementById('ticketMessage').value.trim();if(!subject||!message){showToast('❌ Subjek dan pesan wajib diisi!',true);return}var ticketData={userId:currentUser.uid,username:currentUser.displayName,orderId:orderId,subject:subject,message:message,status:'open',replies:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()};db.collection('tickets').add(ticketData).then(()=>{showToast('✅ Tiket terkirim!');document.getElementById('ticketOrderId').value='';document.getElementById('ticketSubject').value='';document.getElementById('ticketMessage').value='';loadUserTickets()}).catch(err=>showToast('❌ '+err.message,true))}
+
+function loadUserTickets(){db.collection('tickets').where('userId','==',currentUser.uid).orderBy('createdAt','desc').onSnapshot(snap=>{var tickets=[];snap.forEach(doc=>tickets.push({id:doc.id,...doc.data()}));var html=tickets.map(t=>'<tr><td><b>'+t.id.substring(0,8)+'</b></td><td>'+(t.createdAt?new Date(t.createdAt.toDate()).toLocaleDateString('id-ID'):'-')+'</td><td>'+t.subject+'</td><td><span class="badge-status badge-'+(t.status==='open'?'pending':'completed')+'">'+(t.status==='open'?'🔴 Open':'✅ Closed')+'</span></td><td>'+(t.replies||[]).length+' balasan</td></tr>').join('');document.getElementById('ticketTable').innerHTML=html||'<tr><td colspan="5" style="text-align:center;padding:1rem;color:var(--muted)">Belum ada tiket</td></tr>'})}
+
+function loadWebsiteTheme(){db.collection('settings').doc('theme').onSnapshot(doc=>{if(!doc.exists)return;var t=doc.data();var root=document.documentElement;if(t.colors){if(t.colors.primary)root.style.setProperty('--secondary',t.colors.primary);if(t.colors.secondary)root.style.setProperty('--accent',t.colors.secondary);if(t.colors.bg)root.style.setProperty('--darker',t.colors.bg);if(t.colors.card)root.style.setProperty('--card',t.colors.card)}if(t.background){document.body.style.backgroundImage='url('+t.background+')';document.body.style.backgroundSize='cover';document.body.style.backgroundPosition='center';document.body.style.backgroundAttachment='fixed'}if(t.logo){var logoIcons=document.querySelectorAll('.logo-icon');logoIcons.forEach(el=>{el.innerHTML='<img src="'+t.logo+'" style="width:100%;height:100%;object-fit:contain;border-radius:8px">'})}if(t.banner){var homePage=document.getElementById('page-home');if(homePage){var existing=homePage.querySelector('.theme-banner');if(existing)existing.remove();var bannerHtml='<div class="theme-banner" style="margin-bottom:1.2rem;border-radius:12px;overflow:hidden"><img src="'+t.banner+'" style="width:100%;max-height:180px;object-fit:cover"></div>';homePage.insertAdjacentHTML('afterbegin',bannerHtml)}}})}
+
+function checkForUpdates(){db.collection('settings').doc('version').onSnapshot(doc=>{if(!doc.exists)return;var v=doc.data();var latestVersion=v.version||'1.0.0';var updateMessage=v.message||'Update baru tersedia';var forceUpdateFlag=v.forceUpdate||false;if(compareVersions(latestVersion,CURRENT_VERSION)>0){var snoozedUntil=localStorage.getItem('snoozeUpdateUntil');var now=Date.now();if(snoozedUntil&&now<parseInt(snoozedUntil))return;document.getElementById('updateTitle').textContent='🔄 Update v'+latestVersion;document.getElementById('updateMessage').textContent=updateMessage;document.getElementById('updateBanner').classList.add('show');if(forceUpdateFlag)setTimeout(()=>forceUpdate(),3000)}})}
+
+function compareVersions(v1,v2){var p1=v1.split('.').map(Number);var p2=v2.split('.').map(Number);for(var i=0;i<3;i++){if(p1[i]>p2[i])return 1;if(p1[i]<p2[i])return -1}return 0}
+
+function forceUpdate(){showToastNotif('🔄','Memperbarui...','Sedang memuat versi terbaru','success');setTimeout(()=>{localStorage.removeItem('snoozeUpdateUntil');window.location.reload(true)},1000)}
+
+function snoozeUpdate(){var snoozeTime=Date.now()+(24*60*60*1000);localStorage.setItem('snoozeUpdateUntil',snoozeTime);document.getElementById('updateBanner').classList.remove('show');showToastNotif('🔕','Ditunda','Notifikasi update ditunda 24 jam','warning')}
+
+function startAutoRefresh(){if(autoRefreshInterval)clearInterval(autoRefreshInterval);autoRefreshInterval=setInterval(()=>{if(!currentUser)return;document.getElementById('refreshIndicator').classList.add('show');refreshBalance();checkOrderChanges();checkDepositChanges();setTimeout(()=>{document.getElementById('refreshIndicator').classList.remove('show')},1000)},30000)}
+
+function refreshBalance(){if(!currentUser)return;db.collection('users').doc(currentUser.uid).get().then(doc=>{if(doc.exists){var newBalance=doc.data().balance||0;var oldBalance=parseInt(document.getElementById('userBalance').textContent.replace(/\D/g,''))||0;if(newBalance!==oldBalance){document.getElementById('userBalance').textContent=newBalance.toLocaleString('id-ID');document.getElementById('statBalance').textContent='Rp '+newBalance.toLocaleString('id-ID');if(newBalance>oldBalance)showToastNotif('💰','Saldo Bertambah!','Saldo kamu bertambah Rp '+(newBalance-oldBalance).toLocaleString('id-ID'),'success');else if(newBalance<oldBalance)showToastNotif('💸','Saldo Berkurang','Saldo kamu berkurang Rp '+(oldBalance-newBalance).toLocaleString('id-ID'),'warning')}}})}
+
+function checkOrderChanges(){if(!currentUser)return;db.collection('orders').where('userId','==',currentUser.uid).where('status','in',['pending','processing']).get().then(snap=>{snap.forEach(doc=>{var order=doc.data();var orderId=doc.id;var oldStatus=lastOrderStatus[orderId];var newStatus=order.status;if(oldStatus&&oldStatus!==newStatus){var statusText={'processing':'⚙️ Sedang diproses','completed':'✅ Selesai!','cancelled':'❌ Dibatalkan'};showToastNotif('🛒','Order Update','Order '+orderId.substring(0,8)+': '+(statusText[newStatus]||newStatus),newStatus==='completed'?'success':'warning')}lastOrderStatus[orderId]=newStatus})})}
+
+function checkDepositChanges(){if(!currentUser)return;db.collection('deposits').where('userId','==',currentUser.uid).where('status','==','pending').get().then(snap=>{snap.forEach(doc=>{var depId=doc.id;db.collection('deposits').doc(depId).get().then(d=>{if(d.exists&&d.data().status==='approved'&&lastDepositStatus[depId]!=='approved'){showToastNotif('💰','Deposit Disetujui!','Deposit Rp '+d.data().amount.toLocaleString('id-ID')+' telah disetujui','success')}lastDepositStatus[depId]=d.data().status})})})}
+
+function showToastNotif(icon,title,message,type){var container=document.getElementById('toastContainer');var toast=document.createElement('div');toast.className='toast-notification '+(type||'');toast.innerHTML='<div style="display:flex;align-items:start;gap:.6rem"><div style="font-size:1.3rem">'+icon+'</div><div style="flex:1"><div style="font-weight:700;font-size:.85rem">'+title+'</div><div style="color:var(--muted);font-size:.8rem">'+message+'</div></div><button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem">✕</button></div>';container.appendChild(toast);setTimeout(()=>toast.classList.add('show'),10);setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),300)},5000);while(container.children.length>3)container.removeChild(container.firstChild)}
+
+function showToast(msg,isError){var t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(isError?' error':'');setTimeout(()=>t.className='toast',3000)}
 </script>
 </body>
-</html>
+  </html>
