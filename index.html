@@ -89,11 +89,13 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
 /* MODAL */
 .md{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;padding:1rem}
 .md.on{display:flex}
-.mdc{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:1.2rem;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;animation:ms .3s}
+.mdc{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:1.2rem;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;animation:ms .3s}
 @keyframes ms{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .mdc h2{margin-bottom:.8rem;font-size:1.1rem;display:flex;align-items:center;gap:.5rem}
-.mcl{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+.reg-link{text-align:center;margin-top:.8rem;font-size:.8rem;color:var(--m)}
+.reg-link a{color:var(--s);text-decoration:none;font-weight:600;cursor:pointer}
+.reg-link a:hover{text-decoration:underline}
 /* TOAST */
 .ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.7rem 1rem;border-radius:10px;font-weight:600;font-size:.8rem;z-index:10000;transform:translateY(120px);opacity:0;transition:.3s;max-width:90%;box-shadow:0 5px 20px rgba(0,0,0,.4)}
 .ts.on{transform:translateY(0);opacity:1}.ts.e{background:var(--err)}.ts.w{background:var(--warn)}.ts.i{background:var(--p)}
@@ -194,7 +196,7 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
       <div class="pbar" id="pbar"><i id="pbarFill"></i></div>
       <div class="ptxt" id="ptxt">Memulai download...</div>
     </div>
-    <div class="cd" style="font-size:.75rem;color:var(--m)"><i class="fas fa-shield-alt" style="color:var(--ok)"></i> File langsung terdownload ke perangkat Anda (tanpa membuka halaman web). Jika muncul peringatan "Sumber tidak dikenal", pilih <b>Simpan/Tetap Download</b>.</div>
+    <div class="cd" style="font-size:.75rem;color:var(--m)"><i class="fas fa-shield-alt" style="color:var(--ok)"></i> File langsung terdownload ke perangkat Anda. Jika muncul peringatan "Sumber tidak dikenal", pilih <b>Simpan/Tetap Download</b>.</div>
   </div>
 
   <!-- HELP -->
@@ -215,9 +217,24 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
   <h2 style="justify-content:center">🔐 Masuk Member</h2>
   <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Masuk ke akun DEZSTORE Anda</p>
   <div class="fg" style="text-align:left"><label>Username</label><input class="fc" id="liUser" placeholder="username"></div>
-  <div class="fg" style="text-align:left"><label>Password <small style="color:var(--m)">(opsional)</small></label><input type="password" class="fc" id="liPass" placeholder="password"></div>
+  <div class="fg" style="text-align:left"><label>Password</label><input type="password" class="fc" id="liPass" placeholder="password"></div>
   <button class="bt bp bb" style="padding:.7rem" onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+  <div class="reg-link">Belum punya akun? <a onclick="switchToRegister()">Daftar di sini</a></div>
   <div id="liInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--err)"></div>
+</div></div>
+
+<!-- REGISTER MODAL -->
+<div class="md" id="mRegister"><div class="mdc" style="text-align:center">
+  <div class="logo" style="margin:0 auto .8rem;width:54px;height:54px"><img src="logo.png" onerror="this.parentNode.innerHTML='<i class=\'fas fa-bolt\' style=\'font-size:1.4rem\'></i>'"></div>
+  <h2 style="justify-content:center">📝 Daftar Akun Baru</h2>
+  <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Buat akun untuk mulai order</p>
+  <div class="fg" style="text-align:left"><label>Username</label><input class="fc" id="regUser" placeholder="username unik"></div>
+  <div class="fg" style="text-align:left"><label>Email</label><input type="email" class="fc" id="regEmail" placeholder="email@contoh.com"></div>
+  <div class="fg" style="text-align:left"><label>WhatsApp</label><input class="fc" id="regWa" placeholder="08xxxxxxxxxx"></div>
+  <div class="fg" style="text-align:left"><label>Password</label><input type="password" class="fc" id="regPass" placeholder="min. 6 karakter"></div>
+  <button class="bt bg bb" style="padding:.7rem" onclick="doRegister()"><i class="fas fa-user-plus"></i> Daftar Sekarang</button>
+  <div class="reg-link">Sudah punya akun? <a onclick="switchToLogin()">Masuk di sini</a></div>
+  <div id="regInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--err)"></div>
 </div></div>
 
 <!-- UPDATE MODAL -->
@@ -233,20 +250,23 @@ td{padding:.6rem;border-bottom:1px solid var(--b);font-size:.8rem;color:#cbd5e1}
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
-// ===== FIREBASE (SAMA PERSIS DENGAN ADMIN) =====
+// ===== FIREBASE CONFIG (SAMA PERSIS DENGAN ADMIN) =====
 var fc={apiKey:"AIzaSyDE9i5HzR49qFJEr77fi5mI3guA6jt1UDA",authDomain:"dezstore-78d09.firebaseapp.com",projectId:"dezstore-78d09",storageBucket:"dezstore-78d09.firebasestorage.app",messagingSenderId:"815388782850",appId:"1:815388782850:web:de678f5df5380be276921b"};
 firebase.initializeApp(fc);
 var db=firebase.firestore();
-var ME=JSON.parse(localStorage.getItem('dez_member')||'null'); // {id,username,balance}
+var ME=JSON.parse(localStorage.getItem('dez_member')||'null');
 
 // ===== HELPERS =====
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' '+e:'');setTimeout(()=>t.className='ts',3000)}
 function rp(n){return 'Rp '+Number(n||0).toLocaleString('id-ID')}
 function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');if(window.innerWidth<=768)tSide(false);var f={home:loadHome,order:loadOrder,hist:loadHist,dep:loadDep,ann:loadAnn,apk:loadApk,help:loadHelp};if(f[id])f[id]()}
-function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function tSide(f){var s=document.getElementById('side'),o=document.getElementById('ov');var on=(f===undefined)?!s.classList.contains('on'):f;s.classList.toggle('on',on);o.classList.toggle('on',on)}
-function doLogout(){if(confirm('Logout?')){localStorage.removeItem('dez_member');location.reload()}}
+function doLogout(){if(confirm('Yakin ingin logout?')){localStorage.removeItem('dez_member');location.reload()}}
+
+// ===== AUTH SWITCHER =====
+function switchToRegister(){closeM('mLogin');document.getElementById('mRegister').classList.add('on');document.getElementById('regInfo').textContent='';}
+function switchToLogin(){closeM('mRegister');document.getElementById('mLogin').classList.add('on');document.getElementById('liInfo').textContent='';}
 
 // ===== LOGIN MEMBER =====
 function doLogin(){
@@ -255,8 +275,8 @@ function doLogin(){
   db.collection('users').where('username','==',u).get().then(s=>{
     if(s.empty){document.getElementById('liInfo').textContent='❌ Username tidak ditemukan';return}
     var d=s.docs[0],x=d.data();
-    if(x.status==='banned'){document.getElementById('liInfo').textContent='❌ Akun dibanned';return}
-    if(x.password!==undefined&&x.password!==p){document.getElementById('liInfo').textContent='❌ Password salah';return}
+    if(x.status==='banned'){document.getElementById('liInfo').textContent='❌ Akun Anda telah dibanned';return}
+    if(x.password!==undefined && x.password!==p){document.getElementById('liInfo').textContent='❌ Password salah';return}
     ME={id:d.id,username:x.username,balance:x.balance||0};
     localStorage.setItem('dez_member',JSON.stringify(ME));
     closeM('mLogin');document.getElementById('liInfo').textContent='';
@@ -265,7 +285,56 @@ function doLogin(){
   }).catch(e=>document.getElementById('liInfo').textContent='❌ '+e.message);
 }
 
-// ===== TEMA DINAMIS (dari admin) =====
+// ===== REGISTRASI MEMBER (FITUR BARU) =====
+function doRegister(){
+  var u=document.getElementById('regUser').value.trim();
+  var e=document.getElementById('regEmail').value.trim();
+  var w=document.getElementById('regWa').value.trim();
+  var p=document.getElementById('regPass').value;
+  
+  if(!u || !e || !w || !p){document.getElementById('regInfo').textContent='❌ Semua kolom wajib diisi!';return}
+  if(u.length < 3){document.getElementById('regInfo').textContent='❌ Username minimal 3 karakter!';return}
+  if(p.length < 6){document.getElementById('regInfo').textContent='❌ Password minimal 6 karakter!';return}
+
+  document.getElementById('regInfo').textContent='Memeriksa username...';
+  
+  // Cek apakah username sudah ada
+  db.collection('users').where('username','==',u).get().then(s=>{
+    if(!s.empty){
+      document.getElementById('regInfo').textContent='❌ Username sudah digunakan, pilih yang lain!';
+      return;
+    }
+    
+    document.getElementById('regInfo').textContent='Mendaftarkan akun...';
+    
+    // Buat user baru dengan format yang SAMA PERSIS dengan admin.html
+    var newUser = {
+      username: u,
+      email: e,
+      whatsapp: w,
+      password: p, // Disimpan untuk keamanan login
+      balance: 0,
+      status: 'active',
+      totalOrders: 0,
+      totalSpend: 0,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    db.collection('users').add(newUser).then(docRef=>{
+      ME = {id: docRef.id, username: u, balance: 0};
+      localStorage.setItem('dez_member', JSON.stringify(ME));
+      closeM('mRegister');
+      T('✅ Registrasi berhasil! Selamat datang.');
+      boot();
+    }).catch(err=>{
+      document.getElementById('regInfo').textContent='❌ Gagal mendaftar: '+err.message;
+    });
+  }).catch(err=>{
+    document.getElementById('regInfo').textContent='❌ Error: '+err.message;
+  });
+}
+
+// ===== TEMA & WEBSITE DINAMIS =====
 function applyTheme(){
   db.collection('settings').doc('theme').get().then(d=>{
     if(!d.exists)return;var t=d.data(),r=document.documentElement.style;
@@ -303,12 +372,8 @@ function loadAnn(){
   });
 }
 
-// ===== DOWNLOAD APK (SINKRON ADMIN) =====
-function getApk(){
-  // prioritas: Firestore settings/apk (jika admin nanti tulis ke sana), fallback localStorage 'apk'
-  var ls=JSON.parse(localStorage.getItem('apk')||'{}');
-  return ls;
-}
+// ===== DOWNLOAD APK =====
+function getApk(){return JSON.parse(localStorage.getItem('apk')||'{}');}
 function loadApk(){
   var a=getApk();
   document.getElementById('aVer').textContent='v'+(a.ver||'-');
@@ -331,14 +396,12 @@ function downloadAPK(){
   btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Mengunduh...';
   bar.classList.add('on');ptxt.classList.add('on');ptxt.textContent='Menghubungkan...';
   var pr=0,ti=setInterval(()=>{pr=Math.min(pr+Math.random()*12,90);fill.style.width=pr+'%';ptxt.textContent='Mengunduh... '+Math.round(pr)+'%'},250);
-  // coba blob (langsung simpan, tanpa buka web)
   fetch(url).then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{
     clearInterval(ti);fill.style.width='100%';
     var u=URL.createObjectURL(b),l=document.createElement('a');l.href=u;l.download=name;document.body.appendChild(l);l.click();l.remove();
     setTimeout(()=>URL.revokeObjectURL(u),8000);
     done();T('✅ APK terdownload!');
   }).catch(()=>{
-    // fallback: anchor download / navigasi (file .apk otomatis tersimpan, bukan dibuka sebagai web)
     clearInterval(ti);fill.style.width='100%';
     var l=document.createElement('a');l.href=url;l.download=name;l.rel='noopener';document.body.appendChild(l);l.click();l.remove();
     setTimeout(done,1200);T('⬇️ Download dimulai (cek notifikasi browser)');
@@ -385,12 +448,12 @@ function oCalc(){
   document.getElementById('oTotal').value=rp(Math.round(x.price*q/1000));
 }
 function submitOrder(){
-  if(!ME){T('Login dulu!',1);return}
+  if(!ME){T('Silakan login terlebih dahulu!',1);return}
   var c=document.getElementById('oCat').value,i=document.getElementById('oSvc').value;
   var x=SVC.filter(s=>s.categoryName===c)[i];
   var link=document.getElementById('oLink').value.trim(),q=parseInt(document.getElementById('oQty').value)||0;
   if(!x||!link||!q){T('Lengkapi semua kolom!',1);return}
-  if(q<x.min||q>x.max){T('Qty harus '+x.min+'-'+x.max,1);return}
+  if(q<x.min||q>x.max){T('Jumlah harus antara '+x.min+' - '+x.max,1);return}
   var total=Math.round(x.price*q/1000);
   if(total>ME.balance){T('Saldo tidak cukup!',1);return}
   var d=db.collection('users').doc(ME.id);
@@ -398,15 +461,15 @@ function submitOrder(){
     if((u.data().balance||0)<total)throw'Saldo kurang';
     t.update(d,{balance:firebase.firestore.FieldValue.increment(-total),totalOrders:firebase.firestore.FieldValue.increment(1),totalSpend:firebase.firestore.FieldValue.increment(total)});
     t.add(db.collection('orders'),{userId:ME.id,username:ME.username,serviceId:x.serviceId,serviceName:x.name,category:x.category,link:link,qty:q,price:x.price,total:total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});
-  })).then(()=>{T('✅ Order dibuat!');document.getElementById('oLink').value='';document.getElementById('oQty').value='';oCalc();go('hist',document.querySelectorAll('.mi')[2])}).catch(e=>T('❌ '+e,1));
+  })).then(()=>{T('✅ Order berhasil dibuat!');document.getElementById('oLink').value='';document.getElementById('oQty').value='';oCalc();go('hist',document.querySelectorAll('.mi')[2])}).catch(e=>T('❌ '+e,1));
 }
 
 // ===== HISTORY =====
 function loadHist(){
-  if(!ME){document.getElementById('histTb').innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--m)">Login dulu</td></tr>';return}
+  if(!ME){document.getElementById('histTb').innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--m)">Silakan login terlebih dahulu</td></tr>';return}
   db.collection('orders').where('userId','==',ME.id).orderBy('createdAt','desc').get().then(s=>{
     var h='';s.forEach(d=>{var o=d.data();h+='<tr><td><b>'+d.id.substring(0,6)+'</b></td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>'+rp(o.total)+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td></tr>'});
-    document.getElementById('histTb').innerHTML=h||'<tr><td colspan="5" style="text-align:center;color:var(--m)">Belum ada</td></tr>';
+    document.getElementById('histTb').innerHTML=h||'<tr><td colspan="5" style="text-align:center;color:var(--m)">Belum ada order</td></tr>';
   });
 }
 
@@ -418,34 +481,34 @@ function loadDep(){
   });
 }
 function submitDep(){
-  if(!ME){T('Login dulu!',1);return}
+  if(!ME){T('Silakan login terlebih dahulu!',1);return}
   var amt=parseInt(document.getElementById('dAmt').value)||0,f=document.getElementById('dProof').files[0];
-  if(amt<10000){T('Min Rp 10.000!',1);return}
-  var go2=proof=>{db.collection('deposits').add({userId:ME.id,username:ME.username,method:'manual',methodName:'Transfer',amount:amt,proof:proof||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Deposit dikirim!');document.getElementById('dAmt').value='';document.getElementById('dProof').value=''})};
+  if(amt<10000){T('Minimal deposit Rp 10.000!',1);return}
+  var go2=proof=>{db.collection('deposits').add({userId:ME.id,username:ME.username,method:'manual',methodName:'Transfer',amount:amt,proof:proof||'',status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Permintaan deposit dikirim! Tunggu konfirmasi admin.');document.getElementById('dAmt').value='';document.getElementById('dProof').value=''})};
   if(f){var r=new FileReader();r.onload=e=>go2(e.target.result);r.readAsDataURL(f)}else go2('');
 }
 
 // ===== HELP / TIKET =====
 function loadHelp(){
   applySite();
-  if(!ME){document.getElementById('tikTb').innerHTML='<tr><td colspan="2" style="text-align:center;color:var(--m)">Login dulu</td></tr>';return}
+  if(!ME){document.getElementById('tikTb').innerHTML='<tr><td colspan="2" style="text-align:center;color:var(--m)">Silakan login terlebih dahulu</td></tr>';return}
   db.collection('tickets').where('userId','==',ME.id).orderBy('createdAt','desc').get().then(s=>{
     var h='';s.forEach(d=>{var t=d.data();h+='<tr><td>'+(t.subject||'-')+'</td><td><span class="bad '+(t.status==='open'?'p':'c')+'">'+t.status+'</span></td></tr>'});
-    document.getElementById('tikTb').innerHTML=h||'<tr><td colspan="2" style="text-align:center;color:var(--m)">Belum ada</td></tr>';
+    document.getElementById('tikTb').innerHTML=h||'<tr><td colspan="2" style="text-align:center;color:var(--m)">Belum ada tiket</td></tr>';
   });
 }
 function submitTiket(){
-  if(!ME){T('Login dulu!',1);return}
+  if(!ME){T('Silakan login terlebih dahulu!',1);return}
   var s=document.getElementById('tSub').value.trim(),m=document.getElementById('tMsg').value.trim();
   if(!s||!m){T('Lengkapi subjek & pesan!',1);return}
-  db.collection('tickets').add({userId:ME.id,username:ME.username,subject:s,message:m,status:'open',replies:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Tiket terkirim!');document.getElementById('tSub').value='';document.getElementById('tMsg').value='';loadHelp()});
+  db.collection('tickets').add({userId:ME.id,username:ME.username,subject:s,message:m,status:'open',replies:[],createdAt:firebase.firestore.FieldValue.serverTimestamp()}).then(()=>{T('✅ Tiket berhasil dikirim!');document.getElementById('tSub').value='';document.getElementById('tMsg').value='';loadHelp()});
 }
 
 // ===== UPDATE CHECK =====
 function checkUpdate(){
   db.collection('settings').doc('version').get().then(d=>{
     if(!d.exists)return;var v=d.data();var cur=localStorage.getItem('dez_appver')||'0';
-    if(v.version&&v.version!==cur){document.getElementById('updMsg').textContent=(v.message||'Ada versi baru!')+' (v'+v.version+')';openM('mUpd')}
+    if(v.version&&v.version!==cur){document.getElementById('updMsg').textContent=(v.message||'Ada versi baru!')+' (v'+v.version+')';document.getElementById('mUpd').classList.add('on')}
   });
 }
 
@@ -453,8 +516,8 @@ function checkUpdate(){
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 
 // ===== BOOT =====
-function boot(){applyTheme();applySite();loadHome();checkUpdate();setInterval(loadAnnData,30000)}
+function boot(){applyTheme();applySite();loadHome();checkUpdate();setInterval(()=>loadAnnData(()=>{}),30000)}
 if(ME){closeM('mLogin');boot()}else{document.getElementById('liUser').focus()}
 </script>
 </body>
-    </html>
+</html>
