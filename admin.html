@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -389,7 +389,30 @@ var curSvc='';
 function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt bp bs" onclick="editSvc(\''+d.id+'\')">✏️</button> <button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
 function addSvc(){curSvc='';document.querySelector('#mSvc h2').textContent='Tambah Layanan';document.getElementById('sId').readOnly=false;['sId','sCat','sCatN','sNm','sPr','sMn','sMx'].forEach(i=>document.getElementById(i).value='');openM('mSvc')}
 function editSvc(id){curSvc=id;db.collection('services').doc(id).get().then(d=>{var x=d.data()||{};document.querySelector('#mSvc h2').textContent='Edit Layanan';document.getElementById('sId').value=x.serviceId||id;document.getElementById('sId').readOnly=true;document.getElementById('sCat').value=x.category||'';document.getElementById('sCatN').value=x.categoryName||'';document.getElementById('sNm').value=x.name||'';document.getElementById('sPr').value=x.price||0;document.getElementById('sMn').value=x.min||0;document.getElementById('sMx').value=x.max||0;openM('mSvc')})}
-function saveSvc(){var d={serviceId:document.getElementById('sId').value,category:document.getElementById('sCat').value.toLowerCase(),categoryName:document.getElementById('sCatN').value,name:document.getElementById('sNm').value,price:parseInt(document.getElementById('sPr').value)||0,min:parseInt(document.getElementById('sMn').value)||0,max:parseInt(document.getElementById('sMx').value)||0};var id=curSvc||d.serviceId;if(!id||!d.name){T('❌ Isi lengkap!',1);return}db.collection('services').doc(id).set(d,{merge:true}).then(()=>{T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));curSvc='';closeM('mSvc');loadSvc()})}
+function saveSvc(){
+  var d={serviceId:document.getElementById('sId').value,category:document.getElementById('sCat').value.toLowerCase(),categoryName:document.getElementById('sCatN').value,name:document.getElementById('sNm').value,price:parseInt(document.getElementById('sPr').value)||0,min:parseInt(document.getElementById('sMn').value)||0,max:parseInt(document.getElementById('sMx').value)||0};
+  var id=curSvc||d.serviceId;
+  if(!id||!d.name){T('❌ Isi lengkap!',1);return}
+  db.collection('services').doc(id).set(d,{merge:true}).then(()=>{
+    T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));
+    curSvc='';
+    closeM('mSvc');
+    var rows=document.querySelectorAll('#tSvc tr');
+    for(var i=0;i<rows.length;i++){
+      if(rows[i].innerHTML.includes(id)){
+        var tds=rows[i].querySelectorAll('td');
+        if(tds.length>=6){
+          tds[1].textContent=d.categoryName||d.category||'-';
+          tds[2].textContent=d.name||'-';
+          tds[3].textContent='Rp '+d.price.toLocaleString('id-ID');
+          tds[4].textContent=d.min||0;
+          tds[5].textContent=d.max||0;
+        }
+        break;
+      }
+    }
+  })
+}
 function delSvc(id){if(confirm('Hapus?'))db.collection('services').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadSvc()})}
 
 // ===== KATEGORI =====
@@ -461,4 +484,4 @@ function chgPass(){var o=document.getElementById('pOld').value,n=document.getEle
 loadDash();
 </script>
 </body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>                                                                    </htm
