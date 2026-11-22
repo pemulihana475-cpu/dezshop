@@ -61,7 +61,7 @@ textarea.fc{min-height:60px;resize:vertical}
 .ts.e{background:var(--err)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
-@@media(max-width:768px){.sidebar{transform:translateX(-100%);transition:.3s;box-shadow:5px 0 20px rgba(0,0,0,.5)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0}.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:768px){.side{width:150px}.bd{margin-left:150px;padding:.6rem}.g2,.g3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -119,7 +119,11 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg" id="ord">
 <h1>🛒 Orders</h1>
-<div class="cd"><select class="fc" id="fOrd" onchange="loadOrd()" style="width:auto;margin-bottom:.5rem"><option value="">Semua</option><option value="pending">Pending</option><option value="processing">Processing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>User</th><th>Layanan</th><th>Qty</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tOrd"></tbody></table></div></div>
+<div class="cd">
+<button class="bt bp" onclick="autoProses()">🚀 Auto-Process Semua Pending</button>
+<select class="fc" id="fOrd" onchange="loadOrd()" style="width:auto;margin-bottom:.5rem"><option value="">Semua</option><option value="pending">Pending</option><option value="processing">Processing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>
+<div class="tr"><table class="tb"><thead><tr><th>ID</th><th>User</th><th>Layanan</th><th>Qty</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="tOrd"></tbody></table></div>
+</div>
 </div>
 
 <div class="pg" id="dep">
@@ -134,12 +138,12 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg" id="svc">
 <h1>⚙️ Layanan</h1>
-<div class="cd"><button class="bt bp" onclick="openM('mSvc')">+ Tambah</button><button class="bt bg" onclick="syncPPS()">Sync PPS</button><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Kategori</th><th>Nama</th><th>Harga</th><th>Min</th><th>Max</th><th>Aksi</th></tr></thead><tbody id="tSvc"></tbody></table></div></div>
+<div class="cd"><button class="bt bp" onclick="addSvc()">+ Tambah</button><button class="bt bg" onclick="syncPPS()">Sync PPS</button><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Kategori</th><th>Nama</th><th>Harga</th><th>Min</th><th>Max</th><th>Aksi</th></tr></thead><tbody id="tSvc"></tbody></table></div></div>
 </div>
 
 <div class="pg" id="cat">
 <h1>📂 Kategori</h1>
-<div class="cd"><button class="bt bp" onclick="addCat()">+ Tambah</button><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Nama</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody id="tCat"></tbody></table></div></div>
+<div class="cd"><button class="bt bp" onclick="openM('mCat')">+ Tambah</button><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Nama</th><th>Jumlah</th><th>Aksi</th></tr></thead><tbody id="tCat"></tbody></table></div></div>
 </div>
 
 <div class="pg" id="ann">
@@ -165,7 +169,14 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg" id="api">
 <h1>🔌 API PPS</h1>
-<div class="cd"><div class="fg"><label>API URL</label><input class="fc" id="apiUrl"></div><div class="fg"><label>API Key</label><input class="fc" id="apiKey"></div><div class="fg"><label>Secret Key</label><input type="password" class="fc" id="apiSec"></div><button class="bt bg" onclick="saveApi()">Simpan</button><button class="bt bp" onclick="testApi()">Test</button><button class="bt bw" onclick="syncPPS()">Sync</button><div id="apiRes" style="margin-top:.5rem"></div></div>
+<div class="cd">
+<div class="fg"><label>API Key</label><input class="fc" id="apiKey" placeholder="Masukkan API Key dari PPS"></div>
+<div class="fg"><label>Secret Key</label><input type="password" class="fc" id="apiSec" placeholder="Masukkan Secret Key dari PPS"></div>
+<button class="bt bg" onclick="saveApi()">Simpan</button>
+<button class="bt bp" onclick="testApi()">Test</button>
+<button class="bt bw" onclick="syncPPS()">Sync</button>
+<div id="apiRes" style="margin-top:.5rem"></div>
+</div>
 </div>
 
 <div class="pg" id="wa">
@@ -230,6 +241,7 @@ textarea.fc{min-height:60px;resize:vertical}
 
 </div>
 
+<!-- MODALS -->
 <div class="md" id="mUsr"><div class="mdc"><h2>User</h2><div class="fg"><label>Username</label><input class="fc" id="uNm"></div><div class="fg"><label>Email</label><input type="email" class="fc" id="uEm"></div><div class="fg"><label>WA</label><input class="fc" id="uWa"></div><div class="fg"><label>Saldo</label><input type="number" class="fc" id="uBal" value="0"></div><div class="fg"><label>Status</label><select class="fc" id="uSt"><option value="active">Active</option><option value="banned">Banned</option></select></div><button class="bt bp" onclick="saveUsr()">Simpan</button><button class="bt be" onclick="closeM('mUsr')">Batal</button></div></div>
 
 <div class="md" id="mSvc"><div class="mdc"><h2>Layanan</h2><div class="fg"><label>Service ID</label><input class="fc" id="sId"></div><div class="fg"><label>Kategori</label><input class="fc" id="sCat"></div><div class="fg"><label>Nama Kategori</label><input class="fc" id="sCatN"></div><div class="fg"><label>Nama</label><input class="fc" id="sNm"></div><div class="fg"><label>Harga</label><input type="number" class="fc" id="sPr"></div><div class="fg"><label>Min</label><input type="number" class="fc" id="sMn"></div><div class="fg"><label>Max</label><input type="number" class="fc" id="sMx"></div><button class="bt bp" onclick="saveSvc()">Simpan</button><button class="bt be" onclick="closeM('mSvc')">Batal</button></div></div>
@@ -239,6 +251,12 @@ textarea.fc{min-height:60px;resize:vertical}
 <div class="md" id="mVch"><div class="mdc"><h2>Voucher</h2><div class="fg"><label>Kode</label><input class="fc" id="vCd" placeholder="DISKON50"></div><div class="g2"><div class="fg"><label>Tipe</label><select class="fc" id="vTy"><option value="percent">%</option><option value="fixed">Rp</option></select></div><div class="fg"><label>Nilai</label><input type="number" class="fc" id="vVl"></div></div><div class="g2"><div class="fg"><label>Min Order</label><input type="number" class="fc" id="vMn" value="10000"></div><div class="fg"><label>Max Pakai</label><input type="number" class="fc" id="vMx" value="100"></div></div><button class="bt bp" onclick="saveVch()">Simpan</button><button class="bt be" onclick="closeM('mVch')">Batal</button></div></div>
 
 <div class="md" id="mTik"><div class="mdc"><h2>Balas Tiket</h2><div id="tikDtl" style="margin-bottom:.5rem;font-size:.8rem"></div><div class="fg"><label>Balasan</label><textarea class="fc" id="tikRpl" rows="3"></textarea></div><div class="fg"><label>Status</label><select class="fc" id="tikSt"><option value="open">Open</option><option value="closed">Closed</option></select></div><button class="bt bp" onclick="saveTik()">Kirim</button><button class="bt be" onclick="closeM('mTik')">Batal</button></div></div>
+
+<div class="md" id="mPay"><div class="mdc"><h2>Edit Pembayaran</h2><div class="fg"><label>Nomor</label><input class="fc" id="payNum"></div><div class="fg"><label>Fee (Rp)</label><input type="number" class="fc" id="payFee"></div><button class="bt bp" onclick="savePay()">Simpan</button><button class="bt be" onclick="closeM('mPay')">Batal</button></div></div>
+
+<div class="md" id="mBal"><div class="mdc"><h2>Tambah Saldo</h2><div class="fg"><label>Jumlah (Rp)</label><input type="number" class="fc" id="balAmt"></div><button class="bt bp" onclick="confirmAddBal()">Tambah</button><button class="bt be" onclick="closeM('mBal')">Batal</button></div></div>
+
+<div class="md" id="mCat"><div class="mdc"><h2>Kategori Baru</h2><div class="fg"><label>Nama Kategori</label><input class="fc" id="catNm"></div><div class="fg"><label>ID (slug)</label><input class="fc" id="catId" placeholder="instagram"></div><button class="bt bp" onclick="saveCat()">Simpan</button><button class="bt be" onclick="closeM('mCat')">Batal</button></div></div>
 
 <div class="ts" id="toast"></div>
 
@@ -252,94 +270,195 @@ var PW=localStorage.getItem('ap')||'dezstore2026';
 var p=prompt('🔐 Password:');
 if(p!==PW){alert('❌ Salah!');location.href='index.html'}
 
+// ===== URL API PPS (WAJIB GANTI DENGAN URL CLOUDFLARE WORKER KAMU) =====
+var PPS_URL='https://dez-proxy.pemulihana475.workers.dev/';
+
 function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
+// ===== API PPS =====
+function loadApi(){document.getElementById('apiKey').value=localStorage.getItem('ak')||'';document.getElementById('apiSec').value=localStorage.getItem('sk')||''}
+function saveApi(){localStorage.setItem('ak',document.getElementById('apiKey').value.trim());localStorage.setItem('sk',document.getElementById('apiSec').value.trim());T('✅ API disimpan!')}
+function testApi(){
+  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
+  if(!k||!s){T('❌ Isi API Key & Secret dulu, lalu Simpan!',1);return}
+  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dengan Cloudflare Worker kamu!',1);return}
+  var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','profile');
+  fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+  .then(r=>r.json())
+  .then(d=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ '+(d.status?'KONEKSI BERHASIL':'KONEKSI GAGAL')+'<br>Saldo: Rp '+((d.data&&d.data.balance)||0)+'</div>'})
+  .catch(e=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>'});
+}
+function syncPPS(){
+  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
+  if(!k||!s){T('❌ API belum diset!',1);return}
+  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dengan Cloudflare Worker kamu!',1);return}
+  var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
+  fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.data){
+      var b=db.batch(),c=0;
+      d.data.forEach(x=>{b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:parseInt(x.price)||0,min:parseInt(x.min)||0,max:parseInt(x.max)||0});c++});
+      b.commit().then(()=>{T('✅ '+c+' layanan disync!');loadSvc()});
+    } else T('❌ Gagal ambil data!',1);
+  })
+  .catch(e=>T('❌ '+e.message,1));
+}
+
+// ===== DASHBOARD =====
 function loadDash(){db.collection('users').get().then(s=>document.getElementById('d1').textContent=s.size);db.collection('orders').get().then(s=>{document.getElementById('d2').textContent=s.size;var p=0,c=0;s.forEach(d=>{if(d.data().status==='pending')p++;if(d.data().status==='completed')c++});document.getElementById('d5').textContent=p;document.getElementById('d6').textContent=c});db.collection('deposits').where('status','==','approved').get().then(s=>{var t=0;s.forEach(d=>t+=(d.data().amount||0));document.getElementById('d3').textContent=s.size;document.getElementById('d4').textContent='Rp '+t.toLocaleString('id-ID')})}
 
-function loadUsr(){var q=(document.getElementById('sUsr').value||'').toLowerCase();db.collection('users').get().then(s=>{var h='';s.forEach(d=>{var u=d.data();if(q&&!(u.username||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return;h+='<tr><td><b>'+(u.username||'-')+'</b></td><td>'+(u.email||'-')+'</td><td>'+(u.whatsapp||'-')+'</td><td>Rp '+(u.balance||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(u.status==='banned'?'x':'c')+'">'+(u.status||'active')+'</span></td><td><button class="bt bg bs" onclick="addBal(\''+d.id+'\')">💰</button><button class="bt be bs" onclick="delUsr(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tUsr').innerHTML=h||'<tr><td colspan="6" style="text-align:center">Tidak ada</td></tr>'})}
+// ===== USERS =====
+function loadUsr(){var q=(document.getElementById('sUsr').value||'').toLowerCase();db.collection('users').get().then(s=>{var h='';s.forEach(d=>{var u=d.data();if(q&&!(u.username||'').toLowerCase().includes(q)&&!(u.email||'').toLowerCase().includes(q))return;h+='<tr><td><b>'+(u.username||'-')+'</b></td><td>'+(u.email||'-')+'</td><td>'+(u.whatsapp||'-')+'</td><td>Rp '+(u.balance||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(u.status==='banned'?'x':'c')+'">'+(u.status||'active')+'</span></td><td><button class="bt bg bs" onclick="openBal(\''+d.id+'\')">💰</button><button class="bt be bs" onclick="delUsr(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tUsr').innerHTML=h||'<tr><td colspan="6" style="text-align:center">Tidak ada</td></tr>'})}
 function saveUsr(){var d={username:document.getElementById('uNm').value,email:document.getElementById('uEm').value,whatsapp:document.getElementById('uWa').value,balance:parseInt(document.getElementById('uBal').value)||0,status:document.getElementById('uSt').value,createdAt:firebase.firestore.FieldValue.serverTimestamp(),totalOrders:0,totalSpend:0};db.collection('users').add(d).then(()=>{T('✅ User ditambah!');closeM('mUsr');loadUsr()})}
-function addBal(id){var a=prompt('Saldo (Rp):');if(!a||isNaN(a))return;db.collection('users').doc(id).update({balance:firebase.firestore.FieldValue.increment(parseInt(a))}).then(()=>{T('✅ +Rp '+parseInt(a).toLocaleString('id-ID'));loadUsr()})}
+var curBalId='';
+function openBal(id){curBalId=id;document.getElementById('balAmt').value='';openM('mBal')}
+function confirmAddBal(){var a=parseInt(document.getElementById('balAmt').value);if(!a||isNaN(a)){T('❌ Jumlah tidak valid!',1);return}db.collection('users').doc(curBalId).update({balance:firebase.firestore.FieldValue.increment(a)}).then(()=>{T('✅ +Rp '+a.toLocaleString('id-ID'));closeM('mBal');loadUsr()})}
 function delUsr(id){if(confirm('Hapus user?'))db.collection('users').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadUsr()})}
 
-function loadOrd(){var f=document.getElementById('fOrd').value;var q=db.collection('orders');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var o=d.data();h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(o.username||'-')+'</td><td>'+(o.serviceName||'-')+'</td><td>'+(o.qty||0)+'</td><td>Rp '+(o.total||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td><td><button class="bt bg bs" onclick="apOrd(\''+d.id+'\')">✓</button><button class="bt bw bs" onclick="prOrd(\''+d.id+'\')">⚙</button><button class="bt be bs" onclick="cnOrd(\''+d.id+'\')">✗</button></td></tr>'});document.getElementById('tOrd').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
-function apOrd(id){db.collection('orders').doc(id).update({status:'completed'}).then(()=>{T('✅ Approved!');loadOrd()})}
-function prOrd(id){db.collection('orders').doc(id).update({status:'processing'}).then(()=>{T('⚙ Diproses!');loadOrd()})}
+// ===== ORDERS (dengan Auto-Process ke PPS) =====
+function loadOrd(){var f=document.getElementById('fOrd').value;var q=db.collection('orders');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var o=d.data();var btn='';if(!o.ppsId&&o.status!=='cancelled'&&o.status!=='completed'){btn+='<button class="bt bp bs" onclick="sendPPS(\''+d.id+'\')">🚀</button> '}if(o.ppsId&&o.status!=='completed'&&o.status!=='cancelled'){btn+='<button class="bt bw bs" onclick="cekStatus(\''+d.id+'\')">🔄</button> '}btn+='<button class="bt bg bs" onclick="apOrd(\''+d.id+'\')">✓</button><button class="bt be bs" onclick="cnOrd(\''+d.id+'\')">✗</button>';h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(o.username||'-')+'</td><td>'+(o.serviceName||'-')+'<br><small style="color:var(--m)">PPS: '+(o.ppsId||'-')+'</small></td><td>'+(o.qty||0)+'</td><td>Rp '+(o.total||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td><td>'+btn+'</td></tr>'});document.getElementById('tOrd').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
+function sendPPS(id){
+  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
+  if(!k||!s){T('❌ API PPS belum diset!',1);return}
+  if(PPS_URL.includes('GANTI-DENGAN')){T('❌ Ganti PPS_URL dulu!',1);return}
+  db.collection('orders').doc(id).get().then(d=>{
+    var o=d.data();
+    var svc=(o.serviceId||o.service||'').toString().replace('PPS','');
+    var data=o.link||o.data||o.target||o.username_target||'';
+    var qty=o.qty||o.quantity||1;
+    if(!svc||!data){T('❌ Data order kurang (serviceId/link)!',1);return}
+    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','order');fd.append('service',svc);fd.append('data',data);fd.append('quantity',qty);
+    if(o.komen)fd.append('komen',o.komen);if(o.komenUser)fd.append('username',o.komenUser);
+    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status&&res.data&&res.data.id){db.collection('orders').doc(id).update({status:'processing',ppsId:String(res.data.id),ppsMsg:'OK'}).then(()=>{T('✅ Terkirim ke PPS! Order #'+res.data.id);loadOrd()})}
+      else{var msg=(res.data&&res.data.msg)||'Gagal order';db.collection('orders').doc(id).update({ppsMsg:msg}).then(()=>{T('❌ '+msg,1);loadOrd()})}
+    })
+    .catch(e=>T('❌ '+e.message,1));
+  });
+}
+function cekStatus(id){
+  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
+  if(!k||!s){T('❌ API belum diset!',1);return}
+  db.collection('orders').doc(id).get().then(d=>{
+    var o=d.data();if(!o.ppsId){T('❌ Order belum dikirim ke PPS!',1);return}
+    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','status');fd.append('id',o.ppsId);
+    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+    .then(r=>r.json())
+    .then(res=>{
+      if(res.status&&res.data){
+        var st=(res.data.status||'').toLowerCase();
+        var map={completed:'completed',selesai:'completed',processing:'processing',pending:'pending',cancelled:'cancelled',canceled:'cancelled',refunded:'cancelled'};
+        var newSt=map[st]||o.status;
+        db.collection('orders').doc(id).update({status:newSt,ppsStatus:res.data.status}).then(()=>{
+          if(newSt==='cancelled'&&o.status!=='cancelled'){db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('⚠️ Dibatalkan PPS → Saldo di-refund!')}
+          else T('🔄 Status: '+res.data.status);
+          loadOrd();
+        });
+      }else T('❌ '+(res.data&&res.data.msg||'Gagal'),1);
+    })
+    .catch(e=>T('❌ '+e.message,1));
+  });
+}
+function autoProses(){
+  var pending=[];
+  db.collection('orders').where('status','==','pending').get().then(s=>{s.forEach(d=>{if(!d.data().ppsId)pending.push(d.id)});if(!pending.length){T('Tidak ada order pending!',1);return}if(!confirm('Kirim '+pending.length+' order ke PPS?'))return;pending.forEach((id,i)=>setTimeout(()=>sendPPS(id),i*800));T('🚀 Memproses '+pending.length+' order...')});
+}
+function apOrd(id){db.collection('orders').doc(id).update({status:'completed'}).then(()=>{T('✅ Completed!');loadOrd()})}
 function cnOrd(id){if(!confirm('Cancel + refund?'))return;db.collection('orders').doc(id).get().then(d=>{var o=d.data();db.collection('orders').doc(id).update({status:'cancelled'});db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('❌ Cancel!');loadOrd()})}
 
+// ===== DEPOSITS =====
 function loadDep(){var f=document.getElementById('fDep').value;var q=db.collection('deposits');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(x.username||'-')+'</td><td>'+(x.methodName||'-')+'</td><td>Rp '+(x.amount||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(x.status==='approved'?'c':x.status==='rejected'?'x':'p')+'">'+x.status+'</span></td><td><button class="bt bg bs" onclick="apDep(\''+d.id+'\')">✓</button><button class="bt be bs" onclick="rjDep(\''+d.id+'\')">✗</button></td></tr>'});document.getElementById('tDep').innerHTML=h||'<tr><td colspan="6" style="text-align:center">Tidak ada</td></tr>'})}
 function apDep(id){db.collection('deposits').doc(id).get().then(d=>{var x=d.data();db.collection('deposits').doc(id).update({status:'approved'});db.collection('users').doc(x.userId).update({balance:firebase.firestore.FieldValue.increment(x.amount)});T('✅ Approved!');loadDep()})}
 function rjDep(id){if(!confirm('Reject?'))return;db.collection('deposits').doc(id).update({status:'rejected'}).then(()=>{T('❌ Rejected!');loadDep()})}
 
+// ===== TIKET =====
 function loadTik(){db.collection('tickets').orderBy('createdAt','desc').get().then(s=>{var h='';s.forEach(d=>{var t=d.data();h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(t.username||'-')+'</td><td>'+(t.subject||'-')+'</td><td><span class="bad '+(t.status==='open'?'p':'c')+'">'+t.status+'</span></td><td><button class="bt bp bs" onclick="repTik(\''+d.id+'\')">💬</button></td></tr>'});document.getElementById('tTik').innerHTML=h||'<tr><td colspan="5" style="text-align:center">Tidak ada</td></tr>'})}
 var curTik='';
 function repTik(id){curTik=id;db.collection('tickets').doc(id).get().then(d=>{var t=d.data();document.getElementById('tikDtl').innerHTML='<b>Subjek:</b> '+t.subject+'<br><b>Pesan:</b> '+t.message+'<br><b>User:</b> '+(t.username||'-');document.getElementById('tikRpl').value='';document.getElementById('tikSt').value=t.status||'open';openM('mTik')})}
 function saveTik(){var r=document.getElementById('tikRpl').value.trim();var s=document.getElementById('tikSt').value;if(!r){T('❌ Isi balasan!',1);return}db.collection('tickets').doc(curTik).update({replies:firebase.firestore.FieldValue.arrayUnion({admin:true,message:r,time:new Date().toISOString()}),status:s}).then(()=>{T('✅ Terkirim!');closeM('mTik');loadTik()})}
 
-function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
-function saveSvc(){var d={serviceId:document.getElementById('sId').value,category:document.getElementById('sCat').value.toLowerCase(),categoryName:document.getElementById('sCatN').value,name:document.getElementById('sNm').value,price:parseInt(document.getElementById('sPr').value)||0,min:parseInt(document.getElementById('sMn').value)||0,max:parseInt(document.getElementById('sMx').value)||0};if(!d.serviceId||!d.name){T('❌ Isi lengkap!',1);return}db.collection('services').doc(d.serviceId).set(d,{merge:true}).then(()=>{T('✅ Disimpan!');closeM('mSvc');loadSvc()})}
+// ===== LAYANAN (dengan EDIT) =====
+var curSvc='';
+function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt bp bs" onclick="editSvc(\''+d.id+'\')">✏️</button> <button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
+function addSvc(){curSvc='';document.querySelector('#mSvc h2').textContent='Tambah Layanan';document.getElementById('sId').readOnly=false;['sId','sCat','sCatN','sNm','sPr','sMn','sMx'].forEach(i=>document.getElementById(i).value='');openM('mSvc')}
+function editSvc(id){curSvc=id;db.collection('services').doc(id).get().then(d=>{var x=d.data()||{};document.querySelector('#mSvc h2').textContent='Edit Layanan';document.getElementById('sId').value=x.serviceId||id;document.getElementById('sId').readOnly=true;document.getElementById('sCat').value=x.category||'';document.getElementById('sCatN').value=x.categoryName||'';document.getElementById('sNm').value=x.name||'';document.getElementById('sPr').value=x.price||0;document.getElementById('sMn').value=x.min||0;document.getElementById('sMx').value=x.max||0;openM('mSvc')})}
+function saveSvc(){var d={serviceId:document.getElementById('sId').value,category:document.getElementById('sCat').value.toLowerCase(),categoryName:document.getElementById('sCatN').value,name:document.getElementById('sNm').value,price:parseInt(document.getElementById('sPr').value)||0,min:parseInt(document.getElementById('sMn').value)||0,max:parseInt(document.getElementById('sMx').value)||0};var id=curSvc||d.serviceId;if(!id||!d.name){T('❌ Isi lengkap!',1);return}db.collection('services').doc(id).set(d,{merge:true}).then(()=>{T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));curSvc='';closeM('mSvc');loadSvc()})}
 function delSvc(id){if(confirm('Hapus?'))db.collection('services').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadSvc()})}
-function syncPPS(){var k=localStorage.getItem('ak'),s=localStorage.getItem('sk'),u=localStorage.getItem('au')||'https://pps-provider.com/api';if(!k||!s){T('❌ API belum diset!',1);return}var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');fetch(u,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()}).then(r=>r.json()).then(d=>{if(d.data){var b=db.batch(),c=0;d.data.forEach(x=>{b.set(db.collection('services').doc('PPS'+x.service),{serviceId:'PPS'+x.service,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:parseInt(x.rate)||0,min:parseInt(x.min)||0,max:parseInt(x.max)||0});c++});b.commit().then(()=>{T('✅ '+c+' disync!');loadSvc()})}else T('❌ Gagal!',1)}).catch(e=>T('❌ '+e.message,1))}
 
+// ===== KATEGORI =====
 function loadCat(){db.collection('services').get().then(s=>{var c={};s.forEach(d=>{var x=d.data();var k=x.category||'other';if(!c[k])c[k]={n:x.categoryName||k,c:0};c[k].c++});var h='';var i=1;Object.keys(c).forEach(k=>{h+='<tr><td>'+i+++'</td><td><b>'+c[k].n+'</b><br><small style="color:var(--m)">'+k+'</small></td><td>'+c[k].c+'</td><td><button class="bt be bs" onclick="delCat(\''+k+'\')">🗑</button></td></tr>'});document.getElementById('tCat').innerHTML=h||'<tr><td colspan="4" style="text-align:center">Tidak ada</td></tr>'})}
-function addCat(){var n=prompt('Nama:');var i=prompt('ID:');if(n&&i)db.collection('categories').doc(i).set({name:n,id:i}).then(()=>{T('✅ Ditambah!');loadCat()})}
+function saveCat(){var n=document.getElementById('catNm').value.trim();var i=document.getElementById('catId').value.trim().toLowerCase();if(!n||!i){T('❌ Isi lengkap!',1);return}db.collection('categories').doc(i).set({name:n,id:i}).then(()=>{T('✅ Ditambah!');closeM('mCat');loadCat()})}
 function delCat(id){if(confirm('Hapus?'))db.collection('categories').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadCat()})}
 
+// ===== PENGUMUMAN =====
 function loadAnn(){db.collection('announcements').orderBy('createdAt','desc').get().then(s=>{var h='';s.forEach(d=>{var a=d.data();h+='<tr><td><b>'+a.title+'</b></td><td><span class="bad p">'+a.type+'</span></td><td><span class="bad '+(a.active?'c':'x')+'">'+(a.active?'active':'inactive')+'</span></td><td><button class="bt be bs" onclick="delAnn(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tAnn').innerHTML=h||'<tr><td colspan="4" style="text-align:center">Tidak ada</td></tr>'})}
 function saveAnn(){var d={title:document.getElementById('anT').value,type:document.getElementById('anTy').value,message:document.getElementById('anM').value,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(!d.title){T('❌ Isi judul!',1);return}db.collection('announcements').add(d).then(()=>{T('✅ Dibuat!');closeM('mAnn');loadAnn()})}
 function delAnn(id){if(confirm('Hapus?'))db.collection('announcements').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadAnn()})}
 
+// ===== VOUCHER =====
 function loadVch(){db.collection('vouchers').orderBy('createdAt','desc').get().then(s=>{var h='';s.forEach(d=>{var v=d.data();h+='<tr><td><b style="color:var(--a)">'+v.code+'</b></td><td>'+(v.type==='percent'?v.vl+'%':'Rp '+v.vl)+'</td><td>Rp '+(v.mn||0).toLocaleString('id-ID')+'</td><td>'+(v.used||0)+'/'+v.mx+'</td><td><button class="bt be bs" onclick="delVch(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tVch').innerHTML=h||'<tr><td colspan="5" style="text-align:center">Tidak ada</td></tr>'})}
 function saveVch(){var d={code:document.getElementById('vCd').value.toUpperCase(),type:document.getElementById('vTy').value,vl:parseInt(document.getElementById('vVl').value)||0,mn:parseInt(document.getElementById('vMn').value)||0,mx:parseInt(document.getElementById('vMx').value)||100,used:0,active:true,createdAt:firebase.firestore.FieldValue.serverTimestamp()};if(!d.code||!d.vl){T('❌ Isi lengkap!',1);return}db.collection('vouchers').add(d).then(()=>{T('✅ Dibuat!');closeM('mVch');loadVch()})}
 function delVch(id){if(confirm('Hapus?'))db.collection('vouchers').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadVch()})}
 
-function loadPay(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();var ms=[{k:'qris',n:'QRIS'},{k:'dana',n:'DANA'},{k:'gopay',n:'GoPay'},{k:'ovo',n:'OVO'},{k:'shopeepay',n:'ShopeePay'},{k:'bca',n:'BCA'}];var h='';ms.forEach(m=>{h+='<tr><td><b>'+m.n+'</b></td><td>'+(p[m.k]||'-')+'</td><td>Rp '+(p[m.k+'Fee']||0)+'</td><td><button class="bt bp bs" onclick="edPay(\''+m.k+'\')">✏</button></td></tr>'});document.getElementById('tPay').innerHTML=h})}
-function edPay(k){var n=prompt('Nomor:');var f=prompt('Fee:');if(n!==null)db.collection('settings').doc('payment').set({[k]:n,[k+'Fee']:parseInt(f)||0},{merge:true}).then(()=>{T('✅ Updated!');loadPay()})}
+// ===== PAYMENT (dengan MODAL EDIT) =====
+function loadPay(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();var ms=[{k:'qris',n:'QRIS'},{k:'dana',n:'DANA'},{k:'gopay',n:'GoPay'},{k:'ovo',n:'OVO'},{k:'shopeepay',n:'ShopeePay'},{k:'bca',n:'BCA'}];var h='';ms.forEach(m=>{h+='<tr><td><b>'+m.n+'</b></td><td>'+(p[m.k]||'-')+'</td><td>Rp '+(p[m.k+'Fee']||0)+'</td><td><button class="bt bp bs" onclick="edPay(\''+m.k+'\')">✏️</button></td></tr>'});document.getElementById('tPay').innerHTML=h})}
+var curPay='';
+function edPay(k){curPay=k;db.collection('settings').doc('payment').get().then(d=>{var p=(d.exists&&d.data())||{};document.getElementById('payNum').value=p[k]||'';document.getElementById('payFee').value=p[k+'Fee']||0;openM('mPay')})}
+function savePay(){db.collection('settings').doc('payment').set({[curPay]:document.getElementById('payNum').value,[curPay+'Fee']:parseInt(document.getElementById('payFee').value)||0},{merge:true}).then(()=>{T('✅ Updated!');closeM('mPay');loadPay()})}
 
+// ===== QRIS =====
 function loadQrs(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();document.getElementById('nQrs').value=p.qris||'';document.getElementById('nDna').value=p.dana||'';document.getElementById('nGpy').value=p.gopay||'';document.getElementById('nOvo').value=p.ovo||'';document.getElementById('nShp').value=p.shopeepay||'';document.getElementById('nBca').value=p.bca||'';if(p.qrisImage)document.getElementById('pvQrs').innerHTML='<img src="'+p.qrisImage+'" style="max-width:200px;border-radius:8px">'})}
-function prevQrs(){var f=document.getElementById('fQrs').files[0];if(!f)return;var r=new FileReader();r.onload=e=>document.getElementById('pvQrs').innerHTML='<img src="'+e.target.result+'" style="max-width:200px;border-radius:8px>';r.readAsDataURL(f)}
+function prevQrs(){var f=document.getElementById('fQrs').files[0];if(!f)return;var r=new FileReader();r.onload=e=>document.getElementById('pvQrs').innerHTML='<img src="'+e.target.result+'" style="max-width:200px;border-radius:8px">';r.readAsDataURL(f)}
 function saveQrs(){var i=document.querySelector('#pvQrs img');if(!i){T('❌ Upload dulu!',1);return}db.collection('settings').doc('payment').set({qrisImage:i.src},{merge:true}).then(()=>T('✅ QRIS disimpan!'))}
 function savePayNum(){db.collection('settings').doc('payment').set({qris:document.getElementById('nQrs').value,dana:document.getElementById('nDna').value,gopay:document.getElementById('nGpy').value,ovo:document.getElementById('nOvo').value,shopeepay:document.getElementById('nShp').value,bca:document.getElementById('nBca').value},{merge:true}).then(()=>T('✅ Disimpan!'))}
 
-function loadApi(){document.getElementById('apiUrl').value=localStorage.getItem('au')||'';document.getElementById('apiKey').value=localStorage.getItem('ak')||'';document.getElementById('apiSec').value=localStorage.getItem('sk')||''}
-function saveApi(){localStorage.setItem('au',document.getElementById('apiUrl').value);localStorage.setItem('ak',document.getElementById('apiKey').value);localStorage.setItem('sk',document.getElementById('apiSec').value);T('✅ API disimpan!')}
-function testApi(){var u=localStorage.getItem('au'),k=localStorage.getItem('ak'),s=localStorage.getItem('sk');if(!u||!k||!s){T('❌ Simpan dulu!',1);return}var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','profile');fetch(u,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()}).then(r=>r.json()).then(d=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ '+(d.status?'OK':'GAGAL')+'<br>Saldo: Rp '+(d.data?.balance||0)+'</div>'}).catch(e=>document.getElementById('apiRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>')}
-
+// ===== WHATSAPP =====
 function loadWa(){document.getElementById('fntToken').value=localStorage.getItem('ft')||'';document.getElementById('waNum').value=localStorage.getItem('wn')||''}
 function saveWa(){localStorage.setItem('ft',document.getElementById('fntToken').value);localStorage.setItem('wn',document.getElementById('waNum').value);T('✅ WA disimpan!')}
 function testWa(){var t=localStorage.getItem('ft'),n=localStorage.getItem('wn');if(!t||!n){T('❌ Simpan dulu!',1);return}if(n.startsWith('0'))n='62'+n.substring(1);var fd=new URLSearchParams();fd.append('target',n);fd.append('message','✅ TEST DEZSTORE berhasil!');fd.append('countryCode','62');fetch('https://api.fonnte.com/send',{method:'POST',headers:{'Authorization':t,'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()}).then(r=>r.json()).then(d=>document.getElementById('waRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ Terkirim!</div>').catch(e=>document.getElementById('waRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>')}
 
+// ===== WEBSITE =====
 function loadSet(){db.collection('settings').doc('website').get().then(d=>{if(!d.exists)return;var s=d.data();document.getElementById('siteName').value=s.name||'DEZSTORE';document.getElementById('siteTag').value=s.tagline||'';document.getElementById('cWa').value=s.contactWA||'';document.getElementById('cEm').value=s.contactEmail||'';document.getElementById('cTg').value=s.contactTelegram||'';document.getElementById('cIg').value=s.contactInstagram||'';document.getElementById('minDep').value=s.minDeposit||10000;document.getElementById('maxDep').value=s.maxDeposit||10000000;document.getElementById('defFee').value=s.defaultFee||0})}
 function saveSet(){db.collection('settings').doc('website').set({name:document.getElementById('siteName').value,tagline:document.getElementById('siteTag').value,contactWA:document.getElementById('cWa').value,contactEmail:document.getElementById('cEm').value,contactTelegram:document.getElementById('cTg').value,contactInstagram:document.getElementById('cIg').value,minDeposit:parseInt(document.getElementById('minDep').value),maxDeposit:parseInt(document.getElementById('maxDep').value),defaultFee:parseInt(document.getElementById('defFee').value)},{merge:true}).then(()=>T('✅ Disimpan!'))}
 
+// ===== TEMA =====
 function loadThm(){db.collection('settings').doc('theme').get().then(d=>{if(!d.exists)return;var t=d.data();if(t.background)document.getElementById('pvBackground').innerHTML='<img src="'+t.background+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.logo)document.getElementById('pvLogo').innerHTML='<img src="'+t.logo+'" style="max-height:50px">';if(t.banner)document.getElementById('pvBanner').innerHTML='<img src="'+t.banner+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.colors){document.getElementById('cP').value=t.colors.p||'#3b82f6';document.getElementById('cS').value=t.colors.s||'#60a5fa';document.getElementById('cA').value=t.colors.a||'#a855f7';document.getElementById('cB').value=t.colors.b||'#0a0a1a';document.getElementById('cC').value=t.colors.c||'#1a1a2e';document.getElementById('cT').value=t.colors.t||'#ffffff'}})}
 function upImg(t,inp){var f=inp.files[0];if(!f)return;if(f.size>2*1024*1024){T('❌ Max 2MB!',1);return}var r=new FileReader();r.onload=e=>{var id='pv'+t.charAt(0).toUpperCase()+t.slice(1);document.getElementById(id).innerHTML='<img src="'+e.target.result+'" style="max-width:100%;max-height:100px;border-radius:6px">';var o={};o[t]=e.target.result;db.collection('settings').doc('theme').set(o,{merge:true}).then(()=>T('✅ '+t+' disimpan!'))};r.readAsDataURL(f)}
 function preset(p){var pr={dark:{p:'#3b82f6',s:'#60a5fa',a:'#a855f7',b:'#0a0a1a',c:'#1a1a2e',t:'#ffffff'},light:{p:'#3b82f6',s:'#2563eb',a:'#7c3aed',b:'#f8fafc',c:'#ffffff',t:'#1e293b'},gradient:{p:'#667eea',s:'#764ba2',a:'#f093fb',b:'#667eea',c:'#1a1a2e',t:'#ffffff'},neon:{p:'#00ff88',s:'#00d4ff',a:'#ff00ff',b:'#0f0c29',c:'#1a1a3e',t:'#00ff88'}}[p];if(!pr)return;document.getElementById('cP').value=pr.p;document.getElementById('cS').value=pr.s;document.getElementById('cA').value=pr.a;document.getElementById('cB').value=pr.b;document.getElementById('cC').value=pr.c;document.getElementById('cT').value=pr.t;saveColor();T('✅ '+p+' diterapkan!')}
 function saveColor(){var c={p:document.getElementById('cP').value,s:document.getElementById('cS').value,a:document.getElementById('cA').value,b:document.getElementById('cB').value,c:document.getElementById('cC').value,t:document.getElementById('cT').value};var r=document.documentElement;r.style.setProperty('--p',c.p);r.style.setProperty('--s',c.s);r.style.setProperty('--a',c.a);r.style.setProperty('--d',c.b);r.style.setProperty('--c',c.c);r.style.setProperty('--m',c.t);db.collection('settings').doc('theme').set({colors:c},{merge:true}).then(()=>T('✅ Warna disimpan!'))}
 
+// ===== REFERRAL =====
 function loadRef(){db.collection('settings').doc('referral').get().then(d=>{if(d.exists){var r=d.data();document.getElementById('rB1').value=r.b1||5000;document.getElementById('rB2').value=r.b2||3000;document.getElementById('rCm').value=r.cm||10;document.getElementById('rMn').value=r.mn||50000;document.getElementById('r3').textContent=(r.cm||10)+'%'}});db.collection('users').where('referredBy','!=',null).get().then(s=>document.getElementById('r1').textContent=s.size)}
 function saveRef(){db.collection('settings').doc('referral').set({b1:parseInt(document.getElementById('rB1').value),b2:parseInt(document.getElementById('rB2').value),cm:parseInt(document.getElementById('rCm').value),mn:parseInt(document.getElementById('rMn').value)},{merge:true}).then(()=>T('✅ Disimpan!'))}
 
+// ===== UPDATE & NOTIF =====
 function loadUpd(){}
 function pushUpd(){var v=document.getElementById('newVer').value.trim(),m=document.getElementById('upMsg').value.trim(),f=document.getElementById('upForce').checked;if(!v||!m){T('❌ Isi lengkap!',1);return}if(!confirm('Push v'+v+'?'))return;db.collection('settings').doc('version').set({version:v,message:m,forceUpdate:f,pushedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{db.collection('updateHistory').add({version:v,message:m,createdAt:firebase.firestore.FieldValue.serverTimestamp()});T('✅ Update dipush!')})}
 function sendNotif(){var t=document.getElementById('ntTitle').value.trim(),m=document.getElementById('ntMsg').value.trim(),ty=document.getElementById('ntType').value,w=document.getElementById('ntWa').checked;if(!t||!m){T('❌ Isi lengkap!',1);return}db.collection('broadcastNotifs').add({title:t,message:m,type:ty,createdAt:firebase.firestore.FieldValue.serverTimestamp(),readBy:[]}).then(()=>{T('📢 Terkirim!');if(w)sendWaAll(t,m)})}
 function sendWaAll(t,m){var tk=localStorage.getItem('ft');if(!tk){T('⚠️ Fonnte belum diset!',1);return}db.collection('users').get().then(s=>{var c=0;s.forEach(d=>{var u=d.data();if(u.whatsapp){var n=u.whatsapp.startsWith('0')?'62'+u.whatsapp.substring(1):u.whatsapp;var fd=new URLSearchParams();fd.append('target',n);fd.append('message','📢 *'+t+'*\n\n'+m);fd.append('countryCode','62');fetch('https://api.fonnte.com/send',{method:'POST',headers:{'Authorization':tk,'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()});c++}});T('📱 WA ke '+c+' user')})}
 
-function exportData(){db.collection('users').get().then(s1=>{var d={users:[]};s1.forEach(x=>d.users.push({id:x.id,...x.data()}));db.collection('orders').get().then(s2=>{s2.forEach(x=>d.orders=d.orders||[],d.orders.push({id:x.id,...x.data()}));db.collection('deposits').get().then(s3=>{s3.forEach(x=>d.deposits=d.deposits||[],d.deposits.push({id:x.id,...x.data()}));var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='backup-'+Date.now()+'.json';a.click();T('✅ Exported!')})})})}
+// ===== BACKUP =====
+function exportData(){db.collection('users').get().then(s1=>{var d={users:[]};s1.forEach(x=>d.users.push({id:x.id,...x.data()}));db.collection('orders').get().then(s2=>{d.orders=[];s2.forEach(x=>d.orders.push({id:x.id,...x.data()}));db.collection('deposits').get().then(s3=>{d.deposits=[];s3.forEach(x=>d.deposits.push({id:x.id,...x.data()}));var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='backup-'+Date.now()+'.json';a.click();T('✅ Exported!')})})})}
 function importData(){var f=document.getElementById('imFile').files[0];if(!f){T('❌ Pilih file!',1);return}var r=new FileReader();r.onload=e=>{try{var d=JSON.parse(e.target.result);if(!confirm('Import akan timpa data. Lanjut?'))return;var p=Object.keys(d).map(c=>{var b=db.batch();d[c].forEach(x=>{var id=x.id;delete x.id;b.set(db.collection(c).doc(id),x)});return b.commit()});Promise.all(p).then(()=>{T('✅ Imported!');loadDash()})}catch(err){T('❌ '+err.message,1)}};r.readAsText(f)}
 
+// ===== LAPORAN =====
 function genRep(){var p=document.getElementById('repPer').value;var n=new Date(),s=new Date();if(p==='today')s.setHours(0,0,0,0);else if(p==='week')s.setDate(n.getDate()-7);else if(p==='month')s.setMonth(n.getMonth()-1);else s.setFullYear(n.getFullYear()-1);db.collection('users').where('createdAt','>=',s).get().then(x=>document.getElementById('rp1').textContent=x.size);db.collection('orders').where('createdAt','>=',s).get().then(x=>document.getElementById('rp2').textContent=x.size);db.collection('deposits').where('createdAt','>=',s).where('status','==','approved').get().then(x=>{var t=0;x.forEach(d=>t+=(d.data().amount||0));document.getElementById('rp3').textContent=x.size;document.getElementById('rp4').textContent='Rp '+t.toLocaleString('id-ID')})}
 
+// ===== LOGS =====
 function addLog(m){var l=JSON.parse(localStorage.getItem('al')||'[]');l.unshift({t:new Date().toISOString(),m:m});if(l.length>100)l=l.slice(0,100);localStorage.setItem('al',JSON.stringify(l))}
 function loadLog(){var l=JSON.parse(localStorage.getItem('al')||'[]');document.getElementById('logList').innerHTML=l.map(x=>'<div style="padding:.4rem;border-bottom:1px solid var(--b)"><small style="color:var(--m)">'+new Date(x.t).toLocaleString('id-ID')+'</small><br>'+x.m+'</div>').join('')||'<p style="text-align:center;color:var(--m)">Belum ada</p>'}
 function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLog();T('🗑 Dihapus!')}}
 
+// ===== KEAMANAN =====
 function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
-
 loadDash();
 </script>
 </body>
-  </html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </html>
