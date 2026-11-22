@@ -161,7 +161,7 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg" id="svc">
 <h1>⚙️ Layanan</h1>
-<div class="cd"><button class="bt bp" onclick="addSvc()">+ Tambah</button><button class="bt bg" onclick="syncPPS()">Sync PPS</button><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Kategori</th><th>Nama</th><th>Harga</th><th>Min</th><th>Max</th><th>Aksi</th></tr></thead><tbody id="tSvc"></tbody></table></div></div>
+<div class="cd"><button class="bt bp" onclick="addSvc()">+ Tambah</button><button class="bt bg" onclick="syncPPS()">Sync PPS</button><div id="syncProgress" style="margin:.5rem 0;font-size:.75rem;color:var(--s)"></div><div class="tr"><table class="tb"><thead><tr><th>ID</th><th>Kategori</th><th>Nama</th><th>Harga</th><th>Min</th><th>Max</th><th>Aksi</th></tr></thead><tbody id="tSvc"></tbody></table></div></div>
 </div>
 
 <div class="pg" id="cat">
@@ -295,7 +295,7 @@ textarea.fc{min-height:60px;resize:vertical}
 
 </div>
 
-<!-- MODAL LOGIN (DIPERBAIKI: PAKAI INPUT, BUKAN PROMPT) -->
+<!-- MODAL LOGIN -->
 <div class="md on" id="mLogin"><div class="mdc" style="text-align:center">
 <h2>🔐 Login Admin</h2>
 <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Masukkan password untuk mengakses panel</p>
@@ -305,7 +305,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <div id="loginInfo" style="margin-top:.6rem;font-size:.75rem;color:var(--err)"></div>
 </div></div>
 
-<!-- MODALS LAINNYA -->
+<!-- MODALS -->
 <div class="md" id="mUsr"><div class="mdc"><h2>User</h2><div class="fg"><label>Username</label><input class="fc" id="uNm"></div><div class="fg"><label>Email</label><input type="email" class="fc" id="uEm"></div><div class="fg"><label>WA</label><input class="fc" id="uWa"></div><div class="fg"><label>Saldo</label><input type="number" class="fc" id="uBal" value="0"></div><div class="fg"><label>Status</label><select class="fc" id="uSt"><option value="active">Active</option><option value="banned">Banned</option></select></div><button class="bt bp" onclick="saveUsr()">Simpan</button><button class="bt be" onclick="closeM('mUsr')">Batal</button></div></div>
 <div class="md" id="mSvc"><div class="mdc"><h2>Layanan</h2><div class="fg"><label>Service ID</label><input class="fc" id="sId"></div><div class="fg"><label>Kategori</label><input class="fc" id="sCat"></div><div class="fg"><label>Nama Kategori</label><input class="fc" id="sCatN"></div><div class="fg"><label>Nama</label><input class="fc" id="sNm"></div><div class="fg"><label>Harga</label><input type="number" class="fc" id="sPr"></div><div class="fg"><label>Min</label><input type="number" class="fc" id="sMn"></div><div class="fg"><label>Max</label><input type="number" class="fc" id="sMx"></div><button class="bt bp" onclick="saveSvc()">Simpan</button><button class="bt be" onclick="closeM('mSvc')">Batal</button></div></div>
 <div class="md" id="mAnn"><div class="mdc"><h2>Pengumuman</h2><div class="fg"><label>Judul</label><input class="fc" id="anT"></div><div class="fg"><label>Tipe</label><select class="fc" id="anTy"><option value="info">Info</option><option value="warning">Warning</option><option value="success">Success</option><option value="promo">Promo</option></select></div><div class="fg"><label>Pesan</label><textarea class="fc" id="anM" rows="3"></textarea></div><button class="bt bp" onclick="saveAnn()">Simpan</button><button class="bt be" onclick="closeM('mAnn')">Batal</button></div></div>
@@ -335,7 +335,7 @@ function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
-// ===== LOGIN (DIPERBAIKI: PAKAI INPUT) =====
+// ===== LOGIN =====
 function showLoginModal(){
   var bio=localStorage.getItem('bioCred');
   var btn=document.getElementById('btnBioLogin');
@@ -346,11 +346,7 @@ function showLoginModal(){
 }
 function checkLogin(){
   var p=document.getElementById('loginPassInput').value;
-  if(p!==PW){
-    document.getElementById('loginInfo').textContent='❌ Password Salah!';
-    document.getElementById('loginPassInput').value='';
-    return;
-  }
+  if(p!==PW){document.getElementById('loginInfo').textContent='❌ Password Salah!';document.getElementById('loginPassInput').value='';return}
   document.getElementById('mLogin').classList.remove('on');
   document.getElementById('loginPassInput').value='';
   document.getElementById('loginInfo').textContent='';
@@ -436,17 +432,35 @@ function syncPPS(){
   if(ip&&ip.value){MP=parseInt(ip.value)||20;RU=parseInt(ir.value)||100;doSync(k,s,MP,RU)}
   else{db.collection('settings').doc('markup').get().then(m=>{if(m.exists){MP=m.data().percent||20;RU=m.data().round||100}doSync(k,s,MP,RU)})}
 }
+
+// ===== DO SYNC (DIPERBAIKI: CHUNKING 500, TIDAK JEBOL BATCH LIMIT) =====
 function doSync(k,s,MP,RU){
+  var prog=document.getElementById('syncProgress');
+  if(prog)prog.textContent='🔄 Mengambil layanan dari PPS...';
   var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','services');
   fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
   .then(r=>r.json())
   .then(d=>{
-    if(d.data){var b=db.batch(),c=0;
-      d.data.forEach(x=>{var ha=parseInt(x.price)||0;var hb=ha+(ha*MP/100);if(RU>0){hb=Math.ceil(hb/RU)*RU}b.set(db.collection('services').doc('PPS'+x.id),{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hb,min:parseInt(x.min)||0,max:parseInt(x.max)||0});c++});
-      b.commit().then(()=>{T('✅ '+c+' layanan disync dengan markup '+MP+'%!');loadSvc()});
-    } else T('❌ Gagal ambil data!',1);
+    if(!d.data||!Array.isArray(d.data)){if(prog)prog.textContent='';T('❌ Data tidak valid: '+(d.data&&d.data.msg||'bukan array'),1);return}
+    var arr=d.data;
+    if(arr.length===0){if(prog)prog.textContent='';T('⚠️ PPS mengirim 0 layanan',1);return}
+    if(prog)prog.textContent='📥 '+arr.length+' layanan diterima. Menyimpan...';
+    var items=arr.map(x=>{
+      var ha=parseInt(x.price)||0;var hb=ha+(ha*MP/100);
+      if(RU>0){hb=Math.ceil(hb/RU)*RU}
+      return {doc:db.collection('services').doc('PPS'+x.id),data:{serviceId:'PPS'+x.id,category:(x.category||'other').toLowerCase(),categoryName:x.category||'Lainnya',name:x.name,price:hb,min:parseInt(x.min)||0,max:parseInt(x.max)||0}};
+    });
+    var chunks=[];
+    for(var i=0;i<items.length;i+=500){chunks.push(items.slice(i,i+500))}
+    var done=0,fail=0;
+    chunks.forEach(function(ch){
+      var b=db.batch();
+      ch.forEach(it=>b.set(it.doc,it.data));
+      b.commit().then(()=>{done++;if(prog)prog.textContent='💾 '+done+'/'+chunks.length+' bagian tersimpan...';if(done+fail===chunks.length){if(prog)prog.textContent='';T('✅ '+items.length+' layanan disync dengan markup '+MP+'%!');loadSvc()}})
+       .catch(e=>{fail++;if(done+fail===chunks.length){if(prog)prog.textContent='';T('❌ Sebagian gagal: '+e.message,1);loadSvc()}});
+    });
   })
-  .catch(e=>T('❌ '+e.message,1));
+  .catch(e=>{if(prog)prog.textContent='';T('❌ '+e.message,1)});
 }
 
 // ===== DASHBOARD =====
@@ -525,7 +539,7 @@ function saveTik(){var r=document.getElementById('tikRpl').value.trim();var s=do
 
 // ===== LAYANAN =====
 var curSvc='';
-function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt bp bs" onclick="editSvc(\''+d.id+'\')">✏️</button> <button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
+function loadSvc(){db.collection('services').get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+(x.serviceId||d.id)+'</b></td><td>'+(x.categoryName||x.category||'-')+'</td><td>'+(x.name||'-')+'</td><td>Rp '+(x.price||0).toLocaleString('id-ID')+'</td><td>'+(x.min||0)+'</td><td>'+(x.max||0)+'</td><td><button class="bt bp bs" onclick="editSvc(\''+d.id+'\')">✏️</button> <button class="bt be bs" onclick="delSvc(\''+d.id+'\')">🗑</button></td></tr>'});document.getElementById('tSvc').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada. Klik Sync PPS.</td></tr>'})}
 function addSvc(){curSvc='';document.querySelector('#mSvc h2').textContent='Tambah Layanan';document.getElementById('sId').readOnly=false;['sId','sCat','sCatN','sNm','sPr','sMn','sMx'].forEach(i=>document.getElementById(i).value='');openM('mSvc')}
 function editSvc(id){curSvc=id;db.collection('services').doc(id).get().then(d=>{var x=d.data()||{};document.querySelector('#mSvc h2').textContent='Edit Layanan';document.getElementById('sId').value=x.serviceId||id;document.getElementById('sId').readOnly=true;document.getElementById('sCat').value=x.category||'';document.getElementById('sCatN').value=x.categoryName||'';document.getElementById('sNm').value=x.name||'';document.getElementById('sPr').value=x.price||0;document.getElementById('sMn').value=x.min||0;document.getElementById('sMx').value=x.max||0;openM('mSvc')})}
 function saveSvc(){
@@ -618,4 +632,4 @@ showLoginModal();
 loadDash();
 </script>
 </body>
-</html>
+  </html>
