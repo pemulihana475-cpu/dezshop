@@ -689,9 +689,105 @@ function repeatOrder(svcId,link){
   });
 }
 
-// ===== DEPOSIT =====
-function loadDep(){var c=getCached('payment');if(c){payList(c);return}db.collection('settings').doc('payment').get().then(function(d){var p=(d.exists&&d.data())||{};setCached('payment',p);payList(p)}).catch(function(){})}
-function payList(p){var ms=[['qris','QRIS'],['dana','DANA'],['gopay','GoPay'],['ovo','OVO'],['shopeepay','ShopeePay'],['bca','BCA']];var h='';for(var i=0;i<ms.length;i++)h+='<div class="cd" style="margin:0;padding:.6rem"><b style="font-size:.8rem">'+ms[i][1]+'</b><br><small style="color:var(--s);font-size:.7rem;word-break:break-all">'+(p[ms[i][0]]||'-')+'</small></div>';document.getElementById('payList').innerHTML=h}
+// ===== DEPOSIT (FIXED: TAMPILKAN GAMBAR QRIS + NOMOR LENGKAP) =====
+function loadDep(){
+  clearCache('payment'); // Selalu ambil data terbaru dari Firestore
+  db.collection('settings').doc('payment').get().then(function(d){
+    var p=(d.exists&&d.data())||{};
+    setCached('payment',p);
+    payList(p);
+  }).catch(function(e){
+    document.getElementById('payList').innerHTML='<div class="empty-state">❌ Gagal memuat metode pembayaran: '+e.message+'</div>';
+  });
+}
+
+function payList(p){
+  var ms=[
+    ['qris','QRIS','qris'],
+    ['dana','DANA','dana'],
+    ['gopay','GoPay','gopay'],
+  
+  ];
+  var h='';
+  
+  for(var i=0;i<ms.length;i++){
+    var key=ms[i][0];
+    var name=ms[i][1];
+    var num=p[key]||'';
+    var icon=getPayIcon(key);
+    var color=getPayColor(key);
+    
+    h+='<div style="background:var(--dd);border:1px solid var(--b);border-radius:10px;padding:.8rem;margin-bottom:.6rem;transition:.2s" onmouseover="this.style.borderColor=\''+color+'\'" onmouseout="this.style.borderColor=\'var(--b)\'">';
+    h+='<div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem">';
+    h+='<div style="width:36px;height:36px;border-radius:8px;background:'+color+';display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem">'+icon+'</div>';
+    h+='<div style="flex:1"><b style="font-size:.9rem">'+name+'</b>';
+    
+    if(key==='qris'&&p.qrisImage){
+      h+='<br><small style="color:var(--ok);font-size:.7rem"><i class="fas fa-qrcode"></i> Scan QR Code di bawah</small>';
+    }
+    
+    h+='</div></div>';
+    
+    // Tampilkan gambar QRIS jika ada
+    if(key==='qris'&&p.qrisImage){
+      h+='<div style="text-align:center;margin:.5rem 0">';
+      h+='<img src="'+p.qrisImage+'" style="max-width:220px;border-radius:10px;border:2px solid '+color+';background:#fff;padding:8px">';
+      h+='</div>';
+    }
+    
+    // Tampilkan nomor
+    if(num){
+      h+='<div style="display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.03);padding:.5rem .7rem;border-radius:6px">';
+      h+='<span style="flex:1;font-family:monospace;font-size:.85rem;color:'+color+';font-weight:600;word-break:break-all">'+num+'</span>';
+      h+='<button class="bt bs" style="background:'+color+';color:#fff;padding:.3rem .6rem;font-size:.7rem" onclick="copyPayNum(\''+num+'\',\''+name+'\')"><i class="fas fa-copy"></i> Salin</button>';
+      h+='</div>';
+    }else{
+      h+='<div style="text-align:center;padding:.5rem;color:var(--m);font-size:.75rem;font-style:italic"><i class="fas fa-info-circle"></i> Belum tersedia</div>';
+    }
+    
+    h+='</div>';
+  }
+  
+  document.getElementById('payList').innerHTML=h;
+}
+
+function getPayIcon(key){
+  var icons={
+    'qris':'<i class="fas fa-qrcode"></i>',
+    'dana':'D',
+    'gopay':'G',
+    'ovo':'O',
+    'shopeepay':'S',
+    'bca':'<i class="fas fa-university"></i>'
+  };
+  return icons[key]||'?';
+}
+
+function getPayColor(key){
+  var colors={
+    'qris':'#E31E24',
+    'dana':'#108EE9',
+    'gopay':'#00AED6',
+    'ovo':'#4C3494',
+    'shopeepay':'#EE4D2D',
+    'bca':'#0060AF'
+  };
+  return colors[key]||'var(--p)';
+}
+
+function copyPayNum(num,name){
+  var el=document.createElement('textarea');
+  el.value=num;
+  document.body.appendChild(el);
+  el.select();
+  try{
+    document.execCommand('copy');
+    T('✅ Nomor '+name+' disalin: '+num);
+  }catch(e){
+    T('❌ Gagal menyalin',1);
+  }
+  document.body.removeChild(el);
+}
 function submitDep(){
   if(!ME){T('Silakan login!','e');return}
   var amt=parseInt(document.getElementById('dAmt').value)||0,f=document.getElementById('dProof').files[0];
@@ -820,4 +916,4 @@ function boot(){applyTheme();applySite();loadHome()}
 if(ME){closeM('mLogin');boot()}else{document.getElementById('liUser').focus()}
 </script>
 </body>
-</html>
+              </html>
