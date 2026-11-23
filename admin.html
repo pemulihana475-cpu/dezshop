@@ -206,7 +206,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <h1>💰 Markup Harga</h1>
 <div class="cd">
 <h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis</h3>
-<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Setiap kali klik "Sync PPS", harga akan otomatis naik sesuai persentase di bawah ini.</p>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Setiap kali klik "Sync PPS", harga akan otomatis naik sesuai persentase di bawah ini. (Auto-save saat diubah)</p>
 <div class="g2">
   <div class="fg"><label>Persentase Markup (%)</label><input type="number" class="fc" id="mrkPercent" placeholder="20" value="20"></div>
   <div class="fg"><label>Pembulatan Harga</label><select class="fc" id="mrkRound"><option value="0">Tanpa pembulatan</option><option value="10">Ke puluhan</option><option value="100" selected>Ke ratusan</option><option value="500">Ke 500-an</option><option value="1000">Ke ribuan</option><option value="5000">Ke 5 ribuan</option></select></div>
@@ -247,7 +247,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <h1>🎨 Tema</h1>
 <div class="cd"><h3 style="margin-bottom:.5rem">Preset</h3><div class="g2"><div onclick="preset('dark')" style="background:linear-gradient(135deg,#0a0a1a,#1a1a2e);padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">🌙 Dark</div><div onclick="preset('light')" style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#1e293b;padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">☀️ Light</div><div onclick="preset('gradient')" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">🌈 Gradient</div><div onclick="preset('neon')" style="background:linear-gradient(135deg,#0f0c29,#302b63);color:#00ff88;padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">⚡ Neon</div></div></div>
 <div class="cd"><h3 style="margin-bottom:.5rem">Warna Kustom</h3><div class="g3"><div class="fg"><label>Primary</label><input type="color" class="fc" id="cP" value="#3b82f6"></div><div class="fg"><label>Secondary</label><input type="color" class="fc" id="cS" value="#60a5fa"></div><div class="fg"><label>Accent</label><input type="color" class="fc" id="cA" value="#a855f7"></div><div class="fg"><label>Background</label><input type="color" class="fc" id="cB" value="#0a0a1a"></div><div class="fg"><label>Card</label><input type="color" class="fc" id="cC" value="#1a1a2e"></div><div class="fg"><label>Text</label><input type="color" class="fc" id="cT" value="#ffffff"></div></div><button class="bt bg" onclick="saveColor()">Simpan</button></div>
-<div class="cd"><h3 style="margin-bottom:.5rem">Upload Gambar</h3><div class="g2"><div class="fg"><label>Background</label><input type="file" class="fc" accept="image/*" onchange="upImg('background',this)"><div id="pvBackground" style="margin-top:.3rem"></div></div><div class="fg"><label>Logo</label><input type="file" class="fc" accept="image/*" onchange="upImg('logo',this)"><div id="pvLogo" style="margin-top:.3rem"></div></div><div class="fg"><label>Banner</label><input type="file" class="fc" accept="image/*" onchange="upImg('banner',this)"><div id="pvBanner" style="margin-top:.3rem"></div></div></div></div>
+<div class="cd"><h3 style="margin-bottom:.5rem">Upload Gambar (Auto-Compress)</h3><div class="g2"><div class="fg"><label>Background</label><input type="file" class="fc" accept="image/*" onchange="upImg('background',this)"><div id="pvBackground" style="margin-top:.3rem"></div></div><div class="fg"><label>Logo</label><input type="file" class="fc" accept="image/*" onchange="upImg('logo',this)"><div id="pvLogo" style="margin-top:.3rem"></div></div><div class="fg"><label>Banner</label><input type="file" class="fc" accept="image/*" onchange="upImg('banner',this)"><div id="pvBanner" style="margin-top:.3rem"></div></div></div></div>
 </div>
 
 <div class="pg" id="ref">
@@ -335,6 +335,18 @@ function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
 function doLogout(){if(confirm('Logout?'))location.href='index.html'}
 
+// ===== API KEY HELPER (PERMANEN) =====
+function getApiKeys(){
+  return new Promise(res=>{
+    var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
+    if(k&&s){res({k:k,s:s});return}
+    db.collection('settings').doc('pps').get().then(d=>{
+      if(d.exists){var x=d.data();res({k:x.apiKey||'',s:x.secretKey||''})}else res({k:'',s:''});
+    }).catch(()=>res({k:'',s:''}));
+  });
+}
+function prefetchApi(){getApiKeys().then(k=>{if(k.k){localStorage.setItem('ak',k.k);localStorage.setItem('sk',k.s)}})}
+
 // ===== LOGIN =====
 function showLoginModal(){
   var bio=localStorage.getItem('bioCred');
@@ -351,6 +363,7 @@ function checkLogin(){
   document.getElementById('loginPassInput').value='';
   document.getElementById('loginInfo').textContent='';
   T('✅ Login berhasil!');
+  prefetchApi();
 }
 async function loginBio(){
   var saved=localStorage.getItem('bioCred');
@@ -362,6 +375,7 @@ async function loginBio(){
     document.getElementById('loginPassInput').value='';
     document.getElementById('loginInfo').textContent='';
     T('✅ Selamat datang, Admin!');
+    prefetchApi();
   }catch(e){T('❌ Verifikasi dibatalkan',1)}
 }
 
@@ -410,26 +424,30 @@ function showInstallGuide(){
   else{info.innerHTML='<b>Desktop:</b> Klik ikon Install di bar alamat browser.'}
 }
 
-// ===== API PPS (API KEY DISIMPAN PERMANEN DI FIREBASE) =====
-function loadMrk(){db.collection('settings').doc('markup').get().then(d=>{if(d.exists){document.getElementById('mrkPercent').value=d.data().percent||20;document.getElementById('mrkRound').value=d.data().round||100}})}
-function saveMrk(){var p=parseInt(document.getElementById('mrkPercent').value)||20;var r=parseInt(document.getElementById('mrkRound').value)||100;db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true}).then(()=>{T('✅ Pengaturan markup disimpan!')})}
+// ===== API PPS =====
+function loadMrk(){
+  db.collection('settings').doc('markup').get().then(d=>{
+    if(d.exists){
+      document.getElementById('mrkPercent').value=(d.data().percent!=null)?d.data().percent:20;
+      document.getElementById('mrkRound').value=(d.data().round!=null)?d.data().round:100;
+    }
+    // Auto-save saat diubah
+    document.getElementById('mrkPercent').onchange=()=>saveMrk();
+    document.getElementById('mrkRound').onchange=()=>saveMrk();
+  }).catch(e=>T('❌ Gagal muat markup: '+e.message,1));
+}
+function saveMrk(cb){
+  var p=parseInt(document.getElementById('mrkPercent').value)||0;
+  var r=parseInt(document.getElementById('mrkRound').value)||0;
+  db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true})
+    .then(()=>{T('✅ Markup disimpan: '+p+'% / bulat '+r);if(cb)cb()})
+    .catch(e=>T('❌ Gagal simpan markup: '+e.message,1));
+}
 
 function loadApi(){
-  db.collection('settings').doc('pps').get().then(d=>{
-    if(d.exists){
-      var k=d.data().apiKey||'';
-      var s=d.data().secretKey||'';
-      document.getElementById('apiKey').value=k;
-      document.getElementById('apiSec').value=s;
-      if(k)localStorage.setItem('ak',k);
-      if(s)localStorage.setItem('sk',s);
-    } else {
-      document.getElementById('apiKey').value=localStorage.getItem('ak')||'';
-      document.getElementById('apiSec').value=localStorage.getItem('sk')||'';
-    }
-  }).catch(e=>{
-    document.getElementById('apiKey').value=localStorage.getItem('ak')||'';
-    document.getElementById('apiSec').value=localStorage.getItem('sk')||'';
+  getApiKeys().then(keys=>{
+    document.getElementById('apiKey').value=keys.k;
+    document.getElementById('apiSec').value=keys.s;
   });
 }
 function saveApi(){
@@ -443,21 +461,25 @@ function saveApi(){
   }).catch(e=>{T('❌ Gagal simpan: '+e.message,1)});
 }
 function testApi(){
-  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
-  if(!k||!s){T('❌ Isi API Key & Secret dulu, lalu Simpan!',1);return}
-  var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','profile');
-  fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-  .then(r=>r.json())
-  .then(d=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ '+(d.status?'KONEKSI BERHASIL':'KONEKSI GAGAL')+'<br>Saldo: Rp '+((d.data&&d.data.balance)||0)+'</div>'})
-  .catch(e=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>'});
+  getApiKeys().then(function(keys){
+    if(!keys.k||!keys.s){T('❌ API Key & Secret wajib diisi!',1);return}
+    var fd=new URLSearchParams();fd.append('api_key',keys.k);fd.append('secret_key',keys.s);fd.append('action','profile');
+    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+    .then(r=>r.json())
+    .then(d=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ '+(d.status?'KONEKSI BERHASIL':'KONEKSI GAGAL')+'<br>Saldo: Rp '+((d.data&&d.data.balance)||0)+'</div>'})
+    .catch(e=>{document.getElementById('apiRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>'});
+  });
 }
 function syncPPS(){
-  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
-  if(!k||!s){T('❌ API belum diset!',1);return}
-  var MP=20,RU=100;
-  var ip=document.getElementById('mrkPercent'),ir=document.getElementById('mrkRound');
-  if(ip&&ip.value){MP=parseInt(ip.value)||20;RU=parseInt(ir.value)||100;doSync(k,s,MP,RU)}
-  else{db.collection('settings').doc('markup').get().then(m=>{if(m.exists){MP=m.data().percent||20;RU=m.data().round||100}doSync(k,s,MP,RU)})}
+  getApiKeys().then(function(keys){
+    if(!keys.k||!keys.s){T('❌ API belum diset! Buka menu API PPS & Simpan.',1);return}
+    db.collection('settings').doc('markup').get().then(m=>{
+      var MP=(m.exists&&m.data().percent!=null)?m.data().percent:20;
+      var RU=(m.exists&&m.data().round!=null)?m.data().round:100;
+      T('🔄 Sync dengan markup '+MP+'%...');
+      doSync(keys.k,keys.s,MP,RU);
+    });
+  });
 }
 
 function doSync(k,s,MP,RU){
@@ -503,46 +525,48 @@ function delUsr(id){if(confirm('Hapus user?'))db.collection('users').doc(id).del
 // ===== ORDERS =====
 function loadOrd(){var f=document.getElementById('fOrd').value;var q=db.collection('orders');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var o=d.data();var btn='';if(!o.ppsId&&o.status!=='cancelled'&&o.status!=='completed'){btn+='<button class="bt bp bs" onclick="sendPPS(\''+d.id+'\')">🚀</button> '}if(o.ppsId&&o.status!=='completed'&&o.status!=='cancelled'){btn+='<button class="bt bw bs" onclick="cekStatus(\''+d.id+'\')">🔄</button> '}btn+='<button class="bt bg bs" onclick="apOrd(\''+d.id+'\')">✓</button><button class="bt be bs" onclick="cnOrd(\''+d.id+'\')">✗</button>';h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(o.username||'-')+'</td><td>'+(o.serviceName||'-')+'<br><small style="color:var(--m)">PPS: '+(o.ppsId||'-')+'</small></td><td>'+(o.qty||0)+'</td><td>Rp '+(o.total||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(o.status==='completed'?'c':o.status==='cancelled'?'x':o.status==='processing'?'w':'p')+'">'+o.status+'</span></td><td>'+btn+'</td></tr>'});document.getElementById('tOrd').innerHTML=h||'<tr><td colspan="7" style="text-align:center">Tidak ada</td></tr>'})}
 function sendPPS(id){
-  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
-  if(!k||!s){T('❌ API PPS belum diset!',1);return}
-  db.collection('orders').doc(id).get().then(d=>{
-    var o=d.data();
-    var svc=(o.serviceId||o.service||'').toString().replace('PPS','');
-    var data=o.link||o.data||o.target||o.username_target||'';
-    var qty=o.qty||o.quantity||1;
-    if(!svc||!data){T('❌ Data order kurang (serviceId/link)!',1);return}
-    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','order');fd.append('service',svc);fd.append('data',data);fd.append('quantity',qty);
-    if(o.komen)fd.append('komen',o.komen);if(o.komenUser)fd.append('username',o.komenUser);
-    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-    .then(r=>r.json())
-    .then(res=>{
-      if(res.status&&res.data&&res.data.id){db.collection('orders').doc(id).update({status:'processing',ppsId:String(res.data.id),ppsMsg:'OK'}).then(()=>{T('✅ Terkirim ke PPS! Order #'+res.data.id);loadOrd()})}
-      else{var msg=(res.data&&res.data.msg)||'Gagal order';db.collection('orders').doc(id).update({ppsMsg:msg}).then(()=>{T('❌ '+msg,1);loadOrd()})}
-    })
-    .catch(e=>T('❌ '+e.message,1));
+  getApiKeys().then(function(keys){
+    if(!keys.k||!keys.s){T('❌ API PPS belum diset!',1);return}
+    db.collection('orders').doc(id).get().then(d=>{
+      var o=d.data();
+      var svc=(o.serviceId||o.service||'').toString().replace('PPS','');
+      var data=o.link||o.data||o.target||o.username_target||'';
+      var qty=o.qty||o.quantity||1;
+      if(!svc||!data){T('❌ Data order kurang (serviceId/link)!',1);return}
+      var fd=new URLSearchParams();fd.append('api_key',keys.k);fd.append('secret_key',keys.s);fd.append('action','order');fd.append('service',svc);fd.append('data',data);fd.append('quantity',qty);
+      if(o.komen)fd.append('komen',o.komen);if(o.komenUser)fd.append('username',o.komenUser);
+      fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+      .then(r=>r.json())
+      .then(res=>{
+        if(res.status&&res.data&&res.data.id){db.collection('orders').doc(id).update({status:'processing',ppsId:String(res.data.id),ppsMsg:'OK'}).then(()=>{T('✅ Terkirim ke PPS! Order #'+res.data.id);loadOrd()})}
+        else{var msg=(res.data&&res.data.msg)||'Gagal order';db.collection('orders').doc(id).update({ppsMsg:msg}).then(()=>{T('❌ '+msg,1);loadOrd()})}
+      })
+      .catch(e=>T('❌ '+e.message,1));
+    });
   });
 }
 function cekStatus(id){
-  var k=localStorage.getItem('ak'),s=localStorage.getItem('sk');
-  if(!k||!s){T('❌ API belum diset!',1);return}
-  db.collection('orders').doc(id).get().then(d=>{
-    var o=d.data();if(!o.ppsId){T('❌ Order belum dikirim ke PPS!',1);return}
-    var fd=new URLSearchParams();fd.append('api_key',k);fd.append('secret_key',s);fd.append('action','status');fd.append('id',o.ppsId);
-    fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
-    .then(r=>r.json())
-    .then(res=>{
-      if(res.status&&res.data){
-        var st=(res.data.status||'').toLowerCase();
-        var map={completed:'completed',selesai:'completed',processing:'processing',pending:'pending',cancelled:'cancelled',canceled:'cancelled',refunded:'cancelled'};
-        var newSt=map[st]||o.status;
-        db.collection('orders').doc(id).update({status:newSt,ppsStatus:res.data.status}).then(()=>{
-          if(newSt==='cancelled'&&o.status!=='cancelled'){db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('⚠️ Dibatalkan PPS → Saldo di-refund!')}
-          else T('🔄 Status: '+res.data.status);
-          loadOrd();
-        });
-      }else T('❌ '+(res.data&&res.data.msg||'Gagal'),1);
-    })
-    .catch(e=>T('❌ '+e.message,1));
+  getApiKeys().then(function(keys){
+    if(!keys.k||!keys.s){T('❌ API belum diset!',1);return}
+    db.collection('orders').doc(id).get().then(d=>{
+      var o=d.data();if(!o.ppsId){T('❌ Order belum dikirim ke PPS!',1);return}
+      var fd=new URLSearchParams();fd.append('api_key',keys.k);fd.append('secret_key',keys.s);fd.append('action','status');fd.append('id',o.ppsId);
+      fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
+      .then(r=>r.json())
+      .then(res=>{
+        if(res.status&&res.data){
+          var st=(res.data.status||'').toLowerCase();
+          var map={completed:'completed',selesai:'completed',processing:'processing',pending:'pending',cancelled:'cancelled',canceled:'cancelled',refunded:'cancelled'};
+          var newSt=map[st]||o.status;
+          db.collection('orders').doc(id).update({status:newSt,ppsStatus:res.data.status}).then(()=>{
+            if(newSt==='cancelled'&&o.status!=='cancelled'){db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('⚠️ Dibatalkan PPS → Saldo di-refund!')}
+            else T('🔄 Status: '+res.data.status);
+            loadOrd();
+          });
+        }else T('❌ '+(res.data&&res.data.msg||'Gagal'),1);
+      })
+      .catch(e=>T('❌ '+e.message,1));
+    });
   });
 }
 function autoProses(){
@@ -620,22 +644,52 @@ function testWa(){var t=localStorage.getItem('ft'),n=localStorage.getItem('wn');
 
 // ===== WEBSITE =====
 function loadSet(){db.collection('settings').doc('website').get().then(d=>{if(!d.exists)return;var s=d.data();document.getElementById('siteName').value=s.name||'DEZSTORE';document.getElementById('siteTag').value=s.tagline||'';document.getElementById('cWa').value=s.contactWA||'';document.getElementById('cEm').value=s.contactEmail||'';document.getElementById('cTg').value=s.contactTelegram||'';document.getElementById('cIg').value=s.contactInstagram||'';document.getElementById('minDep').value=s.minDeposit||10000;document.getElementById('maxDep').value=s.maxDeposit||10000000;document.getElementById('defFee').value=s.defaultFee||0})}
-function saveSet(){db.collection('settings').doc('website').set({name:document.getElementById('siteName').value,tagline:document.getElementById('siteTag').value,contactWA:document.getElementById('cWa').value,contactEmail:document.getElementById('cEm').value,contactTelegram:document.getElementById('cTg').value,contactInstagram:document.getElementById('cIg').value,minDeposit:parseInt(document.getElementById('minDep').value),maxDeposit:parseInt(document.getElementById('maxDep').value),defaultFee:parseInt(document.getElementById('defFee').value)},{merge:true}).then(()=>T('✅ Disimpan!'))}
+function saveSet(){db.collection('settings').doc('website').set({name:document.getElementById('siteName').value,tagline:document.getElementById('siteTag').value,contactWA:document.getElementById('cWa').value,contactEmail:document.getElementById('cEm').value,contactTelegram:document.getElementById('cTg').value,contactInstagram:document.getElementById('cIg').value,minDeposit:parseInt(document.getElementById('minDep').value),maxDeposit:parseInt(document.getElementById('maxDep').value),defaultFee:parseInt(document.getElementById('defFee').value)},{merge:true}).then(()=>T('✅ Disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
 
 // ===== TEMA =====
 function loadThm(){db.collection('settings').doc('theme').get().then(d=>{if(!d.exists)return;var t=d.data();if(t.background)document.getElementById('pvBackground').innerHTML='<img src="'+t.background+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.logo)document.getElementById('pvLogo').innerHTML='<img src="'+t.logo+'" style="max-height:50px">';if(t.banner)document.getElementById('pvBanner').innerHTML='<img src="'+t.banner+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.colors){document.getElementById('cP').value=t.colors.p||'#3b82f6';document.getElementById('cS').value=t.colors.s||'#60a5fa';document.getElementById('cA').value=t.colors.a||'#a855f7';document.getElementById('cB').value=t.colors.b||'#0a0a1a';document.getElementById('cC').value=t.colors.c||'#1a1a2e';document.getElementById('cT').value=t.colors.t||'#ffffff'}})}
-function upImg(t,inp){var f=inp.files[0];if(!f)return;if(f.size>2*1024*1024){T('❌ Max 2MB!',1);return}var r=new FileReader();r.onload=e=>{var id='pv'+t.charAt(0).toUpperCase()+t.slice(1);document.getElementById(id).innerHTML='<img src="'+e.target.result+'" style="max-width:100%;max-height:100px;border-radius:6px">';var o={};o[t]=e.target.result;db.collection('settings').doc('theme').set(o,{merge:true}).then(()=>T('✅ '+t+' disimpan!'))};r.readAsDataURL(f)}
+
+// ===== UPLOAD GAMBAR DENGAN KOMPRESI (FIX BUG) =====
+function upImg(t,inp){
+  var f=inp.files[0];if(!f)return;
+  if(f.size>5*1024*1024){T('❌ Max 5MB!',1);return}
+  var r=new FileReader();
+  r.onload=e=>{
+    var img=new Image();
+    img.onload=()=>{
+      var maxW=(t==='logo')?512:1200, maxH=(t==='logo')?512:1200;
+      var w=img.width,h=img.height;
+      if(w>maxW||h>maxH){var s=Math.min(maxW/w,maxH/h);w=Math.round(w*s);h=Math.round(h*s)}
+      var c=document.createElement('canvas');c.width=w;c.height=h;
+      var ctx=c.getContext('2d');
+      if(t!=='logo'){ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h)}
+      ctx.drawImage(img,0,0,w,h);
+      var out=(t==='logo')?c.toDataURL('image/png',0.9):c.toDataURL('image/jpeg',0.75);
+      if(out.length>900*1024)out=c.toDataURL('image/jpeg',0.5); // paksa kecil jika masih >900KB
+      var id='pv'+t.charAt(0).toUpperCase()+t.slice(1);
+      document.getElementById(id).innerHTML='<img src="'+out+'" style="max-width:100%;max-height:100px;border-radius:6px">';
+      var o={};o[t]=out;
+      db.collection('settings').doc('theme').set(o,{merge:true})
+        .then(()=>T('✅ '+t+' disimpan permanen! ('+Math.round(out.length/1024)+'KB)'))
+        .catch(err=>T('❌ Gagal simpan: '+err.message,1));
+    };
+    img.onerror=()=>T('❌ File bukan gambar valid',1);
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(f);
+}
+
 function preset(p){var pr={dark:{p:'#3b82f6',s:'#60a5fa',a:'#a855f7',b:'#0a0a1a',c:'#1a1a2e',t:'#ffffff'},light:{p:'#3b82f6',s:'#2563eb',a:'#7c3aed',b:'#f8fafc',c:'#ffffff',t:'#1e293b'},gradient:{p:'#667eea',s:'#764ba2',a:'#f093fb',b:'#667eea',c:'#1a1a2e',t:'#ffffff'},neon:{p:'#00ff88',s:'#00d4ff',a:'#ff00ff',b:'#0f0c29',c:'#1a1a3e',t:'#00ff88'}}[p];if(!pr)return;document.getElementById('cP').value=pr.p;document.getElementById('cS').value=pr.s;document.getElementById('cA').value=pr.a;document.getElementById('cB').value=pr.b;document.getElementById('cC').value=pr.c;document.getElementById('cT').value=pr.t;saveColor();T('✅ '+p+' diterapkan!')}
-function saveColor(){var c={p:document.getElementById('cP').value,s:document.getElementById('cS').value,a:document.getElementById('cA').value,b:document.getElementById('cB').value,c:document.getElementById('cC').value,t:document.getElementById('cT').value};var r=document.documentElement;r.style.setProperty('--p',c.p);r.style.setProperty('--s',c.s);r.style.setProperty('--a',c.a);r.style.setProperty('--d',c.b);r.style.setProperty('--c',c.c);r.style.setProperty('--m',c.t);db.collection('settings').doc('theme').set({colors:c},{merge:true}).then(()=>T('✅ Warna disimpan!'))}
+function saveColor(){var c={p:document.getElementById('cP').value,s:document.getElementById('cS').value,a:document.getElementById('cA').value,b:document.getElementById('cB').value,c:document.getElementById('cC').value,t:document.getElementById('cT').value};var r=document.documentElement;r.style.setProperty('--p',c.p);r.style.setProperty('--s',c.s);r.style.setProperty('--a',c.a);r.style.setProperty('--d',c.b);r.style.setProperty('--c',c.c);db.collection('settings').doc('theme').set({colors:c},{merge:true}).then(()=>T('✅ Warna disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
 
 // ===== REFERRAL =====
 function loadRef(){db.collection('settings').doc('referral').get().then(d=>{if(d.exists){var r=d.data();document.getElementById('rB1').value=r.b1||5000;document.getElementById('rB2').value=r.b2||3000;document.getElementById('rCm').value=r.cm||10;document.getElementById('rMn').value=r.mn||50000;document.getElementById('r3').textContent=(r.cm||10)+'%'}});db.collection('users').where('referredBy','!=',null).get().then(s=>document.getElementById('r1').textContent=s.size)}
-function saveRef(){db.collection('settings').doc('referral').set({b1:parseInt(document.getElementById('rB1').value),b2:parseInt(document.getElementById('rB2').value),cm:parseInt(document.getElementById('rCm').value),mn:parseInt(document.getElementById('rMn').value)},{merge:true}).then(()=>T('✅ Disimpan!'))}
+function saveRef(){db.collection('settings').doc('referral').set({b1:parseInt(document.getElementById('rB1').value),b2:parseInt(document.getElementById('rB2').value),cm:parseInt(document.getElementById('rCm').value),mn:parseInt(document.getElementById('rMn').value)},{merge:true}).then(()=>T('✅ Disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
 
 // ===== UPDATE & NOTIF =====
 function loadUpd(){}
-function pushUpd(){var v=document.getElementById('newVer').value.trim(),m=document.getElementById('upMsg').value.trim(),f=document.getElementById('upForce').checked;if(!v||!m){T('❌ Isi lengkap!',1);return}if(!confirm('Push v'+v+'?'))return;db.collection('settings').doc('version').set({version:v,message:m,forceUpdate:f,pushedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{db.collection('updateHistory').add({version:v,message:m,createdAt:firebase.firestore.FieldValue.serverTimestamp()});T('✅ Update dipush!')})}
-function sendNotif(){var t=document.getElementById('ntTitle').value.trim(),m=document.getElementById('ntMsg').value.trim(),ty=document.getElementById('ntType').value,w=document.getElementById('ntWa').checked;if(!t||!m){T('❌ Isi lengkap!',1);return}db.collection('broadcastNotifs').add({title:t,message:m,type:ty,createdAt:firebase.firestore.FieldValue.serverTimestamp(),readBy:[]}).then(()=>{T('📢 Terkirim!');if(w)sendWaAll(t,m)})}
+function pushUpd(){var v=document.getElementById('newVer').value.trim(),m=document.getElementById('upMsg').value.trim(),f=document.getElementById('upForce').checked;if(!v||!m){T('❌ Isi lengkap!',1);return}if(!confirm('Push v'+v+'?'))return;db.collection('settings').doc('version').set({version:v,message:m,forceUpdate:f,pushedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).then(()=>{db.collection('updateHistory').add({version:v,message:m,createdAt:firebase.firestore.FieldValue.serverTimestamp()});T('✅ Update dipush!')}).catch(e=>T('❌ Gagal: '+e.message,1))}
+function sendNotif(){var t=document.getElementById('ntTitle').value.trim(),m=document.getElementById('ntMsg').value.trim(),ty=document.getElementById('ntType').value,w=document.getElementById('ntWa').checked;if(!t||!m){T('❌ Isi lengkap!',1);return}db.collection('broadcastNotifs').add({title:t,message:m,type:ty,createdAt:firebase.firestore.FieldValue.serverTimestamp(),readBy:[]}).then(()=>{T('📢 Terkirim!');if(w)sendWaAll(t,m)}).catch(e=>T('❌ Gagal: '+e.message,1))}
 function sendWaAll(t,m){var tk=localStorage.getItem('ft');if(!tk){T('⚠️ Fonnte belum diset!',1);return}db.collection('users').get().then(s=>{var c=0;s.forEach(d=>{var u=d.data();if(u.whatsapp){var n=u.whatsapp.startsWith('0')?'62'+u.whatsapp.substring(1):u.whatsapp;var fd=new URLSearchParams();fd.append('target',n);fd.append('message','📢 *'+t+'*\n\n'+m);fd.append('countryCode','62');fetch('https://api.fonnte.com/send',{method:'POST',headers:{'Authorization':tk,'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()});c++}});T('📱 WA ke '+c+' user')})}
 
 // ===== BACKUP =====
@@ -653,7 +707,7 @@ function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLo
 // ===== KEAMANAN =====
 function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
 
-// ===== APK (DIPERBAIKI: DISIMPAN KE FIREBASE) =====
+// ===== APK =====
 function loadApk(){
   db.collection('settings').doc('apk').get().then(d=>{
     var a = d.exists ? d.data() : JSON.parse(localStorage.getItem('apk')||'{}');
@@ -662,7 +716,7 @@ function loadApk(){
     document.getElementById('apkSize').value=a.size||'';
     document.getElementById('apkNote').value=a.note||'';
     showApkInfo(a);
-  });
+  }).catch(e=>T('❌ Gagal muat APK: '+e.message,1));
 }
 function showApkInfo(a){
   var el=document.getElementById('apkInfo');
@@ -674,7 +728,7 @@ function saveApk(){
   if(!a.url){T('❌ Link download wajib diisi!',1);return}
   try{
     localStorage.setItem('apk',JSON.stringify(a));
-    db.collection('settings').doc('apk').set(a); // ✅ BARIS PENTING INI MENYIMPAN KE DATABASE
+    db.collection('settings').doc('apk').set(a);
     T('✅ APK disimpan permanen!');
     showApkInfo(a);
   }catch(e){T('❌ Gagal simpan: '+e.message,1)}
@@ -695,6 +749,7 @@ function testApk(){
 // ===== INIT =====
 showLoginModal();
 loadDash();
+prefetchApi();
 </script>
 </body>
-</html>                                                                                               </html>
+  </html>
