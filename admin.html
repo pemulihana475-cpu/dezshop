@@ -227,10 +227,10 @@ textarea.fc{min-height:60px;resize:vertical}
 <h3 style="margin-bottom:.5rem">Atur Kontak yang Tampil di Website</h3>
 <p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Kontak ini akan muncul di halaman "Kontak Admin" member & tombol WhatsApp floating.</p>
 <div class="g2">
-  <div class="fg"><label><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Admin</label><input class="fc" id="cWa" placeholder="089694453911"></div>
-  <div class="fg"><label><i class="fab fa-telegram" style="color:#0088cc"></i> Telegram</label><input class="fc" id="cTg" placeholder="@dezstore"></div>
-  <div class="fg"><label><i class="fas fa-envelope" style="color:var(--err)"></i> Email</label><input class="fc" id="cEm" placeholder="admin@dezstore.com"></div>
-  <div class="fg"><label><i class="fab fa-instagram" style="color:#E4405F"></i> Instagram</label><input class="fc" id="cIg" placeholder="@dezstore"></div>
+  <div class="fg"><label><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Admin</label><input class="fc" id="ctWa" placeholder="089694453911"></div>
+  <div class="fg"><label><i class="fab fa-telegram" style="color:#0088cc"></i> Telegram</label><input class="fc" id="ctTg" placeholder="@dezstore"></div>
+  <div class="fg"><label><i class="fas fa-envelope" style="color:var(--err)"></i> Email</label><input class="fc" id="ctEm" placeholder="admin@dezstore.com"></div>
+  <div class="fg"><label><i class="fab fa-instagram" style="color:#E4405F"></i> Instagram</label><input class="fc" id="ctIg" placeholder="@dezstore"></div>
 </div>
 <button class="bt bg" onclick="saveContact()"><i class="fas fa-save"></i> Simpan Kontak</button>
 <div id="contactRes" style="margin-top:.5rem"></div>
@@ -638,9 +638,21 @@ function cekStatus(id){
           var map={completed:'completed',selesai:'completed',processing:'processing',pending:'pending',cancelled:'cancelled',canceled:'cancelled',refunded:'cancelled'};
           var newSt=map[st]||o.status;
           db.collection('orders').doc(id).update({status:newSt,ppsStatus:res.data.status}).then(()=>{
-            if(newSt==='cancelled'&&o.status!=='cancelled'){db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('⚠️ Dibatalkan PPS → Saldo di-refund!')}
-            else T('🔄 Status: '+res.data.status);
-            loadOrd();
+            if(newSt==='cancelled'&&o.status!=='cancelled'){
+              db.runTransaction(function(tx){
+                return tx.get(db.collection('orders').doc(id)).then(function(latest){
+                  if(!latest.exists)throw new Error('Order tidak ditemukan');
+                  var lo=latest.data();
+                  if(lo.refundApplied===true||lo.status==='cancelled')return;
+                  return tx.get(db.collection('users').doc(lo.userId)).then(function(u){
+                    if(!u.exists)throw new Error('Akun pengguna tidak ditemukan');
+                    tx.update(db.collection('orders').doc(id),{status:'cancelled',refundApplied:true,ppsStatus:res.data.status});
+                    tx.update(db.collection('users').doc(lo.userId),{balance:firebase.firestore.FieldValue.increment(Number(lo.total)||0)});
+                  });
+                });
+              }).then(function(){T('⚠️ Dibatalkan PPS → saldo dikembalikan satu kali!');loadOrd()})
+                .catch(function(e){T('❌ Refund gagal: '+e.message,1)});
+            }else{T('🔄 Status: '+res.data.status);loadOrd()}
           });
         }else T('❌ '+(res.data&&res.data.msg||'Gagal'),1);
       })
@@ -652,12 +664,57 @@ function autoProses(){
   var pending=[];
   db.collection('orders').where('status','==','pending').get().then(s=>{s.forEach(d=>{if(!d.data().ppsId)pending.push(d.id)});if(!pending.length){T('Tidak ada order pending!',1);return}if(!confirm('Kirim '+pending.length+' order ke PPS?'))return;pending.forEach((id,i)=>setTimeout(()=>sendPPS(id),i*800));T('🚀 Memproses '+pending.length+' order...')});
 }
-function apOrd(id){db.collection('orders').doc(id).update({status:'completed'}).then(()=>{T('✅ Completed!');loadOrd()})}
-function cnOrd(id){if(!confirm('Cancel + refund?'))return;db.collection('orders').doc(id).get().then(d=>{var o=d.data();db.collection('orders').doc(id).update({status:'cancelled'});db.collection('users').doc(o.userId).update({balance:firebase.firestore.FieldValue.increment(o.total)});T('❌ Cancel!');loadOrd()})}
+function apOrd(id){
+  var ref=db.collection('orders').doc(id);
+  db.runTransaction(function(tx){
+    return tx.get(ref).then(function(d){
+      if(!d.exists)throw new Error('Order tidak ditemukan');
+      if(d.data().status==='cancelled')throw new Error('Order sudah dibatalkan');
+      tx.update(ref,{status:'completed',completedAt:firebase.firestore.FieldValue.serverTimestamp()});
+    });
+  }).then(function(){T('✅ Completed!');loadOrd()}).catch(function(e){T('❌ '+e.message,1)});
+ }
+function cnOrd(id){
+  if(!confirm('Batalkan order dan kembalikan saldo jika belum pernah di-refund?'))return;
+  var orderRef=db.collection('orders').doc(id);
+  db.runTransaction(function(tx){
+    return tx.get(orderRef).then(function(d){
+      if(!d.exists)throw new Error('Order tidak ditemukan');
+      var o=d.data();
+      if(o.status==='cancelled'||o.refundApplied===true)throw new Error('Order sudah dibatalkan/refund');
+      if(o.status==='completed')throw new Error('Order selesai tidak dapat dibatalkan dari menu ini');
+      var userRef=db.collection('users').doc(o.userId);
+      return tx.get(userRef).then(function(u){
+        if(!u.exists)throw new Error('Akun pengguna tidak ditemukan');
+        tx.update(orderRef,{status:'cancelled',refundApplied:true,cancelledAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.update(userRef,{balance:firebase.firestore.FieldValue.increment(Number(o.total)||0)});
+      });
+    });
+  }).then(function(){T('✅ Order dibatalkan dan saldo dikembalikan!');loadOrd()})
+    .catch(function(e){T('❌ '+e.message,1)});
+}
 
 // ===== DEPOSITS =====
 function loadDep(){var f=document.getElementById('fDep').value;var q=db.collection('deposits');if(f)q=q.where('status','==',f);q.orderBy('createdAt','desc').limit(100).get().then(s=>{var h='';s.forEach(d=>{var x=d.data();h+='<tr><td><b>'+d.id.substring(0,8)+'</b></td><td>'+(x.username||'-')+'</td><td>'+(x.methodName||'-')+'</td><td>Rp '+(x.amount||0).toLocaleString('id-ID')+'</td><td><span class="bad '+(x.status==='approved'?'c':x.status==='rejected'?'x':'p')+'">'+x.status+'</span></td><td><button class="bt bg bs" onclick="apDep(\''+d.id+'\')">✓</button><button class="bt be bs" onclick="rjDep(\''+d.id+'\')">✗</button></td></tr>'});document.getElementById('tDep').innerHTML=h||'<tr><td colspan="6" style="text-align:center">Tidak ada</td></tr>'})}
-function apDep(id){db.collection('deposits').doc(id).get().then(d=>{var x=d.data();db.collection('deposits').doc(id).update({status:'approved'});db.collection('users').doc(x.userId).update({balance:firebase.firestore.FieldValue.increment(x.amount)});T('✅ Approved!');loadDep()})}
+function apDep(id){
+  var depRef=db.collection('deposits').doc(id);
+  db.runTransaction(function(tx){
+    return tx.get(depRef).then(function(d){
+      if(!d.exists)throw new Error('Deposit tidak ditemukan');
+      var x=d.data();
+      if(x.status==='approved')throw new Error('Deposit sudah disetujui');
+      if(x.status!=='pending')throw new Error('Deposit bukan berstatus pending');
+      if(!x.userId||!(Number(x.amount)>0))throw new Error('Data deposit tidak valid');
+      var userRef=db.collection('users').doc(x.userId);
+      return tx.get(userRef).then(function(u){
+        if(!u.exists)throw new Error('Akun pengguna tidak ditemukan');
+        tx.update(depRef,{status:'approved',approvedAt:firebase.firestore.FieldValue.serverTimestamp()});
+        tx.update(userRef,{balance:firebase.firestore.FieldValue.increment(Number(x.amount))});
+      });
+    });
+  }).then(function(){T('✅ Deposit disetujui dan saldo ditambahkan!');loadDep()})
+    .catch(function(e){T('❌ '+e.message,1)});
+}
 function rjDep(id){if(!confirm('Reject?'))return;db.collection('deposits').doc(id).update({status:'rejected'}).then(()=>{T('❌ Rejected!');loadDep()})}
 
 // ===== TIKET =====
@@ -720,10 +777,10 @@ function loadContact(){
   db.collection('settings').doc('website').get().then(d=>{
     if(!d.exists)return;
     var s=d.data();
-    document.getElementById('cWa').value=s.contactWA||'';
-    document.getElementById('cTg').value=s.contactTelegram||'';
-    document.getElementById('cEm').value=s.contactEmail||'';
-    document.getElementById('cIg').value=s.contactInstagram||'';
+    document.getElementById('ctWa').value=s.contactWA||'';
+    document.getElementById('ctTg').value=s.contactTelegram||'';
+    document.getElementById('ctEm').value=s.contactEmail||'';
+    document.getElementById('ctIg').value=s.contactInstagram||'';
     var h='';
     if(s.contactWA)h+='<div style="margin-bottom:.3rem">📱 WA: <b style="color:var(--ok)">'+s.contactWA+'</b></div>';
     if(s.contactTelegram)h+='<div style="margin-bottom:.3rem">✈️ TG: <b style="color:var(--s)">'+s.contactTelegram+'</b></div>';
@@ -733,10 +790,10 @@ function loadContact(){
   }).catch(e=>T('❌ '+e.message,1));
 }
 function saveContact(){
-  var wa=document.getElementById('cWa').value.trim();
-  var tg=document.getElementById('cTg').value.trim();
-  var em=document.getElementById('cEm').value.trim();
-  var ig=document.getElementById('cIg').value.trim();
+  var wa=document.getElementById('ctWa').value.trim();
+  var tg=document.getElementById('ctTg').value.trim();
+  var em=document.getElementById('ctEm').value.trim();
+  var ig=document.getElementById('ctIg').value.trim();
   if(!wa&&!tg&&!em&&!ig){T('❌ Isi minimal 1 kontak!',1);return}
   db.collection('settings').doc('website').set({
     contactWA:wa,contactTelegram:tg,contactEmail:em,contactInstagram:ig
@@ -827,17 +884,26 @@ function saveApk(){
   if(!a.url){T('❌ Link download wajib diisi!',1);return}
   db.collection('settings').doc('apk').set(a).then(()=>{localStorage.setItem('apk',JSON.stringify(a));T('✅ APK disimpan permanen!');showApkInfo(a)}).catch(e=>T('❌ Gagal: '+e.message,1));
 }
+function getApkSettings(){
+  return db.collection('settings').doc('apk').get().then(function(d){
+    if(d.exists)return d.data();
+    try{return JSON.parse(localStorage.getItem('apk')||'{}')}catch(e){return {}}
+  });
+}
 function copyApk(){
-  var a=JSON.parse(localStorage.getItem('apk')||'{}');
-  if(!a.url){T('❌ Belum ada link!',1);return}
-  var t=document.createElement('textarea');t.value=a.url;document.body.appendChild(t);t.select();
-  try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}
-  document.body.removeChild(t);
+  getApkSettings().then(function(a){
+    if(!a.url){T('❌ Belum ada link!',1);return}
+    var t=document.createElement('textarea');t.value=a.url;document.body.appendChild(t);t.select();
+    try{document.execCommand('copy');T('✅ Link disalin!')}catch(e){T('❌ Salin manual',1)}
+    document.body.removeChild(t);
+  }).catch(function(e){T('❌ '+e.message,1)});
 }
 function testApk(){
-  var a=JSON.parse(localStorage.getItem('apk')||'{}');
-  if(!a.url){T('❌ Belum ada link!',1);return}
-  T('🔗 Membuka link...');window.open(a.url,'_blank');
+  getApkSettings().then(function(a){
+    if(!a.url){T('❌ Belum ada link!',1);return}
+    if(!/^https:\/\//i.test(a.url)){T('❌ Link harus diawali https://',1);return}
+    T('🔗 Membuka link...');window.open(a.url,'_blank','noopener');
+  }).catch(function(e){T('❌ '+e.message,1)});
 }
 
 // ===== INIT =====
