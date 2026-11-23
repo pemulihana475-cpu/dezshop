@@ -14,10 +14,10 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 :root{--p:#3b82f6;--s:#60a5fa;--a:#a855f7;--d:#0a0a1a;--dd:#050510;--c:#1a1a2e;--b:rgba(255,255,255,0.08);--m:#9ca3af;--ok:#10b981;--err:#ef4444;--warn:#f59e0b}
-body{background:var(--d);color:#fff;min-height:100vh}
+body{background:var(--d);color:#fff;min-height:100vh;background-size:cover;background-position:center;background-attachment:fixed}
 .nav{position:fixed;top:0;left:0;right:0;height:56px;background:var(--dd);display:flex;align-items:center;justify-content:space-between;padding:0 1rem;z-index:100;border-bottom:1px solid var(--b)}
 .brand{display:flex;align-items:center;gap:.6rem;font-weight:900;font-size:1rem}
-.logo{width:34px;height:34px;border-radius:8px;overflow:hidden}
+.logo{width:34px;height:34px;border-radius:8px;overflow:hidden;flex-shrink:0}
 .logo img{width:100%;height:100%;object-fit:cover}
 .side{position:fixed;top:56px;left:0;bottom:0;width:210px;background:var(--dd);overflow-y:auto;border-right:1px solid var(--b);padding:.5rem 0}
 .lbl{padding:.3rem 1rem;font-size:.6rem;color:var(--m);letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-top:.3rem}
@@ -61,17 +61,19 @@ textarea.fc{min-height:60px;resize:vertical}
 .md.on{display:flex}
 .mdc{background:var(--c);border-radius:12px;padding:1.2rem;max-width:450px;width:100%;max-height:90vh;overflow-y:auto}
 .mdc h2{margin-bottom:.8rem;font-size:1.1rem}
-.ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.6rem 1rem;border-radius:8px;font-weight:600;font-size:.78rem;z-index:10000;transform:translateY(100px);opacity:0;transition:.3s}
+.ts{position:fixed;bottom:20px;right:20px;background:var(--ok);color:#fff;padding:.6rem 1rem;border-radius:8px;font-weight:600;font-size:.78rem;z-index:10000;transform:translateY(100px);opacity:0;transition:.3s;max-width:90%}
 .ts.on{transform:translateY(0);opacity:1}
 .ts.e{background:var(--err)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.pvBox{margin-top:.3rem;text-align:center}
+.pvBox img{max-width:100%;max-height:90px;border-radius:6px;border:1px solid var(--b)}
 @media(max-width:768px){.side{width:150px}.bd{margin-left:150px;padding:.6rem}.g2,.g3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="nav">
-<div class="brand"><div class="logo"><img src="logo.png"></div>DEZSTORE ADMIN</div>
+<div class="brand"><div class="logo" id="navLogo"><img src="logo.jpg" onerror="this.parentNode.innerHTML='<i class=\'fas fa-bolt\' style=\'color:#fff\'></i>'"></div>DEZSTORE ADMIN</div>
 <button class="bt be" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
 </div>
 <div class="side">
@@ -118,10 +120,11 @@ textarea.fc{min-height:60px;resize:vertical}
 </div>
 <div class="cd" style="background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(59,130,246,.15));border-color:var(--a)">
 <h3 style="margin-bottom:.5rem">🔐 Keamanan Login</h3>
-<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Aktifkan sidik jari untuk login cepat & aman.</p>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Sidik jari butuh HTTPS. Di file:// gunakan "Login Cepat Device Ini" (otomatis setelah login password).</p>
 <div style="display:flex;gap:.5rem;flex-wrap:wrap">
 <button class="bt bg" onclick="registerBiometric()"><i class="fas fa-fingerprint"></i> Aktifkan Sidik Jari</button>
 <button class="bt be" onclick="removeBiometric()"><i class="fas fa-trash"></i> Hapus</button>
+<button class="bt bw" onclick="removeRemember()"><i class="fas fa-user-slash"></i> Lupa Device Ini</button>
 </div>
 <div id="bioStatus" style="margin-top:.6rem;font-size:.75rem;color:var(--m)"></div>
 </div>
@@ -186,7 +189,7 @@ textarea.fc{min-height:60px;resize:vertical}
 
 <div class="pg" id="qrs">
 <h1>🖼️ QRIS</h1>
-<div class="cd"><h3 style="margin-bottom:.5rem">Upload QRIS</h3><input type="file" class="fc" id="fQrs" accept="image/*" onchange="prevQrs()"><div id="pvQrs" style="text-align:center;margin:.5rem 0"></div><button class="bt bg" onclick="saveQrs()">Simpan</button></div>
+<div class="cd"><h3 style="margin-bottom:.5rem">Upload QRIS (auto-compress)</h3><input type="file" class="fc" id="fQrs" accept="image/*" onchange="prevQrs()"><div id="pvQrs" class="pvBox" style="margin:.5rem 0"></div><button class="bt bg" onclick="saveQrs()">Simpan</button></div>
 <div class="cd"><h3 style="margin-bottom:.5rem">Nomor Pembayaran</h3><div class="g2"><div class="fg"><label>QRIS</label><input class="fc" id="nQrs"></div><div class="fg"><label>DANA</label><input class="fc" id="nDna"></div><div class="fg"><label>GoPay</label><input class="fc" id="nGpy"></div><div class="fg"><label>OVO</label><input class="fc" id="nOvo"></div><div class="fg"><label>ShopeePay</label><input class="fc" id="nShp"></div><div class="fg"><label>BCA</label><input class="fc" id="nBca"></div></div><button class="bt bp" onclick="savePayNum()">Simpan</button></div>
 </div>
 
@@ -205,13 +208,13 @@ textarea.fc{min-height:60px;resize:vertical}
 <div class="pg" id="mrk">
 <h1>💰 Markup Harga</h1>
 <div class="cd">
-<h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis</h3>
-<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Setiap kali klik "Sync PPS", harga akan otomatis naik sesuai persentase di bawah ini. (Auto-save saat diubah)</p>
+<h3 style="margin-bottom:.5rem">Pengaturan Markup Otomatis (Auto-Save)</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Nilai langsung tersimpan ke database saat diubah. Sync PPS selalu pakai nilai terbaru dari database.</p>
 <div class="g2">
   <div class="fg"><label>Persentase Markup (%)</label><input type="number" class="fc" id="mrkPercent" placeholder="20" value="20"></div>
   <div class="fg"><label>Pembulatan Harga</label><select class="fc" id="mrkRound"><option value="0">Tanpa pembulatan</option><option value="10">Ke puluhan</option><option value="100" selected>Ke ratusan</option><option value="500">Ke 500-an</option><option value="1000">Ke ribuan</option><option value="5000">Ke 5 ribuan</option></select></div>
 </div>
-<button class="bt bp" onclick="saveMrk()">💾 Simpan Pengaturan</button>
+<button class="bt bp" onclick="saveMrk()">💾 Simpan Manual</button>
 <button class="bt bg" onclick="syncPPS()">🔄 Sync PPS dengan Markup</button>
 <div id="mrkInfo" style="margin-top:.8rem;padding:.6rem;background:rgba(59,130,246,.1);border-radius:6px;font-size:.75rem"><b>Contoh:</b> Harga PPS Rp 6.998 + Markup 20% = Rp 8.400</div>
 </div>
@@ -247,7 +250,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <h1>🎨 Tema</h1>
 <div class="cd"><h3 style="margin-bottom:.5rem">Preset</h3><div class="g2"><div onclick="preset('dark')" style="background:linear-gradient(135deg,#0a0a1a,#1a1a2e);padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">🌙 Dark</div><div onclick="preset('light')" style="background:linear-gradient(135deg,#f8fafc,#e2e8f0);color:#1e293b;padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">☀️ Light</div><div onclick="preset('gradient')" style="background:linear-gradient(135deg,#667eea,#764ba2);padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">🌈 Gradient</div><div onclick="preset('neon')" style="background:linear-gradient(135deg,#0f0c29,#302b63);color:#00ff88;padding:.8rem;border-radius:8px;cursor:pointer;text-align:center">⚡ Neon</div></div></div>
 <div class="cd"><h3 style="margin-bottom:.5rem">Warna Kustom</h3><div class="g3"><div class="fg"><label>Primary</label><input type="color" class="fc" id="cP" value="#3b82f6"></div><div class="fg"><label>Secondary</label><input type="color" class="fc" id="cS" value="#60a5fa"></div><div class="fg"><label>Accent</label><input type="color" class="fc" id="cA" value="#a855f7"></div><div class="fg"><label>Background</label><input type="color" class="fc" id="cB" value="#0a0a1a"></div><div class="fg"><label>Card</label><input type="color" class="fc" id="cC" value="#1a1a2e"></div><div class="fg"><label>Text</label><input type="color" class="fc" id="cT" value="#ffffff"></div></div><button class="bt bg" onclick="saveColor()">Simpan</button></div>
-<div class="cd"><h3 style="margin-bottom:.5rem">Upload Gambar (Auto-Compress)</h3><div class="g2"><div class="fg"><label>Background</label><input type="file" class="fc" accept="image/*" onchange="upImg('background',this)"><div id="pvBackground" style="margin-top:.3rem"></div></div><div class="fg"><label>Logo</label><input type="file" class="fc" accept="image/*" onchange="upImg('logo',this)"><div id="pvLogo" style="margin-top:.3rem"></div></div><div class="fg"><label>Banner</label><input type="file" class="fc" accept="image/*" onchange="upImg('banner',this)"><div id="pvBanner" style="margin-top:.3rem"></div></div></div></div>
+<div class="cd"><h3 style="margin-bottom:.5rem">Upload Gambar (Auto-Compress ≤350KB, Permanen)</h3><div class="g3"><div class="fg"><label>Background</label><input type="file" class="fc" accept="image/*" onchange="upImg('background',this)"><div id="pvBackground" class="pvBox"></div></div><div class="fg"><label>Logo</label><input type="file" class="fc" accept="image/*" onchange="upImg('logo',this)"><div id="pvLogo" class="pvBox"></div></div><div class="fg"><label>Banner</label><input type="file" class="fc" accept="image/*" onchange="upImg('banner',this)"><div id="pvBanner" class="pvBox"></div></div></div><p style="font-size:.68rem;color:var(--m);margin-top:.4rem">💡 Setelah upload, buka index.html &amp; hard-refresh (Ctrl+Shift+R) untuk lihat perubahan.</p></div>
 </div>
 
 <div class="pg" id="ref">
@@ -332,8 +335,47 @@ function bufToB64(b){var s='';var u=new Uint8Array(b);for(var i=0;i<u.length;i++
 function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
-function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',2500)}
-function doLogout(){if(confirm('Logout?'))location.href='index.html'}
+function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',3000)}
+function doLogout(){if(confirm('Logout?')){localStorage.removeItem('adm_tok');location.href='index.html'}}
+
+// ===== IMAGE COMPRESS (FIX BUG GAMBAR HILANG) =====
+function compressImage(file,maxDim,preferPng){
+  return new Promise(function(resolve,reject){
+    if(!file||!/^image\//.test(file.type)){reject('File bukan gambar');return}
+    var r=new FileReader();
+    r.onload=function(ev){
+      var img=new Image();
+      img.onload=function(){
+        var w=img.width,h=img.height;
+        var s=Math.min(1,maxDim/Math.max(w,h));
+        w=Math.max(1,Math.round(w*s));h=Math.max(1,Math.round(h*s));
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        var ctx=c.getContext('2d');
+        if(!preferPng){ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h)}
+        ctx.drawImage(img,0,0,w,h);
+        var out;
+        if(preferPng){
+          out=c.toDataURL('image/png');
+          if(out.length>350*1024){ // PNG terlalu besar -> JPEG
+            ctx.globalCompositeOperation='destination-over';
+            ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h);
+            out=c.toDataURL('image/jpeg',0.8);
+          }
+        }else{
+          out=c.toDataURL('image/jpeg',0.8);
+        }
+        var q=0.8;
+        while(out.length>350*1024&&q>0.4){q-=0.1;out=c.toDataURL('image/jpeg',q)}
+        if(out.length>500*1024){reject('Gambar masih terlalu besar, pakai file resolusi lebih rendah');return}
+        resolve(out);
+      };
+      img.onerror=function(){reject('Gambar tidak valid')};
+      img.src=ev.target.result;
+    };
+    r.onerror=function(){reject('Gagal baca file')};
+    r.readAsDataURL(file);
+  });
+}
 
 // ===== API KEY HELPER (PERMANEN) =====
 function getApiKeys(){
@@ -347,40 +389,56 @@ function getApiKeys(){
 }
 function prefetchApi(){getApiKeys().then(k=>{if(k.k){localStorage.setItem('ak',k.k);localStorage.setItem('sk',k.s)}})}
 
-// ===== LOGIN =====
+// ===== LOGIN + REMEMBER + BIOMETRIC (FIX) =====
+function isSecure(){return window.isSecureContext||/localhost|127\.0\.0\.1/.test(location.hostname)}
+function rememberToken(){return btoa(PW+'|dz2026')}
+function setRemember(){try{localStorage.setItem('adm_tok',rememberToken())}catch(e){}}
+function removeRemember(){localStorage.removeItem('adm_tok');T('🗑 Device ini dilupakan. Login ulang pakai password.');}
+
 function showLoginModal(){
-  var bio=localStorage.getItem('bioCred');
   var btn=document.getElementById('btnBioLogin');
   var info=document.getElementById('loginInfo');
-  if(bio){btn.style.display='inline-flex';info.innerHTML='✅ Sidik jari sudah terdaftar.'}
-  else{btn.style.display='none';info.innerHTML=''}
+  if(localStorage.getItem('bioCred')&&isSecure()){btn.style.display='inline-flex';info.innerHTML=''}
+  else{btn.style.display='none';info.innerHTML=isSecure()?'':'⚠️ Sidik jari butuh HTTPS. Login password di device ini akan otomatis tersimpan (1 klik).'}
   document.getElementById('mLogin').classList.add('on');
+}
+function tryAutoLogin(){
+  if(localStorage.getItem('adm_tok')===rememberToken()){
+    closeM('mLogin');T('👋 Login otomatis (device ini dikenali)');
+    prefetchApi();
+    return true;
+  }
+  return false;
 }
 function checkLogin(){
   var p=document.getElementById('loginPassInput').value;
   if(p!==PW){document.getElementById('loginInfo').textContent='❌ Password Salah!';document.getElementById('loginPassInput').value='';return}
-  document.getElementById('mLogin').classList.remove('on');
+  closeM('mLogin');
   document.getElementById('loginPassInput').value='';
   document.getElementById('loginInfo').textContent='';
+  setRemember(); // device ini dikenali berikutnya
   T('✅ Login berhasil!');
   prefetchApi();
 }
 async function loginBio(){
+  if(!isSecure()){T('❌ Sidik jari hanya jalan di HTTPS. Pakai login biasa.',1);return}
   var saved=localStorage.getItem('bioCred');
   if(!saved){T('❌ Sidik jari belum terdaftar',1);return}
   var chal=crypto.getRandomValues(new Uint8Array(32));
   try{
     await navigator.credentials.get({publicKey:{challenge:chal,timeout:60000,userVerification:'required',allowCredentials:[{type:'public-key',id:b64ToBuf(saved)}]}});
-    document.getElementById('mLogin').classList.remove('on');
+    closeM('mLogin');
     document.getElementById('loginPassInput').value='';
-    document.getElementById('loginInfo').textContent='';
+    setRemember();
     T('✅ Selamat datang, Admin!');
     prefetchApi();
-  }catch(e){T('❌ Verifikasi dibatalkan',1)}
+  }catch(e){
+    var msg=e&&e.name==='NotAllowedError'?'Dibatalkan/tidak dikenali. Coba lagi atau pakai password.':('❌ '+(e&&e.message||'Gagal'));
+    T(msg,1);
+  }
 }
-
-// ===== SIDIK JARI =====
 async function registerBiometric(){
+  if(!isSecure()){T('❌ Sidik jari butuh HTTPS (buka via hosting, bukan file://)',1);return}
   if(!window.PublicKeyCredential){T('❌ Browser tidak dukung sidik jari',1);return}
   var chal=crypto.getRandomValues(new Uint8Array(32));
   var uid=crypto.getRandomValues(new Uint8Array(16));
@@ -389,10 +447,10 @@ async function registerBiometric(){
     localStorage.setItem('bioCred',bufToB64(cred.rawId));
     T('✅ Sidik jari berhasil didaftarkan!');
     cekBioStatus();
-  }catch(e){T('❌ Gagal: '+e.message,1)}
+  }catch(e){T('❌ Gagal: '+(e&&e.message||e),1)}
 }
 function removeBiometric(){
-  if(!confirm('Hapus sidik jari? Nanti login pakai password lagi.'))return;
+  if(!confirm('Hapus sidik jari?'))return;
   localStorage.removeItem('bioCred');
   T('🗑 Sidik jari dihapus');
   cekBioStatus();
@@ -400,8 +458,10 @@ function removeBiometric(){
 function cekBioStatus(){
   var el=document.getElementById('bioStatus');
   if(!el)return;
-  if(localStorage.getItem('bioCred')){el.innerHTML='✅ Sidik jari aktif. Login berikutnya tinggal tempel jari.'}
-  else{el.innerHTML='⚠️ Belum aktif. Klik "Aktifkan Sidik Jari" untuk merekam.'}
+  if(localStorage.getItem('bioCred')&&isSecure()){el.innerHTML='✅ Sidik jari aktif (HTTPS).'}
+  else if(localStorage.getItem('bioCred')){el.innerHTML='⚠️ Sidik jari terdaftar tapi browser ini file://. Pakai "Login otomatis device".'}
+  else{el.innerHTML='⚠️ Belum aktif. '+(isSecure()?'Klik "Aktifkan Sidik Jari".':'Sidik jari butuh HTTPS.')}
+  if(localStorage.getItem('adm_tok')===rememberToken())el.innerHTML+='<br>🔓 Device ini dikenali (login 1 klik).';
 }
 
 // ===== PWA =====
@@ -424,14 +484,13 @@ function showInstallGuide(){
   else{info.innerHTML='<b>Desktop:</b> Klik ikon Install di bar alamat browser.'}
 }
 
-// ===== API PPS =====
+// ===== MARKUP (AUTO-SAVE) =====
 function loadMrk(){
   db.collection('settings').doc('markup').get().then(d=>{
     if(d.exists){
       document.getElementById('mrkPercent').value=(d.data().percent!=null)?d.data().percent:20;
       document.getElementById('mrkRound').value=(d.data().round!=null)?d.data().round:100;
     }
-    // Auto-save saat diubah
     document.getElementById('mrkPercent').onchange=()=>saveMrk();
     document.getElementById('mrkRound').onchange=()=>saveMrk();
   }).catch(e=>T('❌ Gagal muat markup: '+e.message,1));
@@ -440,10 +499,11 @@ function saveMrk(cb){
   var p=parseInt(document.getElementById('mrkPercent').value)||0;
   var r=parseInt(document.getElementById('mrkRound').value)||0;
   db.collection('settings').doc('markup').set({percent:p,round:r},{merge:true})
-    .then(()=>{T('✅ Markup disimpan: '+p+'% / bulat '+r);if(cb)cb()})
+    .then(()=>{T('✅ Markup tersimpan: '+p+'% / bulat '+r);if(cb)cb()})
     .catch(e=>T('❌ Gagal simpan markup: '+e.message,1));
 }
 
+// ===== API PPS =====
 function loadApi(){
   getApiKeys().then(keys=>{
     document.getElementById('apiKey').value=keys.k;
@@ -455,10 +515,9 @@ function saveApi(){
   var s=document.getElementById('apiSec').value.trim();
   if(!k||!s){T('❌ API Key & Secret Key wajib diisi!',1);return}
   db.collection('settings').doc('pps').set({apiKey:k,secretKey:s},{merge:true}).then(()=>{
-    localStorage.setItem('ak',k);
-    localStorage.setItem('sk',s);
+    localStorage.setItem('ak',k);localStorage.setItem('sk',s);
     T('✅ API disimpan permanen!');
-  }).catch(e=>{T('❌ Gagal simpan: '+e.message,1)});
+  }).catch(e=>T('❌ Gagal simpan: '+e.message,1));
 }
 function testApi(){
   getApiKeys().then(function(keys){
@@ -481,7 +540,6 @@ function syncPPS(){
     });
   });
 }
-
 function doSync(k,s,MP,RU){
   var prog=document.getElementById('syncProgress');
   if(prog)prog.textContent='🔄 Mengambil layanan dari PPS...';
@@ -489,7 +547,7 @@ function doSync(k,s,MP,RU){
   fetch(PPS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()})
   .then(r=>r.json())
   .then(d=>{
-    if(!d.data||!Array.isArray(d.data)){if(prog)prog.textContent='';T('❌ Data tidak valid: '+(d.data&&d.data.msg||'bukan array'),1);return}
+    if(!d.data||!Array.isArray(d.data)){if(prog)prog.textContent='';T('❌ Data tidak valid',1);return}
     var arr=d.data;
     if(arr.length===0){if(prog)prog.textContent='';T('⚠️ PPS mengirim 0 layanan',1);return}
     if(prog)prog.textContent='📥 '+arr.length+' layanan diterima. Menyimpan...';
@@ -504,7 +562,7 @@ function doSync(k,s,MP,RU){
     chunks.forEach(function(ch){
       var b=db.batch();
       ch.forEach(it=>b.set(it.doc,it.data));
-      b.commit().then(()=>{done++;if(prog)prog.textContent='💾 '+done+'/'+chunks.length+' bagian tersimpan...';if(done+fail===chunks.length){if(prog)prog.textContent='';T('✅ '+items.length+' layanan disync dengan markup '+MP+'%!');loadSvc()}})
+      b.commit().then(()=>{done++;if(prog)prog.textContent='💾 '+done+'/'+chunks.length+'...';if(done+fail===chunks.length){if(prog)prog.textContent='';T('✅ '+items.length+' layanan disync markup '+MP+'%!');loadSvc()}})
        .catch(e=>{fail++;if(done+fail===chunks.length){if(prog)prog.textContent='';T('❌ Sebagian gagal: '+e.message,1);loadSvc()}});
     });
   })
@@ -597,16 +655,8 @@ function saveSvc(){
   var id=curSvc||d.serviceId;
   if(!id||!d.name){T('❌ Isi lengkap!',1);return}
   db.collection('services').doc(id).set(d,{merge:true}).then(()=>{
-    T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));curSvc='';closeM('mSvc');
-    var rows=document.querySelectorAll('#tSvc tr');
-    for(var i=0;i<rows.length;i++){
-      if(rows[i].innerHTML.includes(id)){
-        var tds=rows[i].querySelectorAll('td');
-        if(tds.length>=6){tds[1].textContent=d.categoryName||d.category||'-';tds[2].textContent=d.name||'-';tds[3].textContent='Rp '+d.price.toLocaleString('id-ID');tds[4].textContent=d.min||0;tds[5].textContent=d.max||0}
-        break;
-      }
-    }
-  });
+    T('✅ '+(curSvc?'Diupdate!':'Ditambah!'));curSvc='';closeM('mSvc');loadSvc();
+  }).catch(e=>T('❌ Gagal: '+e.message,1));
 }
 function delSvc(id){if(confirm('Hapus?'))db.collection('services').doc(id).delete().then(()=>{T('🗑 Dihapus!');loadSvc()})}
 
@@ -631,10 +681,12 @@ var curPay='';
 function edPay(k){curPay=k;db.collection('settings').doc('payment').get().then(d=>{var p=(d.exists&&d.data())||{};document.getElementById('payNum').value=p[k]||'';document.getElementById('payFee').value=p[k+'Fee']||0;openM('mPay')})}
 function savePay(){db.collection('settings').doc('payment').set({[curPay]:document.getElementById('payNum').value,[curPay+'Fee']:parseInt(document.getElementById('payFee').value)||0},{merge:true}).then(()=>{T('✅ Updated!');closeM('mPay');loadPay()})}
 
-// ===== QRIS =====
-function loadQrs(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();document.getElementById('nQrs').value=p.qris||'';document.getElementById('nDna').value=p.dana||'';document.getElementById('nGpy').value=p.gopay||'';document.getElementById('nOvo').value=p.ovo||'';document.getElementById('nShp').value=p.shopeepay||'';document.getElementById('nBca').value=p.bca||'';if(p.qrisImage)document.getElementById('pvQrs').innerHTML='<img src="'+p.qrisImage+'" style="max-width:200px;border-radius:8px">'})}
-function prevQrs(){var f=document.getElementById('fQrs').files[0];if(!f)return;var r=new FileReader();r.onload=e=>document.getElementById('pvQrs').innerHTML='<img src="'+e.target.result+'" style="max-width:200px;border-radius:8px">';r.readAsDataURL(f)}
-function saveQrs(){var i=document.querySelector('#pvQrs img');if(!i){T('❌ Upload dulu!',1);return}db.collection('settings').doc('payment').set({qrisImage:i.src},{merge:true}).then(()=>T('✅ QRIS disimpan!'))}
+// ===== QRIS (COMPRESS JUGA) =====
+var qrsCompressed='';
+function loadQrs(){db.collection('settings').doc('payment').get().then(d=>{if(!d.exists)return;var p=d.data();document.getElementById('nQrs').value=p.qris||'';document.getElementById('nDna').value=p.dana||'';document.getElementById('nGpy').value=p.gopay||'';document.getElementById('nOvo').value=p.ovo||'';document.getElementById('nShp').value=p.shopeepay||'';document.getElementById('nBca').value=p.bca||'';if(p.qrisImage){qrsCompressed=p.qrisImage;document.getElementById('pvQrs').innerHTML='<img src="'+p.qrisImage+'" style="max-width:200px;border-radius:8px">'}})}
+function prevQrs(){var f=document.getElementById('fQrs').files[0];if(!f)return;
+  compressImage(f,600,false).then(out=>{qrsCompressed=out;document.getElementById('pvQrs').innerHTML='<img src="'+out+'" style="max-width:200px;border-radius:8px"><br><small style="color:var(--ok)">'+Math.round(out.length/1024)+'KB</small>'}).catch(e=>T('❌ '+e,1));}
+function saveQrs(){if(!qrsCompressed){T('❌ Upload dulu!',1);return}db.collection('settings').doc('payment').set({qrisImage:qrsCompressed},{merge:true}).then(()=>T('✅ QRIS disimpan permanen!')).catch(e=>T('❌ Gagal: '+e.message,1))}
 function savePayNum(){db.collection('settings').doc('payment').set({qris:document.getElementById('nQrs').value,dana:document.getElementById('nDna').value,gopay:document.getElementById('nGpy').value,ovo:document.getElementById('nOvo').value,shopeepay:document.getElementById('nShp').value,bca:document.getElementById('nBca').value},{merge:true}).then(()=>T('✅ Disimpan!'))}
 
 // ===== WHATSAPP =====
@@ -646,41 +698,37 @@ function testWa(){var t=localStorage.getItem('ft'),n=localStorage.getItem('wn');
 function loadSet(){db.collection('settings').doc('website').get().then(d=>{if(!d.exists)return;var s=d.data();document.getElementById('siteName').value=s.name||'DEZSTORE';document.getElementById('siteTag').value=s.tagline||'';document.getElementById('cWa').value=s.contactWA||'';document.getElementById('cEm').value=s.contactEmail||'';document.getElementById('cTg').value=s.contactTelegram||'';document.getElementById('cIg').value=s.contactInstagram||'';document.getElementById('minDep').value=s.minDeposit||10000;document.getElementById('maxDep').value=s.maxDeposit||10000000;document.getElementById('defFee').value=s.defaultFee||0})}
 function saveSet(){db.collection('settings').doc('website').set({name:document.getElementById('siteName').value,tagline:document.getElementById('siteTag').value,contactWA:document.getElementById('cWa').value,contactEmail:document.getElementById('cEm').value,contactTelegram:document.getElementById('cTg').value,contactInstagram:document.getElementById('cIg').value,minDeposit:parseInt(document.getElementById('minDep').value),maxDeposit:parseInt(document.getElementById('maxDep').value),defaultFee:parseInt(document.getElementById('defFee').value)},{merge:true}).then(()=>T('✅ Disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
 
-// ===== TEMA =====
-function loadThm(){db.collection('settings').doc('theme').get().then(d=>{if(!d.exists)return;var t=d.data();if(t.background)document.getElementById('pvBackground').innerHTML='<img src="'+t.background+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.logo)document.getElementById('pvLogo').innerHTML='<img src="'+t.logo+'" style="max-height:50px">';if(t.banner)document.getElementById('pvBanner').innerHTML='<img src="'+t.banner+'" style="max-width:100%;max-height:100px;border-radius:6px">';if(t.colors){document.getElementById('cP').value=t.colors.p||'#3b82f6';document.getElementById('cS').value=t.colors.s||'#60a5fa';document.getElementById('cA').value=t.colors.a||'#a855f7';document.getElementById('cB').value=t.colors.b||'#0a0a1a';document.getElementById('cC').value=t.colors.c||'#1a1a2e';document.getElementById('cT').value=t.colors.t||'#ffffff'}})}
+// ===== TEMA (FIX: VERIFY + CLEAR CACHE INDEX) =====
+function loadThm(){db.collection('settings').doc('theme').get().then(d=>{if(!d.exists)return;var t=d.data();if(t.background)document.getElementById('pvBackground').innerHTML='<img src="'+t.background+'">';if(t.logo)document.getElementById('pvLogo').innerHTML='<img src="'+t.logo+'" style="max-height:60px">';if(t.banner)document.getElementById('pvBanner').innerHTML='<img src="'+t.banner+'">';if(t.colors){document.getElementById('cP').value=t.colors.p||'#3b82f6';document.getElementById('cS').value=t.colors.s||'#60a5fa';document.getElementById('cA').value=t.colors.a||'#a855f7';document.getElementById('cB').value=t.colors.b||'#0a0a1a';document.getElementById('cC').value=t.colors.c||'#1a1a2e';document.getElementById('cT').value=t.colors.t||'#ffffff'}})}
 
-// ===== UPLOAD GAMBAR DENGAN KOMPRESI (FIX BUG) =====
-function upImg(t,inp){
+async function upImg(t,inp){
   var f=inp.files[0];if(!f)return;
-  if(f.size>5*1024*1024){T('❌ Max 5MB!',1);return}
-  var r=new FileReader();
-  r.onload=e=>{
-    var img=new Image();
-    img.onload=()=>{
-      var maxW=(t==='logo')?512:1200, maxH=(t==='logo')?512:1200;
-      var w=img.width,h=img.height;
-      if(w>maxW||h>maxH){var s=Math.min(maxW/w,maxH/h);w=Math.round(w*s);h=Math.round(h*s)}
-      var c=document.createElement('canvas');c.width=w;c.height=h;
-      var ctx=c.getContext('2d');
-      if(t!=='logo'){ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h)}
-      ctx.drawImage(img,0,0,w,h);
-      var out=(t==='logo')?c.toDataURL('image/png',0.9):c.toDataURL('image/jpeg',0.75);
-      if(out.length>900*1024)out=c.toDataURL('image/jpeg',0.5); // paksa kecil jika masih >900KB
-      var id='pv'+t.charAt(0).toUpperCase()+t.slice(1);
-      document.getElementById(id).innerHTML='<img src="'+out+'" style="max-width:100%;max-height:100px;border-radius:6px">';
-      var o={};o[t]=out;
-      db.collection('settings').doc('theme').set(o,{merge:true})
-        .then(()=>T('✅ '+t+' disimpan permanen! ('+Math.round(out.length/1024)+'KB)'))
-        .catch(err=>T('❌ Gagal simpan: '+err.message,1));
-    };
-    img.onerror=()=>T('❌ File bukan gambar valid',1);
-    img.src=e.target.result;
-  };
-  r.readAsDataURL(f);
+  var id='pv'+t.charAt(0).toUpperCase()+t.slice(1);
+  document.getElementById(id).innerHTML='<small style="color:var(--s)">⏳ Mengompres...</small>';
+  try{
+    var out=await compressImage(f,t==='logo'?512:1400,t==='logo');
+    var o={};o[t]=out;
+    await db.collection('settings').doc('theme').set(o,{merge:true});
+    // VERIFIKASI: baca ulang dari Firestore
+    var chk=await db.collection('settings').doc('theme').get();
+    if(chk.exists&&chk.data()[t]){
+      document.getElementById(id).innerHTML='<img src="'+out+'"><br><small style="color:var(--ok)">✅ '+Math.round(out.length/1024)+'KB tersimpan</small>';
+      localStorage.removeItem('cache_theme'); // index.html reload data baru
+      T('✅ '+t+' tersimpan permanen!');
+      if(t==='logo')document.getElementById('navLogo').innerHTML='<img src="'+out+'">';
+      if(t==='background')document.body.style.backgroundImage='url('+out+')';
+    }else{throw new Error('Verifikasi gagal')}
+  }catch(e){
+    document.getElementById(id).innerHTML='<small style="color:var(--err)">❌ '+(e.message||e)+'</small>';
+    T('❌ Gagal: '+(e.message||e),1);
+  }
+  inp.value='';
 }
 
+function applyAdminTheme(){db.collection('settings').doc('theme').get().then(d=>{if(!d.exists)return;var t=d.data();var r=document.documentElement.style;if(t.colors){var c=t.colors;if(c.p)r.setProperty('--p',c.p);if(c.s)r.setProperty('--s',c.s);if(c.a)r.setProperty('--a',c.a);if(c.b)r.setProperty('--d',c.b);if(c.c)r.setProperty('--c',c.c)}if(t.background)document.body.style.backgroundImage='url('+t.background+')';if(t.logo)document.getElementById('navLogo').innerHTML='<img src="'+t.logo+'">'})}
+
 function preset(p){var pr={dark:{p:'#3b82f6',s:'#60a5fa',a:'#a855f7',b:'#0a0a1a',c:'#1a1a2e',t:'#ffffff'},light:{p:'#3b82f6',s:'#2563eb',a:'#7c3aed',b:'#f8fafc',c:'#ffffff',t:'#1e293b'},gradient:{p:'#667eea',s:'#764ba2',a:'#f093fb',b:'#667eea',c:'#1a1a2e',t:'#ffffff'},neon:{p:'#00ff88',s:'#00d4ff',a:'#ff00ff',b:'#0f0c29',c:'#1a1a3e',t:'#00ff88'}}[p];if(!pr)return;document.getElementById('cP').value=pr.p;document.getElementById('cS').value=pr.s;document.getElementById('cA').value=pr.a;document.getElementById('cB').value=pr.b;document.getElementById('cC').value=pr.c;document.getElementById('cT').value=pr.t;saveColor();T('✅ '+p+' diterapkan!')}
-function saveColor(){var c={p:document.getElementById('cP').value,s:document.getElementById('cS').value,a:document.getElementById('cA').value,b:document.getElementById('cB').value,c:document.getElementById('cC').value,t:document.getElementById('cT').value};var r=document.documentElement;r.style.setProperty('--p',c.p);r.style.setProperty('--s',c.s);r.style.setProperty('--a',c.a);r.style.setProperty('--d',c.b);r.style.setProperty('--c',c.c);db.collection('settings').doc('theme').set({colors:c},{merge:true}).then(()=>T('✅ Warna disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
+function saveColor(){var c={p:document.getElementById('cP').value,s:document.getElementById('cS').value,a:document.getElementById('cA').value,b:document.getElementById('cB').value,c:document.getElementById('cC').value,t:document.getElementById('cT').value};var r=document.documentElement;r.style.setProperty('--p',c.p);r.style.setProperty('--s',c.s);r.style.setProperty('--a',c.a);r.style.setProperty('--d',c.b);r.style.setProperty('--c',c.c);db.collection('settings').doc('theme').set({colors:c},{merge:true}).then(()=>{localStorage.removeItem('cache_theme');T('✅ Warna disimpan!')}).catch(e=>T('❌ Gagal: '+e.message,1))}
 
 // ===== REFERRAL =====
 function loadRef(){db.collection('settings').doc('referral').get().then(d=>{if(d.exists){var r=d.data();document.getElementById('rB1').value=r.b1||5000;document.getElementById('rB2').value=r.b2||3000;document.getElementById('rCm').value=r.cm||10;document.getElementById('rMn').value=r.mn||50000;document.getElementById('r3').textContent=(r.cm||10)+'%'}});db.collection('users').where('referredBy','!=',null).get().then(s=>document.getElementById('r1').textContent=s.size)}
@@ -693,7 +741,7 @@ function sendNotif(){var t=document.getElementById('ntTitle').value.trim(),m=doc
 function sendWaAll(t,m){var tk=localStorage.getItem('ft');if(!tk){T('⚠️ Fonnte belum diset!',1);return}db.collection('users').get().then(s=>{var c=0;s.forEach(d=>{var u=d.data();if(u.whatsapp){var n=u.whatsapp.startsWith('0')?'62'+u.whatsapp.substring(1):u.whatsapp;var fd=new URLSearchParams();fd.append('target',n);fd.append('message','📢 *'+t+'*\n\n'+m);fd.append('countryCode','62');fetch('https://api.fonnte.com/send',{method:'POST',headers:{'Authorization':tk,'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()});c++}});T('📱 WA ke '+c+' user')})}
 
 // ===== BACKUP =====
-function exportData(){db.collection('users').get().then(s1=>{var d={users:[]};s1.forEach(x=>d.users.push({id:x.id,...x.data()}));db.collection('orders').get().then(s2=>{d.orders=[];s2.forEach(x=>d.orders.push({id:x.id,...x.data()}));db.collection('deposits').get().then(s3=>{d.deposits=[];s3.forEach(x=>d.deposits.push({id:x.id,...x.data()}));var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='backup-'+Date.now()+'.json';a.click();T('✅ Exported!')})})})}
+function exportData(){db.collection('users').get().then(s1=>{var d={users:[]};s1.forEach(x=>d.users.push(Object.assign({id:x.id},x.data())));db.collection('orders').get().then(s2=>{d.orders=[];s2.forEach(x=>d.orders.push(Object.assign({id:x.id},x.data())));db.collection('deposits').get().then(s3=>{d.deposits=[];s3.forEach(x=>d.deposits.push(Object.assign({id:x.id},x.data())));var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='backup-'+Date.now()+'.json';a.click();T('✅ Exported!')})})})}
 function importData(){var f=document.getElementById('imFile').files[0];if(!f){T('❌ Pilih file!',1);return}var r=new FileReader();r.onload=e=>{try{var d=JSON.parse(e.target.result);if(!confirm('Import akan timpa data. Lanjut?'))return;var p=Object.keys(d).map(c=>{var b=db.batch();d[c].forEach(x=>{var id=x.id;delete x.id;b.set(db.collection(c).doc(id),x)});return b.commit()});Promise.all(p).then(()=>{T('✅ Imported!');loadDash()})}catch(err){T('❌ '+err.message,1)}};r.readAsText(f)}
 
 // ===== LAPORAN =====
@@ -705,12 +753,12 @@ function loadLog(){var l=JSON.parse(localStorage.getItem('al')||'[]');document.g
 function clrLog(){if(confirm('Hapus log?')){localStorage.removeItem('al');loadLog();T('🗑 Dihapus!')}}
 
 // ===== KEAMANAN =====
-function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
+function chgPass(){var o=document.getElementById('pOld').value,n=document.getElementById('pNew').value,c=document.getElementById('pCfm').value;if(o!==PW){T('❌ Lama salah!',1);return}if(n.length<6){T('❌ Min 6!',1);return}if(n!==c){T('❌ Tidak cocok!',1);return}PW=n;localStorage.setItem('ap',n);setRemember();T('✅ Diganti!');['pOld','pNew','pCfm'].forEach(x=>document.getElementById(x).value='')}
 
 // ===== APK =====
 function loadApk(){
   db.collection('settings').doc('apk').get().then(d=>{
-    var a = d.exists ? d.data() : JSON.parse(localStorage.getItem('apk')||'{}');
+    var a=d.exists?d.data():JSON.parse(localStorage.getItem('apk')||'{}');
     document.getElementById('apkVer').value=a.ver||'';
     document.getElementById('apkUrl').value=a.url||'';
     document.getElementById('apkSize').value=a.size||'';
@@ -726,12 +774,7 @@ function showApkInfo(a){
 function saveApk(){
   var a={ver:document.getElementById('apkVer').value.trim(),url:document.getElementById('apkUrl').value.trim(),size:document.getElementById('apkSize').value.trim(),note:document.getElementById('apkNote').value.trim(),date:new Date().toISOString()};
   if(!a.url){T('❌ Link download wajib diisi!',1);return}
-  try{
-    localStorage.setItem('apk',JSON.stringify(a));
-    db.collection('settings').doc('apk').set(a);
-    T('✅ APK disimpan permanen!');
-    showApkInfo(a);
-  }catch(e){T('❌ Gagal simpan: '+e.message,1)}
+  db.collection('settings').doc('apk').set(a).then(()=>{localStorage.setItem('apk',JSON.stringify(a));T('✅ APK disimpan permanen!');showApkInfo(a)}).catch(e=>T('❌ Gagal: '+e.message,1));
 }
 function copyApk(){
   var a=JSON.parse(localStorage.getItem('apk')||'{}');
@@ -747,9 +790,10 @@ function testApk(){
 }
 
 // ===== INIT =====
-showLoginModal();
+if(!tryAutoLogin()){showLoginModal()}
 loadDash();
 prefetchApi();
+applyAdminTheme();
 </script>
 </body>
   </html>
