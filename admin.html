@@ -96,6 +96,7 @@ textarea.fc{min-height:60px;resize:vertical}
 <div class="mi" onclick="go('api',this)"><i class="fas fa-plug"></i> API PPS</div>
 <div class="mi" onclick="go('mrk',this)"><i class="fas fa-percentage"></i> Markup Harga</div>
 <div class="mi" onclick="go('wa',this)"><i class="fab fa-whatsapp"></i> WhatsApp</div>
+<div class="mi" onclick="go('contact',this)"><i class="fas fa-address-book"></i> Kontak</div>
 <div class="mi" onclick="go('apk',this)"><i class="fas fa-download"></i> Download APK</div>
 <div class="lbl">Pengaturan</div>
 <div class="mi" onclick="go('set',this)"><i class="fas fa-cog"></i> Website</div>
@@ -220,6 +221,26 @@ textarea.fc{min-height:60px;resize:vertical}
 </div>
 </div>
 
+<div class="pg" id="contact">
+<h1>📞 Kontak Admin</h1>
+<div class="cd">
+<h3 style="margin-bottom:.5rem">Atur Kontak yang Tampil di Website</h3>
+<p style="color:var(--m);font-size:.75rem;margin-bottom:.8rem">Kontak ini akan muncul di halaman "Kontak Admin" member & tombol WhatsApp floating.</p>
+<div class="g2">
+  <div class="fg"><label><i class="fab fa-whatsapp" style="color:#25D366"></i> WhatsApp Admin</label><input class="fc" id="cWa" placeholder="089694453911"></div>
+  <div class="fg"><label><i class="fab fa-telegram" style="color:#0088cc"></i> Telegram</label><input class="fc" id="cTg" placeholder="@dezstore"></div>
+  <div class="fg"><label><i class="fas fa-envelope" style="color:var(--err)"></i> Email</label><input class="fc" id="cEm" placeholder="admin@dezstore.com"></div>
+  <div class="fg"><label><i class="fab fa-instagram" style="color:#E4405F"></i> Instagram</label><input class="fc" id="cIg" placeholder="@dezstore"></div>
+</div>
+<button class="bt bg" onclick="saveContact()"><i class="fas fa-save"></i> Simpan Kontak</button>
+<div id="contactRes" style="margin-top:.5rem"></div>
+</div>
+<div class="cd">
+<h3 style="margin-bottom:.5rem">👁️ Preview Kontak</h3>
+<div id="contactPreview" style="font-size:.8rem;color:var(--m)">Belum ada data.</div>
+</div>
+</div>
+
 <div class="pg" id="apk">
 <h1>📱 Download APK</h1>
 <div class="cd">
@@ -332,7 +353,7 @@ var PPS_URL='https://dezstore-api.dezstore300.workers.dev/';
 // ===== HELPERS =====
 function b64ToBuf(b){var s=atob(b);var u=new Uint8Array(s.length);for(var i=0;i<s.length;i++){u[i]=s.charCodeAt(i)}return u}
 function bufToB64(b){var s='';var u=new Uint8Array(b);for(var i=0;i<u.length;i++){s+=String.fromCharCode(u[i])}return btoa(s)}
-function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
+function go(id,el){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.mi').forEach(x=>x.classList.remove('on'));document.getElementById(id).classList.add('on');if(el)el.classList.add('on');var f={dash:loadDash,usr:loadUsr,ord:loadOrd,dep:loadDep,tik:loadTik,svc:loadSvc,cat:loadCat,ann:loadAnn,vch:loadVch,pay:loadPay,qrs:loadQrs,api:loadApi,wa:loadWa,contact:loadContact,set:loadSet,thm:loadThm,ref:loadRef,upd:loadUpd,rep:genRep,log:loadLog,mrk:loadMrk,apk:loadApk};if(f[id])f[id]()}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
 function T(m,e){var t=document.getElementById('toast');t.textContent=m;t.className='ts on'+(e?' e':'');setTimeout(()=>t.className='ts',3000)}
@@ -356,7 +377,7 @@ function compressImage(file,maxDim,preferPng){
         var out;
         if(preferPng){
           out=c.toDataURL('image/png');
-          if(out.length>350*1024){ // PNG terlalu besar -> JPEG
+          if(out.length>350*1024){
             ctx.globalCompositeOperation='destination-over';
             ctx.fillStyle='#0a0a1a';ctx.fillRect(0,0,w,h);
             out=c.toDataURL('image/jpeg',0.8);
@@ -416,7 +437,7 @@ function checkLogin(){
   closeM('mLogin');
   document.getElementById('loginPassInput').value='';
   document.getElementById('loginInfo').textContent='';
-  setRemember(); // device ini dikenali berikutnya
+  setRemember();
   T('✅ Login berhasil!');
   prefetchApi();
 }
@@ -694,6 +715,37 @@ function loadWa(){document.getElementById('fntToken').value=localStorage.getItem
 function saveWa(){localStorage.setItem('ft',document.getElementById('fntToken').value);localStorage.setItem('wn',document.getElementById('waNum').value);T('✅ WA disimpan!')}
 function testWa(){var t=localStorage.getItem('ft'),n=localStorage.getItem('wn');if(!t||!n){T('❌ Simpan dulu!',1);return}if(n.startsWith('0'))n='62'+n.substring(1);var fd=new URLSearchParams();fd.append('target',n);fd.append('message','✅ TEST DEZSTORE berhasil!');fd.append('countryCode','62');fetch('https://api.fonnte.com/send',{method:'POST',headers:{'Authorization':t,'Content-Type':'application/x-www-form-urlencoded'},body:fd.toString()}).then(r=>r.json()).then(d=>document.getElementById('waRes').innerHTML='<div style="background:rgba(16,185,129,.1);padding:.6rem;border-radius:6px;color:var(--ok);font-size:.8rem">✅ Terkirim!</div>').catch(e=>document.getElementById('waRes').innerHTML='<div style="background:rgba(239,68,68,.1);padding:.6rem;border-radius:6px;color:var(--err);font-size:.8rem">❌ '+e.message+'</div>')}
 
+// ===== KONTAK ADMIN =====
+function loadContact(){
+  db.collection('settings').doc('website').get().then(d=>{
+    if(!d.exists)return;
+    var s=d.data();
+    document.getElementById('cWa').value=s.contactWA||'';
+    document.getElementById('cTg').value=s.contactTelegram||'';
+    document.getElementById('cEm').value=s.contactEmail||'';
+    document.getElementById('cIg').value=s.contactInstagram||'';
+    var h='';
+    if(s.contactWA)h+='<div style="margin-bottom:.3rem">📱 WA: <b style="color:var(--ok)">'+s.contactWA+'</b></div>';
+    if(s.contactTelegram)h+='<div style="margin-bottom:.3rem">✈️ TG: <b style="color:var(--s)">'+s.contactTelegram+'</b></div>';
+    if(s.contactEmail)h+='<div style="margin-bottom:.3rem">📧 Email: <b style="color:var(--warn)">'+s.contactEmail+'</b></div>';
+    if(s.contactInstagram)h+='<div style="margin-bottom:.3rem">📷 IG: <b style="color:var(--a)">'+s.contactInstagram+'</b></div>';
+    document.getElementById('contactPreview').innerHTML=h||'<i style="color:var(--m)">Belum ada kontak diatur.</i>';
+  }).catch(e=>T('❌ '+e.message,1));
+}
+function saveContact(){
+  var wa=document.getElementById('cWa').value.trim();
+  var tg=document.getElementById('cTg').value.trim();
+  var em=document.getElementById('cEm').value.trim();
+  var ig=document.getElementById('cIg').value.trim();
+  if(!wa&&!tg&&!em&&!ig){T('❌ Isi minimal 1 kontak!',1);return}
+  db.collection('settings').doc('website').set({
+    contactWA:wa,contactTelegram:tg,contactEmail:em,contactInstagram:ig
+  },{merge:true}).then(()=>{
+    T('✅ Kontak disimpan!');
+    loadContact();
+  }).catch(e=>T('❌ '+e.message,1));
+}
+
 // ===== WEBSITE =====
 function loadSet(){db.collection('settings').doc('website').get().then(d=>{if(!d.exists)return;var s=d.data();document.getElementById('siteName').value=s.name||'DEZSTORE';document.getElementById('siteTag').value=s.tagline||'';document.getElementById('cWa').value=s.contactWA||'';document.getElementById('cEm').value=s.contactEmail||'';document.getElementById('cTg').value=s.contactTelegram||'';document.getElementById('cIg').value=s.contactInstagram||'';document.getElementById('minDep').value=s.minDeposit||10000;document.getElementById('maxDep').value=s.maxDeposit||10000000;document.getElementById('defFee').value=s.defaultFee||0})}
 function saveSet(){db.collection('settings').doc('website').set({name:document.getElementById('siteName').value,tagline:document.getElementById('siteTag').value,contactWA:document.getElementById('cWa').value,contactEmail:document.getElementById('cEm').value,contactTelegram:document.getElementById('cTg').value,contactInstagram:document.getElementById('cIg').value,minDeposit:parseInt(document.getElementById('minDep').value),maxDeposit:parseInt(document.getElementById('maxDep').value),defaultFee:parseInt(document.getElementById('defFee').value)},{merge:true}).then(()=>T('✅ Disimpan!')).catch(e=>T('❌ Gagal: '+e.message,1))}
@@ -709,11 +761,10 @@ async function upImg(t,inp){
     var out=await compressImage(f,t==='logo'?512:1400,t==='logo');
     var o={};o[t]=out;
     await db.collection('settings').doc('theme').set(o,{merge:true});
-    // VERIFIKASI: baca ulang dari Firestore
     var chk=await db.collection('settings').doc('theme').get();
     if(chk.exists&&chk.data()[t]){
       document.getElementById(id).innerHTML='<img src="'+out+'"><br><small style="color:var(--ok)">✅ '+Math.round(out.length/1024)+'KB tersimpan</small>';
-      localStorage.removeItem('cache_theme'); // index.html reload data baru
+      localStorage.removeItem('cache_theme');
       T('✅ '+t+' tersimpan permanen!');
       if(t==='logo')document.getElementById('navLogo').innerHTML='<img src="'+out+'">';
       if(t==='background')document.body.style.backgroundImage='url('+out+')';
